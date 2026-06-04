@@ -81,7 +81,7 @@ export default function ServicioDetailPage({
       {/* Cuerpo */}
       <section className="bg-neutral-0 py-16 md:py-24">
         <Container>
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_340px] lg:gap-16">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_340px] lg:gap-16">
             {/* Desarrollo */}
             <Reveal as="div" className="min-w-0">
               <p className="text-balance font-display text-xl font-medium leading-snug tracking-tight text-ink-900 md:text-2xl">

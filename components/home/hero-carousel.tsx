@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
@@ -58,6 +58,18 @@ export function HeroCarousel() {
 
   const go = useCallback((delta: number) => setIndex((p) => (p + delta + n) % n), [n]);
 
+  // Swipe táctil (feel de app nativa en teléfono).
+  const touchX = useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchX.current == null) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+    touchX.current = null;
+  };
+
   useEffect(() => {
     if (paused) return;
     const id = setInterval(() => setIndex((p) => (p + 1) % n), 6500);
@@ -78,9 +90,11 @@ export function HeroCarousel() {
 
   return (
     <section
-      className="relative isolate flex min-h-[calc(100vh-100px)] items-center overflow-hidden bg-ink-900 text-neutral-0"
+      className="relative isolate flex min-h-[calc(100svh-64px)] items-center overflow-hidden bg-ink-900 text-neutral-0 md:min-h-[calc(100vh-100px)]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
       aria-roledescription="carrusel"
     >
       {/* Slide images (crossfade + slow zoom) */}
@@ -102,8 +116,8 @@ export function HeroCarousel() {
 
       {/* Slide text */}
       <Container className="relative w-full">
-        <div className="relative max-w-2xl py-28">
-          <div className="relative min-h-[340px] md:min-h-[360px]">
+        <div className="relative max-w-2xl py-20 sm:py-24 md:py-28">
+          <div className="relative min-h-[300px] sm:min-h-[340px] md:min-h-[360px]">
             <AnimatePresence>
               <motion.div
                 key={index}
@@ -121,11 +135,11 @@ export function HeroCarousel() {
                 </motion.div>
                 <motion.h1
                   variants={itemV}
-                  className="font-display text-4xl font-semibold leading-[1.06] tracking-tight md:text-5xl lg:text-6xl"
+                  className="text-balance font-display text-[2rem] font-semibold leading-[1.12] tracking-tight sm:text-4xl sm:leading-[1.08] md:text-5xl md:leading-[1.06] lg:text-6xl"
                 >
                   {slide.title}
                 </motion.h1>
-                <motion.p variants={itemV} className="mt-6 max-w-xl text-lg leading-relaxed text-neutral-200">
+                <motion.p variants={itemV} className="mt-5 max-w-xl text-pretty text-[15px] leading-relaxed text-neutral-200 sm:mt-6 sm:text-lg">
                   {slide.desc}
                 </motion.p>
                 <motion.div variants={itemV} className="mt-9">
@@ -143,14 +157,14 @@ export function HeroCarousel() {
       <button
         onClick={() => go(-1)}
         aria-label="Slide anterior"
-        className="absolute left-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-neutral-0/60 transition-colors hover:text-neutral-0 md:left-5"
+        className="absolute left-2 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center text-neutral-0/60 transition-colors hover:text-neutral-0 md:left-5 md:flex"
       >
         <Chevron dir="left" />
       </button>
       <button
         onClick={() => go(1)}
         aria-label="Slide siguiente"
-        className="absolute right-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-neutral-0/60 transition-colors hover:text-neutral-0 md:right-5"
+        className="absolute right-2 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center text-neutral-0/60 transition-colors hover:text-neutral-0 md:right-5 md:flex"
       >
         <Chevron dir="right" />
       </button>

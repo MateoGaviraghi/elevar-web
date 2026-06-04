@@ -33,7 +33,7 @@ const MODALITIES = [
 
 export function ModalitiesSection() {
   return (
-    <section className="bg-neutral-50 py-20 md:py-28">
+    <section className="bg-neutral-50 py-14 sm:py-20 md:py-28">
       <Container>
         <Reveal>
           <SectionHeader
@@ -46,7 +46,7 @@ export function ModalitiesSection() {
 
         <Reveal
           as="div"
-          className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="mt-10 grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
           stagger={0.08}
         >
           {MODALITIES.map((mod) => (

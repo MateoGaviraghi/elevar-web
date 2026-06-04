@@ -11,9 +11,9 @@ const STATS = [
 /** Banda de presentación con espacio para video (mockup) — refuerza lo visual del home. */
 export function ShowcaseSection() {
   return (
-    <section className="bg-ink-900 py-20 text-neutral-0 md:py-28">
+    <section className="bg-ink-900 py-14 text-neutral-0 sm:py-20 md:py-28">
       <Container>
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="grid items-center gap-10 sm:gap-12 lg:grid-cols-2 lg:gap-16">
           <Reveal as="div" variant="left">
             <div className="mb-5 flex items-center gap-3">
               <span className="h-px w-10 bg-brand-500" aria-hidden />
@@ -21,7 +21,7 @@ export function ShowcaseSection() {
                 ELEVAR en acción
               </span>
             </div>
-            <h2 className="font-display text-3xl font-semibold leading-tight tracking-tight md:text-[2.5rem]">
+            <h2 className="text-balance font-display text-2xl font-semibold leading-tight tracking-tight sm:text-3xl md:text-[2.5rem]">
               Calidad que se ve en cada resultado
             </h2>
             <p className="mt-5 max-w-md text-[15px] leading-relaxed text-neutral-300">
@@ -29,7 +29,7 @@ export function ShowcaseSection() {
               camino hacia la acreditación ISO/IEC 17025.
             </p>
 
-            <dl className="mt-10 grid grid-cols-3 gap-6 border-t border-neutral-0/10 pt-8">
+            <dl className="mt-8 grid grid-cols-3 gap-3 border-t border-neutral-0/10 pt-6 sm:mt-10 sm:gap-6 sm:pt-8">
               {STATS.map((s) => (
                 <div key={s.label}>
                   <dt className="font-display text-2xl font-semibold text-neutral-0 md:text-3xl">

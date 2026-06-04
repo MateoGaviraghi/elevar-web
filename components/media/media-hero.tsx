@@ -20,9 +20,9 @@ export interface MediaHeroProps {
 }
 
 const SIZES: Record<NonNullable<MediaHeroProps["size"]>, string> = {
-  md: "min-h-[42vh] py-20 md:py-24",
-  lg: "min-h-[58vh] py-24 md:py-32",
-  xl: "min-h-[72vh] py-28 md:py-40",
+  md: "min-h-[36vh] py-16 sm:py-20 md:py-24",
+  lg: "min-h-[46vh] py-20 sm:py-24 md:py-32",
+  xl: "min-h-[60vh] py-24 sm:py-28 md:py-40",
 };
 
 /**
@@ -126,11 +126,13 @@ export function MediaHero({
               </span>
             </div>
           )}
-          <h1 className="font-display text-4xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
+          <h1 className="text-balance font-display text-[1.95rem] font-semibold leading-[1.12] tracking-tight sm:text-4xl sm:leading-[1.08] md:text-5xl lg:text-6xl lg:leading-[1.05]">
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-neutral-300">{subtitle}</p>
+            <p className="mt-5 max-w-2xl text-pretty text-[15px] leading-relaxed text-neutral-300 sm:mt-6 sm:text-lg">
+              {subtitle}
+            </p>
           )}
         </div>
       </Container>

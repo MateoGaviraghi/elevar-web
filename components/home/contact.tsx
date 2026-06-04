@@ -183,7 +183,7 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
   }
 
   return (
-    <section className="bg-neutral-50 py-20 md:py-28">
+    <section className="bg-neutral-50 py-14 sm:py-20 md:py-28">
       <Container>
         {showHeading && (
           <Reveal>
@@ -208,7 +208,7 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
         <Reveal as="div" className={showHeading ? "" : ""}>
           <div className="grid overflow-hidden border border-neutral-200 bg-neutral-0 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.35)] lg:grid-cols-[0.82fr_1.18fr]">
             {/* Panel de info (oscuro, branded) */}
-            <div className="relative overflow-hidden bg-ink-900 p-8 text-neutral-0 md:p-10">
+            <div className="relative overflow-hidden bg-ink-900 p-6 text-neutral-0 sm:p-8 md:p-10">
               <span
                 className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand-500/25 blur-3xl"
                 aria-hidden
@@ -278,7 +278,7 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
             </div>
 
             {/* Formulario (claro) */}
-            <div className="p-8 md:p-10">
+            <div className="p-6 sm:p-8 md:p-10">
               {success && (
                 <AlertBanner variant="success" className="mb-6">
                   ¡Mensaje enviado! Te respondemos a la brevedad.

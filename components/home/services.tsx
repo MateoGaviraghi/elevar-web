@@ -37,7 +37,7 @@ const SERVICES = [
 
 export function ServicesSection() {
   return (
-    <section className="bg-neutral-0 py-20 md:py-28">
+    <section className="bg-neutral-0 py-14 sm:py-20 md:py-28">
       <Container>
         <Reveal variant="blur">
           <h2 className="text-center font-display text-3xl font-semibold tracking-tight text-brand-500 md:text-4xl">
@@ -48,7 +48,7 @@ export function ServicesSection() {
         <Reveal
           as="div"
           stagger={0.1}
-          className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-x-14 gap-y-12 md:grid-cols-2"
+          className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-x-10 gap-y-10 sm:mt-14 sm:gap-x-14 sm:gap-y-12 md:grid-cols-2"
         >
           {SERVICES.map((s, idx) => {
             const iconRight = idx % 2 === 0;
@@ -57,7 +57,7 @@ export function ServicesSection() {
                 src={s.img}
                 alt=""
                 aria-hidden
-                className="h-24 w-24 shrink-0 object-contain transition-transform duration-300 group-hover:scale-105"
+                className="h-16 w-16 shrink-0 object-contain transition-transform duration-300 group-hover:scale-105 sm:h-24 sm:w-24"
               />
             );
             const text = (

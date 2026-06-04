@@ -25,6 +25,11 @@ export function SmoothScroll() {
 
   useEffect(() => {
     if (prefersReducedMotion()) return;
+    // Solo en desktop con mouse. En teléfono/tablet el scroll táctil nativo ya es
+    // fluido (el "feel de app") y Lenis lo entorpece o lo rompe. Sin Lenis, los
+    // reveals (IntersectionObserver) y el parallax (ScrollTrigger) siguen andando
+    // sobre el scroll nativo.
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
     const lenis = new Lenis({
       lerp: 0.085, // más bajo = más “pesado”/suave; 0.08–0.1 es el dulce

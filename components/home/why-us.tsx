@@ -27,13 +27,13 @@ const POINTS = [
 
 export function WhyUsSection() {
   return (
-    <section className="bg-ink-900 py-20 md:py-28">
+    <section className="bg-ink-900 py-14 sm:py-20 md:py-28">
       <Container>
         <Reveal>
           <SectionHeader dark eyebrow="¿Por qué elegirnos?" title="Experiencia técnica, no solo teoría" />
         </Reveal>
 
-        <div className="mt-14 grid items-center gap-12 lg:grid-cols-2">
+        <div className="mt-10 grid items-center gap-10 sm:mt-14 sm:gap-12 lg:grid-cols-2">
           {/* Imagen real del equipo, con marco de acento */}
           <Reveal as="div" variant="scale" duration={0.9} className="relative">
             <span aria-hidden className="absolute -left-3 -top-3 z-10 h-16 w-16 border-l-2 border-t-2 border-brand-500" />

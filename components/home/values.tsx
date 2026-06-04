@@ -23,7 +23,7 @@ const VALUES = [
 
 export function ValuesSection() {
   return (
-    <section className="bg-neutral-0 py-20 md:py-28">
+    <section className="bg-neutral-0 py-14 sm:py-20 md:py-28">
       <Container>
         <Reveal>
           <SectionHeader
@@ -34,7 +34,7 @@ export function ValuesSection() {
 
         <Reveal
           as="div"
-          className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-10"
+          className="mt-10 grid grid-cols-1 gap-8 sm:mt-12 md:grid-cols-3 md:gap-10"
           stagger={0.08}
         >
           {VALUES.map((val) => (

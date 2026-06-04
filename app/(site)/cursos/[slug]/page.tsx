@@ -114,9 +114,9 @@ export default async function CourseDetailPage({
       {/* Cuerpo */}
       <section className="bg-neutral-0 py-16 md:py-24">
         <Container>
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_360px] lg:gap-16">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_360px] lg:gap-16">
             {/* Contenido */}
-            <Reveal as="div" className="min-w-0">
+            <Reveal as="div" className="order-2 min-w-0 lg:order-1">
               <h2 className="font-display text-2xl font-semibold tracking-tight text-ink-900">
                 Sobre el curso
               </h2>
@@ -158,8 +158,8 @@ export default async function CourseDetailPage({
               </dl>
             </Reveal>
 
-            {/* Panel de compra (sticky) */}
-            <div className="lg:sticky lg:top-28 lg:self-start">
+            {/* Panel de compra (sticky en desktop, arriba en mobile) */}
+            <div className="order-1 lg:order-2 lg:sticky lg:top-28 lg:self-start">
               <AddToCartPanel course={course} />
             </div>
           </div>
