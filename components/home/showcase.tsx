@@ -14,7 +14,7 @@ export function ShowcaseSection() {
     <section className="bg-ink-900 py-20 text-neutral-0 md:py-28">
       <Container>
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <Reveal as="div">
+          <Reveal as="div" variant="left">
             <div className="mb-5 flex items-center gap-3">
               <span className="h-px w-10 bg-brand-500" aria-hidden />
               <span className="text-xs font-semibold uppercase tracking-widest text-neutral-400">
@@ -41,7 +41,7 @@ export function ShowcaseSection() {
             </dl>
           </Reveal>
 
-          <Reveal as="div">
+          <Reveal as="div" variant="right">
             <VideoSlot
               poster="/assets/mockup/m7.jpg"
               label="Presentación · próximamente"

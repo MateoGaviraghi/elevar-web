@@ -69,8 +69,9 @@ export function Header() {
 
             <nav className="hidden items-center gap-9 lg:flex" aria-label="Navegación principal">
               <NavLink href="/" label="Inicio" active={isActive("/")} />
-              <NavDropdown label="Formación" active={isActive("/formacion")} items={FORMACION} />
+              <NavDropdown href="/formacion" label="Formación" active={isActive("/formacion")} items={FORMACION} />
               <NavDropdown
+                href="/servicios"
                 label="Servicios"
                 active={isActive("/servicios")}
                 items={[{ label: "Todos los servicios", href: "/servicios" }, ...SERVICIOS]}
@@ -112,8 +113,8 @@ function NavLink({ href, label, active }: { href: string; label: string; active:
     >
       {label}
       <span
-        className={`pointer-events-none absolute -bottom-0.5 left-0 h-px bg-brand-500 transition-all duration-300 ease-out ${
-          active ? "w-full" : "w-0 group-hover:w-full"
+        className={`pointer-events-none absolute -bottom-1 left-0 h-px w-full origin-left bg-brand-500 transition-transform duration-300 ease-out ${
+          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
         }`}
       />
     </Link>
@@ -121,10 +122,12 @@ function NavLink({ href, label, active }: { href: string; label: string; active:
 }
 
 function NavDropdown({
+  href,
   label,
   active,
   items,
 }: {
+  href: string;
   label: string;
   active: boolean;
   items: { label: string; href: string }[];
@@ -137,20 +140,25 @@ function NavDropdown({
     setOpen(true);
   };
   const closeSoon = () => {
-    timer.current = setTimeout(() => setOpen(false), 120);
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setOpen(false), 110);
   };
 
   return (
     <div className="relative" onMouseEnter={openNow} onMouseLeave={closeSoon}>
-      <button
-        type="button"
+      {/* El trigger navega a la sección (click) y abre el menú al pasar por encima
+          (hover/focus). Sin toggle en click → no queda “pegado”. */}
+      <Link
+        href={href}
         aria-expanded={open}
-        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="true"
+        onFocus={openNow}
+        onBlur={closeSoon}
         className="group relative inline-flex items-center gap-1 py-1 text-sm font-medium text-ink-800 outline-none transition-colors hover:text-ink-900"
       >
         {label}
         <svg
-          className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`transition-transform duration-300 ease-out ${open ? "rotate-180" : ""}`}
           width="12"
           height="12"
           viewBox="0 0 24 24"
@@ -164,11 +172,11 @@ function NavDropdown({
           <polyline points="6 9 12 15 18 9" />
         </svg>
         <span
-          className={`pointer-events-none absolute -bottom-0.5 left-0 h-px bg-brand-500 transition-all duration-300 ease-out ${
-            active || open ? "w-full" : "w-0 group-hover:w-full"
+          className={`pointer-events-none absolute -bottom-1 left-0 h-px w-full origin-left bg-brand-500 transition-transform duration-300 ease-out ${
+            active || open ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
           }`}
         />
-      </button>
+      </Link>
 
       <AnimatePresence>
         {open && (
@@ -176,18 +184,18 @@ function NavDropdown({
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
             className="absolute left-0 top-full z-50 pt-3"
           >
-            <div className="min-w-[260px] border border-neutral-200 bg-neutral-0 py-2 shadow-md">
+            <div className="min-w-[260px] border border-neutral-200 bg-neutral-0 py-2 shadow-[0_16px_40px_-16px_rgba(15,23,42,0.28)]">
               {items.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="group/item flex items-center gap-3 px-5 py-2.5 text-sm text-neutral-700 outline-none transition-colors hover:text-ink-900 focus:text-ink-900"
+                  className="group/item flex items-center gap-3 px-5 py-2.5 text-sm text-neutral-700 outline-none transition-colors hover:bg-neutral-50 hover:text-ink-900 focus:bg-neutral-50 focus:text-ink-900"
                 >
-                  <span className="h-px w-4 bg-neutral-200 transition-all duration-200 group-hover/item:w-7 group-hover/item:bg-brand-500" />
+                  <span className="h-px w-4 bg-neutral-200 transition-all duration-300 ease-out group-hover/item:w-7 group-hover/item:bg-brand-500" />
                   {item.label}
                 </Link>
               ))}

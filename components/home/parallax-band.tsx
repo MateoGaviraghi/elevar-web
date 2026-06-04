@@ -8,15 +8,27 @@ import { Container } from "@/components/ui/container";
 export function ParallaxBand({ image, children }: { image: string; children: ReactNode }) {
   const ref = useRef<HTMLElement>(null);
   const bg = useRef<HTMLDivElement>(null);
+  const content = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      if (prefersReducedMotion() || !bg.current) return;
-      gsap.to(bg.current, {
-        yPercent: 18,
-        ease: "none",
-        scrollTrigger: { trigger: ref.current, start: "top bottom", end: "bottom top", scrub: true },
-      });
+      if (prefersReducedMotion()) return;
+      if (bg.current) {
+        gsap.to(bg.current, {
+          yPercent: 18,
+          ease: "none",
+          scrollTrigger: { trigger: ref.current, start: "top bottom", end: "bottom top", scrub: true },
+        });
+      }
+      if (content.current) {
+        gsap.from(content.current, {
+          y: 34,
+          opacity: 0,
+          duration: 1.1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ref.current, start: "top 78%" },
+        });
+      }
     },
     { scope: ref }
   );
@@ -35,7 +47,9 @@ export function ParallaxBand({ image, children }: { image: string; children: Rea
         className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-500/15 blur-3xl"
         aria-hidden
       />
-      <Container className="relative">{children}</Container>
+      <Container className="relative">
+        <div ref={content}>{children}</div>
+      </Container>
     </section>
   );
 }

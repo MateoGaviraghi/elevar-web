@@ -42,6 +42,7 @@ export function MediaHero({
 }: MediaHeroProps) {
   const ref = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
@@ -51,6 +52,19 @@ export function MediaHero({
 
       // Entrada: zoom-out sutil al cargar (da vida sin animación perpetua).
       gsap.from(bg, { scale: 1.18, duration: 1.6, ease: "power2.out" });
+
+      // El contenido (eyebrow, título, subtítulo) entra escalonado.
+      const content = contentRef.current;
+      if (content) {
+        gsap.from(content.children, {
+          y: 26,
+          opacity: 0,
+          duration: 1,
+          ease: "power3.out",
+          stagger: 0.12,
+          delay: 0.12,
+        });
+      }
 
       // Parallax: el fondo (sobredimensionado) se traslada con el scroll.
       gsap.to(bg, {
@@ -102,7 +116,7 @@ export function MediaHero({
       />
 
       <Container className="relative w-full">
-        <div className="max-w-3xl">
+        <div ref={contentRef} className="max-w-3xl">
           {children}
           {eyebrow && (
             <div className="mb-5 flex items-center gap-3">

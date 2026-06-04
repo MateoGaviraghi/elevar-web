@@ -13,43 +13,68 @@ import {
 } from "react";
 import { prefersReducedMotion } from "@/lib/gsap";
 
+export type RevealVariant = "up" | "fade" | "scale" | "blur" | "left" | "right";
+
 export interface RevealProps {
   children: ReactNode;
   className?: string;
-  /** px a recorrer en el eje Y */
+  /** Tipo de entrada. Permite que no todas las secciones animen igual. */
+  variant?: RevealVariant;
+  /** px a recorrer (para up/left/right/blur). */
   y?: number;
   /** si se setea, anima los hijos directos con este stagger (segundos) */
   stagger?: number;
   delay?: number;
+  /** duración en segundos */
+  duration?: number;
   as?: ElementType;
-  /** Aceptado por compatibilidad; ya no se usa (reveal por IntersectionObserver). */
+  /** Aceptado por compatibilidad; ya no se usa. */
   start?: string;
 }
 
+// easeOutExpo: arranca rápido y desacelera suave. Lectura premium, sin rebote.
 const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
-const DUR = 0.6;
+
+function fromTransform(variant: RevealVariant, d: number): string {
+  switch (variant) {
+    case "up":
+      return `translateY(${d}px)`;
+    case "blur":
+      return `translateY(${Math.round(d * 0.6)}px)`;
+    case "left":
+      return `translateX(-${d}px)`;
+    case "right":
+      return `translateX(${d}px)`;
+    case "scale":
+      return "scale(0.94)";
+    case "fade":
+    default:
+      return "none";
+  }
+}
 
 /**
- * Reveal fade + slide-up al entrar en viewport.
+ * Reveal de entrada al viewport (fade + movimiento), con variantes.
  *
- * Implementado con IntersectionObserver + transiciones CSS (NO GSAP ScrollTrigger):
- * el estado "visible" es un boolean de React, así que nunca puede revertirse a
- * opacity:0 por un refresh de ScrollTrigger, un reflow de fuentes o un Fast Refresh.
- * Incluye un timer de seguridad que fuerza la visibilidad pasado un umbral.
+ * IntersectionObserver + transiciones CSS: el estado "visible" es un boolean de
+ * React, así que nunca se revierte a opacity:0 por un refresh, reflow de fuentes
+ * o Fast Refresh. Lo que ya está en viewport al montar se revela enseguida (nada
+ * queda en blanco); lo de más abajo entra al hacer scroll. Sin timer global.
  */
 export function Reveal({
   children,
   className,
-  y = 24,
+  variant = "up",
+  y = 28,
   stagger,
   delay = 0,
+  duration = 0.8,
   as: Tag = "div",
 }: RevealProps) {
   const ref = useRef<HTMLElement>(null);
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
-    // Sin animación posible (reduce-motion o navegador sin IO): mostrar ya.
     if (prefersReducedMotion() || typeof IntersectionObserver === "undefined") {
       setShown(true);
       return;
@@ -59,15 +84,11 @@ export function Reveal({
       setShown(true);
       return;
     }
-
-    // Si ya está en viewport al montar (above-fold, o carga a mitad de página por
-    // un ancla/scroll restaurado): revelar enseguida, sin depender de que el IO
-    // dispare. Garantiza que nada se quede en blanco arriba.
+    // Ya visible al montar (above-fold / carga a mitad de página): revelar ya.
     if (el.getBoundingClientRect().top < window.innerHeight) {
       setShown(true);
       return;
     }
-
     let io: IntersectionObserver | null = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
@@ -79,24 +100,21 @@ export function Reveal({
       { threshold: 0.05, rootMargin: "0px 0px -10% 0px" }
     );
     io.observe(el);
-
-    // NOTA: sin timer de "revelar todo". Un timeout global revela las secciones de
-    // más abajo aunque sigas en el hero, y al scrollear ya están reveladas → se
-    // pierde la animación. El IO dispara solo, y de inmediato para lo que ya está
-    // en viewport, así que arriba entra al cargar y abajo entra al hacer scroll.
     return () => io?.disconnect();
   }, []);
 
   const style = (i: number): CSSProperties => ({
     opacity: shown ? 1 : 0,
-    transform: shown ? "none" : `translateY(${y}px)`,
-    transition: `opacity ${DUR}s ${EASE}, transform ${DUR}s ${EASE}`,
+    transform: shown ? "none" : fromTransform(variant, y),
+    filter: shown ? "blur(0px)" : variant === "blur" ? "blur(12px)" : "blur(0px)",
+    transition:
+      `opacity ${duration}s ${EASE}, transform ${duration}s ${EASE}` +
+      (variant === "blur" ? `, filter ${duration}s ${EASE}` : ""),
     transitionDelay: `${delay + (stagger ? i * stagger : 0)}s`,
     willChange: "opacity, transform",
   });
 
-  // Con stagger: animar cada hijo directo (los que aceptan `style`); los que no,
-  // simplemente quedan visibles (nunca ocultos).
+  // Con stagger: animar cada hijo directo que acepte `style`.
   if (stagger != null) {
     return (
       <Tag ref={ref as never} className={className}>

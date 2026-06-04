@@ -39,7 +39,7 @@ export function ServicesSection() {
   return (
     <section className="bg-neutral-0 py-20 md:py-28">
       <Container>
-        <Reveal>
+        <Reveal variant="blur">
           <h2 className="text-center font-display text-3xl font-semibold tracking-tight text-brand-500 md:text-4xl">
             Nuestros servicios
           </h2>

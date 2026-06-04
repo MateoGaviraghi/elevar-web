@@ -35,7 +35,7 @@ export function WhyUsSection() {
 
         <div className="mt-14 grid items-center gap-12 lg:grid-cols-2">
           {/* Imagen real del equipo, con marco de acento */}
-          <Reveal as="div" className="relative">
+          <Reveal as="div" variant="scale" duration={0.9} className="relative">
             <span aria-hidden className="absolute -left-3 -top-3 z-10 h-16 w-16 border-l-2 border-t-2 border-brand-500" />
             <span aria-hidden className="absolute -bottom-3 -right-3 z-10 h-16 w-16 border-b-2 border-r-2 border-brand-500" />
             <img

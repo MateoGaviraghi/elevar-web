@@ -85,7 +85,7 @@ export default function ServiciosPage() {
       {/* CTA */}
       <section className="border-t border-neutral-200 bg-neutral-50">
         <Container className="py-16 md:py-20">
-          <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
+          <Reveal as="div" className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
             <div>
               <h2 className="font-display text-2xl font-semibold tracking-tight text-ink-900 md:text-3xl">
                 ¿Querés evaluar el sistema de tu laboratorio?
@@ -101,7 +101,7 @@ export default function ServiciosPage() {
             >
               Solicitar asesoramiento
             </Link>
-          </div>
+          </Reveal>
         </Container>
       </section>
     </>

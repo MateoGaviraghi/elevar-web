@@ -164,10 +164,16 @@ export default function ServicioDetailPage({
       {/* Otros servicios */}
       <section className="border-t border-neutral-200 bg-neutral-50 py-16 md:py-20">
         <Container>
-          <h2 className="mb-8 font-display text-xl font-semibold tracking-tight text-ink-900">
-            Otros servicios
-          </h2>
-          <div className="grid grid-cols-1 border-l border-t border-neutral-200 sm:grid-cols-2 lg:grid-cols-3">
+          <Reveal>
+            <h2 className="mb-8 font-display text-xl font-semibold tracking-tight text-ink-900">
+              Otros servicios
+            </h2>
+          </Reveal>
+          <Reveal
+            as="div"
+            stagger={0.06}
+            className="grid grid-cols-1 border-l border-t border-neutral-200 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {others.map((s) => (
               <Link
                 key={s.id}
@@ -180,7 +186,7 @@ export default function ServicioDetailPage({
                 </span>
               </Link>
             ))}
-          </div>
+          </Reveal>
         </Container>
       </section>
     </>
