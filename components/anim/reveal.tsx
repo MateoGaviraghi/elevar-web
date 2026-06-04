@@ -49,12 +49,24 @@ export function Reveal({
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
-    if (prefersReducedMotion()) {
+    // Sin animación posible (reduce-motion o navegador sin IO): mostrar ya.
+    if (prefersReducedMotion() || typeof IntersectionObserver === "undefined") {
       setShown(true);
       return;
     }
     const el = ref.current;
-    if (!el) return;
+    if (!el) {
+      setShown(true);
+      return;
+    }
+
+    // Si ya está en viewport al montar (above-fold, o carga a mitad de página por
+    // un ancla/scroll restaurado): revelar enseguida, sin depender de que el IO
+    // dispare. Garantiza que nada se quede en blanco arriba.
+    if (el.getBoundingClientRect().top < window.innerHeight) {
+      setShown(true);
+      return;
+    }
 
     let io: IntersectionObserver | null = new IntersectionObserver(
       (entries) => {
@@ -64,17 +76,15 @@ export function Reveal({
           io = null;
         }
       },
-      { threshold: 0.05, rootMargin: "0px 0px -8% 0px" }
+      { threshold: 0.05, rootMargin: "0px 0px -10% 0px" }
     );
     io.observe(el);
 
-    // Red de seguridad: si el observer nunca dispara, mostrar igual.
-    const safety = window.setTimeout(() => setShown(true), 1400);
-
-    return () => {
-      io?.disconnect();
-      window.clearTimeout(safety);
-    };
+    // NOTA: sin timer de "revelar todo". Un timeout global revela las secciones de
+    // más abajo aunque sigas en el hero, y al scrollear ya están reveladas → se
+    // pierde la animación. El IO dispara solo, y de inmediato para lo que ya está
+    // en viewport, así que arriba entra al cargar y abajo entra al hacer scroll.
+    return () => io?.disconnect();
   }, []);
 
   const style = (i: number): CSSProperties => ({
