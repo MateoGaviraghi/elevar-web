@@ -1,0 +1,14 @@
+# Normalizar finales de línea a LF en el repositorio (build de Vercel corre en Linux)
+* text=auto eol=lf
+
+# Tratar binarios como tales (sin normalizar)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.svg text
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
