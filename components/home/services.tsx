@@ -51,34 +51,24 @@ export function ServicesSection() {
           className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-x-10 gap-y-10 sm:mt-14 sm:gap-x-14 sm:gap-y-12 md:grid-cols-2"
         >
           {SERVICES.map((s, idx) => {
+            // Mobile: ícono siempre a la izquierda (prolijo y consistente).
+            // Desktop (2 columnas): se alterna para el ritmo editorial.
             const iconRight = idx % 2 === 0;
-            const icon = (
-              <img
-                src={s.img}
-                alt=""
-                aria-hidden
-                className="h-16 w-16 shrink-0 object-contain transition-transform duration-300 group-hover:scale-105 sm:h-24 sm:w-24"
-              />
-            );
-            const text = (
-              <div className="min-w-0 flex-1">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-600">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-700">{s.desc}</p>
-              </div>
-            );
             return (
-              <div key={s.title} className="group flex items-start gap-6">
-                {iconRight ? (
-                  <>
-                    {text}
-                    {icon}
-                  </>
-                ) : (
-                  <>
-                    {icon}
-                    {text}
-                  </>
-                )}
+              <div
+                key={s.title}
+                className={`group flex items-start gap-5 sm:gap-6 ${iconRight ? "md:flex-row-reverse" : ""}`}
+              >
+                <img
+                  src={s.img}
+                  alt=""
+                  aria-hidden
+                  className="h-14 w-14 shrink-0 object-contain transition-transform duration-300 group-hover:scale-105 sm:h-24 sm:w-24"
+                />
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-600">{s.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-neutral-700">{s.desc}</p>
+                </div>
               </div>
             );
           })}
