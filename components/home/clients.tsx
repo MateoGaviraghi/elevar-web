@@ -29,7 +29,7 @@ export function ClientsSection() {
           /* En mobile se ven pocos logos a la vez: a 32s se sentía lentísimo. */
           @media (max-width: 640px) {
             .elevar-marquee-track {
-              animation-duration: 15s;
+              animation-duration: 8s;
             }
           }
           .elevar-marquee-wrapper:hover .elevar-marquee-track {
