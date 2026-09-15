@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { SERVICIOS, FORMACION, PLATAFORMA_URL } from "@/lib/nav";
+import { CommunityButton } from "@/components/common/whatsapp";
 
 export interface MobileDrawerProps {
   open: boolean;
@@ -167,7 +168,8 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
             </nav>
 
             {/* CTA fijo abajo */}
-            <div className="px-6 py-4 border-t border-neutral-200">
+            <div className="space-y-3 px-6 py-4 border-t border-neutral-200">
+              <CommunityButton tone="solid" className="w-full" />
               <a
                 href={PLATAFORMA_URL}
                 target="_blank"

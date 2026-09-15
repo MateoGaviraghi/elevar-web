@@ -4,11 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { SERVICIOS, FORMACION, PLATAFORMA_URL } from "@/lib/nav";
+import { SERVICIOS, FORMACION, PLATAFORMA_URL, WHATSAPP_URL } from "@/lib/nav";
+import { CommunityButton } from "@/components/common/whatsapp";
 import { CartIcon } from "./cart-icon";
 import { MobileDrawer } from "./mobile-drawer";
-
-const WHATSAPP_URL = "https://wa.me/5493446507779";
 
 export function Header() {
   const pathname = usePathname();
@@ -40,17 +39,24 @@ export function Header() {
               <span className="h-1 w-1 rounded-full bg-brand-500" />
               WhatsApp +54&nbsp;9&nbsp;3446&nbsp;507779
             </a>
-            <a
-              href={PLATAFORMA_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-1.5 uppercase transition-colors hover:text-neutral-0"
-            >
-              Plataforma Elevar
-              <span className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-                ↗
-              </span>
-            </a>
+            <div className="flex items-center gap-6">
+              <CommunityButton
+                tone="bare"
+                label="Comunidad WhatsApp"
+                className="text-[11px] font-medium uppercase tracking-wider text-neutral-400 hover:text-[#25D366]"
+              />
+              <a
+                href={PLATAFORMA_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-1.5 uppercase transition-colors hover:text-neutral-0"
+              >
+                Plataforma Elevar
+                <span className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                  ↗
+                </span>
+              </a>
+            </div>
           </div>
         </div>
       </div>

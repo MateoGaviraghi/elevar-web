@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
-import { NewsletterForm } from "@/components/layout/newsletter-form";
+import { CommunityButton, WhatsAppIcon } from "@/components/common/whatsapp";
 
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
@@ -165,22 +165,34 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Col 4 — Newsletter */}
+          {/* Col 4 — Comunidad de WhatsApp */}
           <div>
             <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-500">
-              Newsletter
+              Comunidad Elevar
             </h3>
             <p className="mb-4 text-sm leading-relaxed text-neutral-400">
-              Reciba en su correo las últimas novedades, ofertas exclusivas y contenido especial.
+              Sumate a nuestra comunidad de WhatsApp y recibí novedades de cursos, promociones y
+              contenido técnico sobre ISO/IEC&nbsp;17025.
             </p>
-            <NewsletterForm />
+            <CommunityButton tone="dark" className="w-full sm:w-auto" />
+            <p className="mt-4 flex items-center gap-2 text-xs text-neutral-500">
+              <WhatsAppIcon className="h-3.5 w-3.5" />
+              Sin spam. Salís cuando quieras.
+            </p>
           </div>
         </div>
 
         <div className="mt-12 border-t border-neutral-0/10 pt-6">
-          <p className="text-sm text-neutral-500">
-            © 2026 Elevar — Consultoría de Calidad para Laboratorios
-          </p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-neutral-500">
+              © 2026 Elevar — Consultoría de Calidad para Laboratorios
+            </p>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              <FooterLink href="/promociones">Promociones</FooterLink>
+              <FooterLink href="/formacion">Formación</FooterLink>
+              <FooterLink href="/contacto">Contacto</FooterLink>
+            </div>
+          </div>
         </div>
       </Container>
     </footer>

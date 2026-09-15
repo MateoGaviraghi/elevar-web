@@ -8,6 +8,7 @@ import { VideoSlot } from "@/components/media/video-slot";
 import { CourseCard } from "@/components/catalog/course-card";
 import { getCourses } from "@/lib/api";
 import { MODALITIES } from "@/lib/formacion-modalities";
+import { PromoStrip } from "@/components/promos/promo-strip";
 
 export const metadata: Metadata = {
   title: "Formación — Elevar",
@@ -28,6 +29,8 @@ export default async function FormacionPage() {
         title="Capacitación en calidad de laboratorio"
         subtitle="Formá a tu equipo bajo la norma ISO/IEC 17025: cursos en vivo, asincrónicos, webinars gratuitos y talleres."
       />
+
+      <PromoStrip />
 
       {/* Cómo enseñamos — espacio de video (mockup) */}
       <section className="bg-neutral-0 py-20 md:py-28">

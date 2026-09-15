@@ -4,14 +4,26 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import type { CartItem, CartValidateResult } from "@/types";
-import { getCart, clearCart } from "@/lib/cart";
+import type {
+  Attendee,
+  CartItem,
+  CartValidateResult,
+  PaymentMethod,
+} from "@/types";
+import { getCart, clearCart, setAttendees as persistAttendees } from "@/lib/cart";
 import { validateCart, checkout, simulatePayment, ApiError } from "@/lib/api";
-import { formatARS } from "@/lib/formatters";
+import { arsToUsd, formatARS, formatUSD, USD_RATE } from "@/lib/formatters";
 import { ModalityThumb } from "@/components/catalog/modality-thumb";
 import { MercadoPagoLogo, CardBrands, MP_BLUE, MP_BLUE_DARK } from "./mercado-pago";
+import { PayPalLogo, PAYPAL_BLUE, PAYPAL_YELLOW, PAYPAL_YELLOW_DARK } from "./paypal";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * PayPal (USD) queda contemplado en el alcance pero su implementación efectiva
+ * la confirma Elevar durante el proyecto: con esta bandera se muestra u oculta.
+ */
+const PAYPAL_ENABLED = process.env.NEXT_PUBLIC_PAYPAL_ENABLED !== "false";
 
 function lineKey(courseId: number, sessionId: number | null) {
   return `${courseId}:${sessionId ?? "x"}`;
@@ -20,20 +32,40 @@ function lineKey(courseId: number, sessionId: number | null) {
 export function CheckoutClient() {
   const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
+  const [coupon, setCoupon] = useState<string | null>(null);
   const [validation, setValidation] = useState<CartValidateResult | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
-  const [buyer, setBuyer] = useState({ email: "", firstName: "", lastName: "", phone: "" });
+  const [buyer, setBuyer] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    company: "",
+  });
+  const [attendees, setAttendeesState] = useState<Record<string, Attendee[]>>({});
+  const [method, setMethod] = useState<PaymentMethod>("MERCADOPAGO");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [processing, setProcessing] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
 
   useEffect(() => {
-    const c = getCart().items;
-    setItems(c);
+    const cart = getCart();
+    setItems(cart.items);
+    setCoupon(cart.coupon);
     setHydrated(true);
-    if (c.length > 0) {
-      validateCart(c.map((i) => ({ course_id: i.courseId, session_id: i.sessionId })))
+    setAttendeesState(
+      Object.fromEntries(
+        cart.items
+          .filter((i) => i.quantity > 1)
+          .map((i) => [
+            lineKey(i.courseId, i.sessionId),
+            fillAttendees(i.attendees, i.quantity),
+          ])
+      )
+    );
+    if (cart.items.length > 0) {
+      validateCart(cart.items, cart.coupon)
         .then(setValidation)
         .catch(() => setValidation(null));
     }
@@ -46,11 +78,24 @@ export function CheckoutClient() {
   }, [validation]);
 
   const subtotal = validation?.subtotal ?? null;
-  const isFreeOrder = subtotal != null && parseFloat(subtotal) === 0;
+  const discountTotal = validation?.discount_total ?? "0";
+  const discounts = validation?.discounts ?? [];
+  const total = validation?.total ?? null;
+  const isFreeOrder = total != null && parseFloat(total) === 0;
+  const totalUsd = total != null ? arsToUsd(total) : null;
+  const multiLines = items.filter((i) => i.quantity > 1);
 
   function set<K extends keyof typeof buyer>(k: K, v: string) {
     setBuyer((b) => ({ ...b, [k]: v }));
     setErrors((e) => ({ ...e, [k]: "" }));
+  }
+
+  function updateAttendee(key: string, index: number, patch: Partial<Attendee>) {
+    setAttendeesState((prev) => ({
+      ...prev,
+      [key]: (prev[key] ?? []).map((a, i) => (i === index ? { ...a, ...patch } : a)),
+    }));
+    setErrors((e) => ({ ...e, [`att-${key}-${index}`]: "" }));
   }
 
   async function startPayment() {
@@ -58,8 +103,31 @@ export function CheckoutClient() {
     if (!EMAIL_RE.test(buyer.email.trim())) e.email = "Ingresá un email válido.";
     if (!buyer.firstName.trim()) e.firstName = "Ingresá tu nombre.";
     if (!buyer.lastName.trim()) e.lastName = "Ingresá tu apellido.";
+    // El teléfono es obligatorio: es el canal de contacto para pagos por fuera
+    // de los medios automáticos (transferencia, factura a empresa).
+    if (buyer.phone.replace(/\D/g, "").length < 8)
+      e.phone = "Ingresá un teléfono de contacto.";
+
+    multiLines.forEach((item) => {
+      const key = lineKey(item.courseId, item.sessionId);
+      (attendees[key] ?? []).forEach((a, i) => {
+        if (!EMAIL_RE.test(a.email.trim())) {
+          e[`att-${key}-${i}`] = "Email inválido.";
+        }
+      });
+    });
+
     setErrors(e);
     if (Object.keys(e).length > 0) return;
+
+    // Los participantes cargados acá también quedan en el carrito.
+    const itemsWithAttendees = items.map((item) => {
+      const key = lineKey(item.courseId, item.sessionId);
+      if (item.quantity <= 1) return item;
+      const list = attendees[key] ?? [];
+      persistAttendees(item.courseId, item.sessionId, list);
+      return { ...item, attendees: list };
+    });
 
     setProcessing(true);
     setPayError(null);
@@ -69,17 +137,21 @@ export function CheckoutClient() {
           email: buyer.email.trim(),
           name: `${buyer.firstName.trim()} ${buyer.lastName.trim()}`.trim(),
           phone: buyer.phone.trim() || undefined,
+          company: buyer.company.trim() || undefined,
         },
-        items: items.map((i) => ({ course_id: i.courseId, session_id: i.sessionId })),
+        items: itemsWithAttendees,
+        couponCode: coupon,
+        paymentMethod: isFreeOrder ? "MERCADOPAGO" : method,
       });
 
       if (isFreeOrder) {
-        // Las inscripciones sin costo no pasan por Mercado Pago.
+        // Las inscripciones sin costo no pasan por la pasarela.
         await simulatePayment({ order_public_id: order.order_public_id, outcome: "approved" });
         clearCart();
         router.push(`/orden/${order.order_public_id}?status=success`);
       } else {
-        // Checkout Pro: se redirige a Mercado Pago. El carrito se limpia al confirmarse el pago.
+        // Checkout Pro / PayPal: se redirige al proveedor. El carrito se limpia
+        // al confirmarse el pago.
         router.push(order.init_point);
       }
     } catch (err) {
@@ -120,8 +192,18 @@ export function CheckoutClient() {
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
             <Section title="Contacto">
-              <Field label="Correo electrónico" type="email" autoComplete="email" placeholder="tu@email.com" value={buyer.email} onChange={(v) => set("email", v)} error={errors.email} />
-              <p className="text-xs text-neutral-400">Ahí te enviamos la confirmación y el acceso a los cursos.</p>
+              <Field
+                label="Correo electrónico"
+                type="email"
+                autoComplete="email"
+                placeholder="tu@email.com"
+                value={buyer.email}
+                onChange={(v) => set("email", v)}
+                error={errors.email}
+              />
+              <p className="text-xs text-neutral-400">
+                Ahí te enviamos la confirmación de compra y el acceso a los cursos.
+              </p>
             </Section>
 
             <Section title="Datos del comprador">
@@ -129,36 +211,133 @@ export function CheckoutClient() {
                 <Field label="Nombre" autoComplete="given-name" value={buyer.firstName} onChange={(v) => set("firstName", v)} error={errors.firstName} />
                 <Field label="Apellido" autoComplete="family-name" value={buyer.lastName} onChange={(v) => set("lastName", v)} error={errors.lastName} />
               </div>
-              <Field label="Teléfono (opcional)" type="tel" autoComplete="tel" value={buyer.phone} onChange={(v) => set("phone", v)} />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field
+                  label="Teléfono"
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="+54 9 …"
+                  value={buyer.phone}
+                  onChange={(v) => set("phone", v)}
+                  error={errors.phone}
+                />
+                <Field
+                  label="Laboratorio / empresa (opcional)"
+                  autoComplete="organization"
+                  value={buyer.company}
+                  onChange={(v) => set("company", v)}
+                />
+              </div>
+              <p className="text-xs leading-relaxed text-neutral-400">
+                Usamos el teléfono y el correo únicamente para coordinar la inscripción o un pago
+                por fuera de los medios automáticos (transferencia o factura a empresa).
+              </p>
             </Section>
+
+            {/* Participantes por curso con más de una unidad */}
+            {multiLines.length > 0 && (
+              <Section title="Participantes">
+                <p className="-mt-1 text-xs leading-relaxed text-neutral-500">
+                  Compraste más de una inscripción: indicá a quién corresponde cada una. A esos
+                  correos llega el acceso y el certificado.
+                </p>
+                {multiLines.map((item) => {
+                  const key = lineKey(item.courseId, item.sessionId);
+                  const list = attendees[key] ?? [];
+                  return (
+                    <div key={key} className="border border-neutral-200 bg-neutral-0 p-5">
+                      <p className="text-sm font-semibold leading-snug text-ink-900">
+                        {item.titleSnapshot}
+                      </p>
+                      <p className="mt-0.5 text-xs text-neutral-500">
+                        {item.quantity} inscripciones
+                        {item.sessionLabel ? ` · ${item.sessionLabel}` : ""}
+                      </p>
+                      <div className="mt-4 space-y-3">
+                        {list.map((a, i) => (
+                          <div key={i} className="grid gap-3 sm:grid-cols-[1fr_1.2fr]">
+                            <input
+                              value={a.name}
+                              onChange={(e) => updateAttendee(key, i, { name: e.target.value })}
+                              placeholder={`Participante ${i + 1} — nombre`}
+                              className="w-full rounded-none border border-neutral-300 bg-neutral-0 px-3 py-2.5 text-sm text-ink-900 outline-none transition-colors placeholder:text-neutral-400 focus:border-brand-500"
+                            />
+                            <div>
+                              <input
+                                type="email"
+                                value={a.email}
+                                onChange={(e) => updateAttendee(key, i, { email: e.target.value })}
+                                placeholder="correo@laboratorio.com"
+                                className={`w-full rounded-none border bg-neutral-0 px-3 py-2.5 text-sm text-ink-900 outline-none transition-colors placeholder:text-neutral-400 ${
+                                  errors[`att-${key}-${i}`]
+                                    ? "border-red-500"
+                                    : "border-neutral-300 focus:border-brand-500"
+                                }`}
+                              />
+                              {errors[`att-${key}-${i}`] && (
+                                <span className="mt-1 block text-xs text-red-600">
+                                  {errors[`att-${key}-${i}`]}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </Section>
+            )}
 
             {!isFreeOrder && (
               <Section title="Medio de pago">
-                <div className="border border-neutral-200 bg-neutral-0">
-                  <div className="flex items-start justify-between gap-4 p-5">
-                    <div className="flex items-start gap-3">
-                      <MercadoPagoLogo withWordmark={false} size={40} />
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-ink-900">Mercado Pago</p>
-                        <p className="mt-0.5 text-xs leading-relaxed text-neutral-500">
-                          Tarjeta de crédito o débito, efectivo o dinero en cuenta. Hasta 12 cuotas.
-                        </p>
-                        <CardBrands className="mt-2.5" />
-                      </div>
-                    </div>
-                    <span
-                      className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full"
-                      style={{ background: MP_BLUE }}
-                      aria-hidden
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </span>
-                  </div>
-                  <p className="border-t border-neutral-100 bg-neutral-50 px-5 py-3 text-xs text-neutral-500">
-                    Vas a completar el pago de forma segura en Mercado Pago y después volvés a Elevar.
+                <PaymentOption
+                  selected={method === "MERCADOPAGO"}
+                  onSelect={() => setMethod("MERCADOPAGO")}
+                  logo={<MercadoPagoLogo withWordmark={false} size={40} />}
+                  title="Mercado Pago"
+                  subtitle="Tarjeta de crédito o débito, efectivo o dinero en cuenta. Hasta 12 cuotas."
+                  amount={total != null ? formatARS(total) : "…"}
+                  amountNote="ARS"
+                  accent={MP_BLUE}
+                >
+                  <CardBrands className="mt-2.5" />
+                </PaymentOption>
+
+                {PAYPAL_ENABLED && (
+                  <PaymentOption
+                    selected={method === "PAYPAL"}
+                    onSelect={() => setMethod("PAYPAL")}
+                    logo={<PayPalLogo withWordmark={false} size={36} />}
+                    title="PayPal"
+                    subtitle="Pago internacional en dólares estadounidenses, con tarjeta o saldo PayPal."
+                    amount={totalUsd != null ? formatUSD(totalUsd) : "…"}
+                    amountNote="USD"
+                    accent={PAYPAL_BLUE}
+                  >
+                    <p className="mt-2 text-[11px] leading-relaxed text-neutral-400">
+                      Conversión de referencia: USD 1 = {formatARS(USD_RATE)}. El importe final lo
+                      define PayPal al momento del pago.
+                    </p>
+                  </PaymentOption>
+                )}
+
+                <div className="border border-neutral-200 bg-neutral-50 p-5">
+                  <p className="text-sm font-semibold text-ink-900">
+                    ¿Necesitás transferencia o factura a empresa?
                   </p>
+                  <p className="mt-1 text-xs leading-relaxed text-neutral-500">
+                    Completá tus datos y escribinos: coordinamos el pago por fuera de los medios
+                    automáticos y confirmamos la inscripción manualmente.
+                  </p>
+                  <a
+                    href="https://wa.me/5493446507779"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-2 text-xs font-semibold text-brand-600 underline-offset-4 hover:underline"
+                  >
+                    Coordinar por WhatsApp →
+                  </a>
                 </div>
               </Section>
             )}
@@ -166,7 +345,8 @@ export function CheckoutClient() {
             {isFreeOrder && (
               <Section title="Confirmar inscripción">
                 <p className="text-sm leading-relaxed text-ink-600">
-                  Esta orden no tiene costo. Confirmá para completar tu inscripción y recibir el acceso por email.
+                  Esta orden no tiene costo. Confirmá para completar tu inscripción y recibir el
+                  acceso por email.
                 </p>
               </Section>
             )}
@@ -189,6 +369,25 @@ export function CheckoutClient() {
                   className="inline-flex min-w-[220px] items-center justify-center gap-2 bg-brand-500 px-8 py-4 text-sm font-semibold text-neutral-0 transition-colors hover:bg-brand-600 disabled:opacity-50"
                 >
                   {processing ? <><Spinner /> Procesando…</> : "Confirmar inscripción"}
+                </button>
+              ) : method === "PAYPAL" ? (
+                <button
+                  type="button"
+                  onClick={startPayment}
+                  disabled={processing || !validation}
+                  className="inline-flex min-w-[240px] items-center justify-center gap-2.5 px-8 py-4 text-sm font-semibold text-ink-900 transition-colors disabled:opacity-60"
+                  style={{ background: PAYPAL_YELLOW }}
+                  onMouseEnter={(ev) => (ev.currentTarget.style.background = PAYPAL_YELLOW_DARK)}
+                  onMouseLeave={(ev) => (ev.currentTarget.style.background = PAYPAL_YELLOW)}
+                >
+                  {processing ? (
+                    <><Spinner /> Redirigiendo…</>
+                  ) : (
+                    <>
+                      <PayPalLogo size={18} />
+                      Pagar con PayPal
+                    </>
+                  )}
                 </button>
               ) : (
                 <button
@@ -233,15 +432,28 @@ export function CheckoutClient() {
                 const v = validByKey.get(lineKey(item.courseId, item.sessionId));
                 const price = v?.unit_price ?? item.unitPrice;
                 const free = parseFloat(price) === 0;
+                const lineTotal = parseFloat(price) * item.quantity;
                 return (
                   <li key={lineKey(item.courseId, item.sessionId)} className="flex items-start gap-3 py-4">
-                    <ModalityThumb modality={item.modality} code={item.code} className="h-14 w-14 rounded-md" />
+                    <div className="relative shrink-0">
+                      <ModalityThumb modality={item.modality} code={item.code} className="h-14 w-14 rounded-md" />
+                      {item.quantity > 1 && (
+                        <span className="absolute -right-2 -top-2 grid h-5 min-w-[20px] place-items-center rounded-full bg-ink-900 px-1 text-[10px] font-bold text-neutral-0">
+                          {item.quantity}
+                        </span>
+                      )}
+                    </div>
                     <div className="min-w-0 flex-1">
                       <p className="line-clamp-2 text-sm font-medium leading-snug text-ink-900">{item.titleSnapshot}</p>
                       {item.sessionLabel && <p className="mt-0.5 text-xs text-neutral-500">{item.sessionLabel}</p>}
+                      {item.quantity > 1 && (
+                        <p className="mt-0.5 text-xs text-neutral-400">
+                          {item.quantity} × {formatARS(price)}
+                        </p>
+                      )}
                     </div>
                     <span className={`shrink-0 text-sm font-semibold ${free ? "text-brand-600" : "text-ink-900"}`}>
-                      {free ? "Gratis" : formatARS(price)}
+                      {free ? "Gratis" : formatARS(lineTotal)}
                     </span>
                   </li>
                 );
@@ -253,18 +465,42 @@ export function CheckoutClient() {
                 <span className="text-neutral-500">Subtotal</span>
                 <span className="font-medium text-ink-900">{subtotal == null ? "…" : formatARS(subtotal)}</span>
               </div>
+
+              {discounts.map((d) => (
+                <div key={d.promoId} className="flex items-start justify-between gap-3 text-sm">
+                  <span className="min-w-0 text-emerald-700">
+                    {d.label}
+                    <span className="ml-1 font-mono text-xs text-emerald-600">({d.code})</span>
+                  </span>
+                  <span className="shrink-0 font-medium text-emerald-700">−{formatARS(d.amount)}</span>
+                </div>
+              ))}
+
+              {parseFloat(discountTotal) > 0 && (
+                <div className="flex items-center justify-between border-t border-dashed border-neutral-200 pt-3 text-sm">
+                  <span className="text-neutral-500">Descuentos</span>
+                  <span className="font-medium text-emerald-700">−{formatARS(discountTotal)}</span>
+                </div>
+              )}
+
               <div className="flex items-baseline justify-between border-t border-neutral-200 pt-3">
                 <span className="font-semibold text-ink-900">Total</span>
                 <span className={`font-display text-2xl font-semibold ${isFreeOrder ? "text-brand-600" : "text-ink-900"}`}>
-                  {subtotal == null ? "…" : isFreeOrder ? "Gratis" : formatARS(subtotal)}
+                  {total == null ? "…" : isFreeOrder ? "Gratis" : formatARS(total)}
                 </span>
               </div>
+
+              {!isFreeOrder && method === "PAYPAL" && totalUsd != null && (
+                <p className="text-right text-xs text-neutral-500">
+                  Se cobra como <span className="font-semibold text-ink-900">{formatUSD(totalUsd)}</span> en PayPal
+                </p>
+              )}
             </div>
 
             <ul className="space-y-2 border-t border-neutral-200 bg-neutral-50 px-6 py-5 text-xs text-neutral-500">
               <li className="flex items-center gap-2"><Dot /> Acceso inmediato tras la confirmación</li>
               <li className="flex items-center gap-2"><Dot /> Certificado de participación</li>
-              <li className="flex items-center gap-2"><Dot /> Pago protegido con Mercado Pago</li>
+              <li className="flex items-center gap-2"><Dot /> Comprobante y confirmación por correo</li>
             </ul>
           </div>
         </aside>
@@ -273,7 +509,76 @@ export function CheckoutClient() {
   );
 }
 
+function fillAttendees(attendees: Attendee[] | undefined, quantity: number): Attendee[] {
+  const base = attendees ? [...attendees] : [];
+  while (base.length < quantity) base.push({ name: "", email: "" });
+  return base.slice(0, quantity);
+}
+
 /* ───────────── piezas ───────────── */
+
+function PaymentOption({
+  selected,
+  onSelect,
+  logo,
+  title,
+  subtitle,
+  amount,
+  amountNote,
+  accent,
+  children,
+}: {
+  selected: boolean;
+  onSelect: () => void;
+  logo: React.ReactNode;
+  title: string;
+  subtitle: string;
+  amount: string;
+  amountNote: string;
+  accent: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      aria-pressed={selected}
+      className={`w-full border bg-neutral-0 text-left transition-colors ${
+        selected ? "border-ink-900" : "border-neutral-200 hover:border-neutral-300"
+      }`}
+    >
+      <div className="flex items-start justify-between gap-4 p-5">
+        <div className="flex min-w-0 items-start gap-3">
+          <span className="mt-0.5 shrink-0">{logo}</span>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-ink-900">{title}</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-neutral-500">{subtitle}</p>
+            {children}
+          </div>
+        </div>
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          <span
+            className={`grid h-5 w-5 place-items-center rounded-full ${selected ? "" : "border border-neutral-300"}`}
+            style={selected ? { background: accent } : undefined}
+            aria-hidden
+          >
+            {selected && (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            )}
+          </span>
+          <span className="text-right">
+            <span className="block text-sm font-semibold text-ink-900">{amount}</span>
+            <span className="block text-[10px] font-medium uppercase tracking-wider text-neutral-400">
+              {amountNote}
+            </span>
+          </span>
+        </div>
+      </div>
+    </button>
+  );
+}
 
 function CheckoutShell({ children }: { children: React.ReactNode }) {
   return (

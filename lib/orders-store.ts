@@ -1,38 +1,40 @@
 import type { Order, OrderStatus } from "@/types";
+import { readCollection, writeCollection } from "@/lib/local-db";
 
-// Órdenes del mockup en localStorage (sin backend). El flujo de compra crea la orden
-// en el checkout y la lee la página de estado.
-const KEY = "elevar_orders_v1";
+// Órdenes del mockup (sin backend): las crea el checkout, las lee la pantalla de
+// estado y el panel de administración.
 
-type Store = Record<string, Order>;
-
-function read(): Store {
-  if (typeof window === "undefined") return {};
-  try {
-    return JSON.parse(localStorage.getItem(KEY) || "{}") as Store;
-  } catch {
-    return {};
-  }
-}
-
-function write(store: Store): void {
-  if (typeof window !== "undefined") localStorage.setItem(KEY, JSON.stringify(store));
+export function listOrders(): Order[] {
+  return readCollection<Order>("orders", []);
 }
 
 export function saveOrder(order: Order): void {
-  const store = read();
-  store[order.public_id] = order;
-  write(store);
+  const rows = listOrders();
+  const idx = rows.findIndex((o) => o.public_id === order.public_id);
+  if (idx >= 0) rows[idx] = order;
+  else rows.unshift(order);
+  writeCollection("orders", rows);
 }
 
 export function getStoredOrder(id: string): Order | null {
-  return read()[id] ?? null;
+  return listOrders().find((o) => o.public_id === id) ?? null;
 }
 
-export function setOrderStatus(id: string, status: OrderStatus, paidAt: string | null): void {
-  const store = read();
-  if (store[id]) {
-    store[id] = { ...store[id], status, paid_at: paidAt };
-    write(store);
-  }
+export function setOrderStatus(
+  id: string,
+  status: OrderStatus,
+  paidAt: string | null
+): void {
+  const rows = listOrders();
+  const idx = rows.findIndex((o) => o.public_id === id);
+  if (idx < 0) return;
+  rows[idx] = { ...rows[idx], status, paid_at: paidAt };
+  writeCollection("orders", rows);
+}
+
+export function deleteOrder(id: string): void {
+  writeCollection(
+    "orders",
+    listOrders().filter((o) => o.public_id !== id)
+  );
 }

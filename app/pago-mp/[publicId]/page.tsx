@@ -41,7 +41,7 @@ export default function PagoMercadoPagoPage({ params }: { params: { publicId: st
   const [installments, setInstallments] = useState(1);
   const [back, setBack] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [processing, setProcessing] = useState<null | "approved" | "rejected">(null);
+  const [processing, setProcessing] = useState<null | "approved" | "rejected" | "pending">(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export default function PagoMercadoPagoPage({ params }: { params: { publicId: st
     setErrors((e) => ({ ...e, [k]: "" }));
   }
 
-  async function decide(outcome: "approved" | "rejected") {
+  async function decide(outcome: "approved" | "rejected" | "pending") {
     if (outcome === "approved") {
       const e: Record<string, string> = {};
       if (onlyDigits(card.number).length < 15) e.number = "Número incompleto.";
@@ -84,7 +84,9 @@ export default function PagoMercadoPagoPage({ params }: { params: { publicId: st
     try {
       await simulatePayment({ order_public_id: publicId, outcome });
       if (outcome === "approved") clearCart();
-      router.push(`/orden/${publicId}?status=${outcome === "approved" ? "success" : "failure"}`);
+      const status =
+        outcome === "approved" ? "success" : outcome === "pending" ? "pending" : "failure";
+      router.push(`/orden/${publicId}?status=${status}`);
     } catch (e) {
       setError(e instanceof ApiError ? e.message : "No se pudo procesar el pago.");
       setProcessing(null);
@@ -145,6 +147,12 @@ export default function PagoMercadoPagoPage({ params }: { params: { publicId: st
               <p className="text-sm text-neutral-500">Vas a pagar a Elevar</p>
               <p className="mt-1 font-display text-4xl font-semibold tracking-tight text-neutral-900">
                 {formatARS(order.total)}
+              </p>
+              <p className="mt-1 text-xs text-neutral-500">
+                {order.items.reduce((acc, it) => acc + it.quantity, 0)} inscripciones
+                {parseFloat(order.discount_total) > 0
+                  ? ` · ${formatARS(order.discount_total)} de descuento aplicado`
+                  : ""}
               </p>
             </div>
 
@@ -270,14 +278,25 @@ export default function PagoMercadoPagoPage({ params }: { params: { publicId: st
                   {processing === "approved" ? <><Spinner /> Procesando pago…</> : `Pagar ${formatARS(order.total)}`}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => decide("rejected")}
-                  disabled={processing !== null}
-                  className="mt-3 w-full text-center text-xs font-medium text-neutral-400 underline-offset-4 transition-colors hover:text-neutral-600 hover:underline disabled:opacity-60"
-                >
-                  {processing === "rejected" ? "Procesando…" : "Simular pago rechazado"}
-                </button>
+                <div className="mt-3 flex items-center justify-center gap-4 text-xs font-medium text-neutral-400">
+                  <button
+                    type="button"
+                    onClick={() => decide("rejected")}
+                    disabled={processing !== null}
+                    className="underline-offset-4 transition-colors hover:text-neutral-600 hover:underline disabled:opacity-60"
+                  >
+                    {processing === "rejected" ? "Procesando…" : "Simular pago rechazado"}
+                  </button>
+                  <span aria-hidden>·</span>
+                  <button
+                    type="button"
+                    onClick={() => decide("pending")}
+                    disabled={processing !== null}
+                    className="underline-offset-4 transition-colors hover:text-neutral-600 hover:underline disabled:opacity-60"
+                  >
+                    {processing === "pending" ? "Procesando…" : "Simular pago pendiente"}
+                  </button>
+                </div>
               </div>
 
               {/* Tarjeta 3D + resumen */}
