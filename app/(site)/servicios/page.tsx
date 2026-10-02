@@ -5,6 +5,7 @@ import { Reveal } from "@/components/anim/reveal";
 import { MediaHero } from "@/components/media/media-hero";
 import { buttonClasses } from "@/components/ui/button";
 import { SERVICIOS_DATA } from "@/lib/servicios";
+import { Pictogram } from "@/components/ui/pictogram";
 
 export const metadata: Metadata = {
   title: "Servicios — Elevar",
@@ -41,7 +42,7 @@ export default function ServiciosPage() {
             className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
             stagger={0.07}
           >
-            {SERVICIOS_DATA.map((s) => (
+            {SERVICIOS_DATA.map((s, i) => (
               <Link
                 key={s.id}
                 href={`/servicios/${s.id}`}
@@ -57,8 +58,7 @@ export default function ServiciosPage() {
                   />
                 </div>
                 <div className="flex flex-1 flex-col p-6">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={s.pictogram} alt="" aria-hidden className="h-10 w-10 object-contain" />
+                  <Pictogram src={s.pictogram} index={i} className="h-10 w-10" />
                   <h2 className="mt-4 font-display text-lg font-semibold tracking-tight text-ink-900 transition-colors group-hover:text-brand-600">
                     {s.title}
                   </h2>

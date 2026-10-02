@@ -1,5 +1,6 @@
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/anim/reveal";
+import { Pictogram } from "@/components/ui/pictogram";
 
 // Copy real del sitio de Elevar. Orden row-major: índices pares = columna izq, impares = der.
 const SERVICES = [
@@ -59,12 +60,7 @@ export function ServicesSection() {
                 key={s.title}
                 className={`group flex items-start gap-5 sm:gap-6 ${iconRight ? "md:flex-row-reverse" : ""}`}
               >
-                <img
-                  src={s.img}
-                  alt=""
-                  aria-hidden
-                  className="h-14 w-14 shrink-0 object-contain transition-transform duration-300 group-hover:scale-105 sm:h-24 sm:w-24"
-                />
+                <Pictogram src={s.img} index={idx} className="h-14 w-14 sm:h-24 sm:w-24" />
                 <div className="min-w-0 flex-1">
                   <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-600">{s.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-neutral-700">{s.desc}</p>

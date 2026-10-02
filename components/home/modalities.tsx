@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/anim/reveal";
+import { Pictogram } from "@/components/ui/pictogram";
 
 const MODALITIES = [
   {
@@ -49,20 +49,13 @@ export function ModalitiesSection() {
           className="mt-10 grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
           stagger={0.08}
         >
-          {MODALITIES.map((mod) => (
+          {MODALITIES.map((mod, i) => (
             <Link
               key={mod.href}
               href={mod.href}
               className="group bg-neutral-0 border border-neutral-200 p-7 transition-colors hover:border-ink-900 flex flex-col"
             >
-              <Image
-                src={mod.img}
-                alt=""
-                width={72}
-                height={72}
-                className="mb-6 h-16 w-16 object-contain"
-                aria-hidden="true"
-              />
+              <Pictogram src={mod.img} index={i} className="mb-6 h-16 w-16" />
 
               <h3 className="font-display text-lg font-semibold text-ink-900">
                 {mod.title}

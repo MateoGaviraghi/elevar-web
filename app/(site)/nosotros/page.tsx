@@ -4,6 +4,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/anim/reveal";
 import { Counter } from "@/components/anim/counter";
+import { Pictogram } from "@/components/ui/pictogram";
 
 export const metadata: Metadata = {
   title: "Nosotros — Elevar",
@@ -146,15 +147,9 @@ export default function NosotrosPage() {
             <SectionHeader eyebrow="Cómo trabajamos" title="Nuestros valores" />
           </Reveal>
           <Reveal as="div" stagger={0.1} className="mt-12 grid gap-10 md:grid-cols-3">
-            {VALUES.map((v) => (
+            {VALUES.map((v, i) => (
               <div key={v.title} className="group">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={v.img}
-                  alt=""
-                  aria-hidden
-                  className="mb-5 h-16 w-16 object-contain transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-105"
-                />
+                <Pictogram src={v.img} index={i} className="mb-5 h-16 w-16" />
                 <h3 className="font-display text-xl font-semibold text-ink-900">{v.title}</h3>
                 <p className="mt-2 leading-relaxed text-neutral-700">{v.desc}</p>
               </div>

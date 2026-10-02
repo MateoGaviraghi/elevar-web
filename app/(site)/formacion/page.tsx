@@ -9,6 +9,7 @@ import { CourseCard } from "@/components/catalog/course-card";
 import { getCourses } from "@/lib/api";
 import { MODALITIES } from "@/lib/formacion-modalities";
 import { PromoStrip } from "@/components/promos/promo-strip";
+import { Pictogram } from "@/components/ui/pictogram";
 
 export const metadata: Metadata = {
   title: "Formación — Elevar",
@@ -84,19 +85,13 @@ export default async function FormacionPage() {
             className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
             stagger={0.08}
           >
-            {MODALITIES.map((m) => (
+            {MODALITIES.map((m, i) => (
               <Link
                 key={m.slug}
                 href={`/formacion/${m.slug}`}
                 className="group border border-neutral-200 bg-neutral-0 p-7 transition-colors hover:border-ink-900 flex flex-col"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={m.img}
-                  alt=""
-                  aria-hidden
-                  className="mb-5 h-16 w-16 object-contain transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-105"
-                />
+                <Pictogram src={m.img} index={i} className="mb-5 h-16 w-16" />
                 <h3 className="font-display text-lg font-semibold text-ink-900">
                   {m.title}
                 </h3>

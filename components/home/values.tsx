@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/anim/reveal";
+import { Pictogram } from "@/components/ui/pictogram";
 
 const VALUES = [
   {
@@ -37,16 +37,9 @@ export function ValuesSection() {
           className="mt-10 grid grid-cols-1 gap-8 sm:mt-12 md:grid-cols-3 md:gap-10"
           stagger={0.08}
         >
-          {VALUES.map((val) => (
-            <div key={val.title}>
-              <Image
-                src={val.img}
-                alt=""
-                width={72}
-                height={72}
-                className="mb-5 h-20 w-20 object-contain"
-                aria-hidden="true"
-              />
+          {VALUES.map((val, i) => (
+            <div key={val.title} className="group">
+              <Pictogram src={val.img} index={i} className="mb-5 h-20 w-20" />
               <h3 className="font-display text-xl font-semibold text-ink-900">
                 {val.title}
               </h3>
