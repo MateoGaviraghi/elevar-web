@@ -121,6 +121,11 @@ function withinDates(promo: Promo, now: Date): boolean {
   return true;
 }
 
+/** "COMBO2" mira cursos distintos; el resto, unidades totales. */
+function countsDistinctCourses(promo: Promo): boolean {
+  return promo.id === "promo-combo";
+}
+
 export function isPromoLive(promo: Promo, now: Date = new Date()): boolean {
   return promo.active && withinDates(promo, now);
 }
@@ -146,8 +151,7 @@ export function promoApplies(
   const { amount, quantity, distinctCourses } = promoBase(promo, items);
   if (amount <= 0) return false;
   if (promo.minQuantity != null) {
-    // "COMBO2" mira cursos distintos; el resto, unidades totales.
-    const reference = promo.id === "promo-combo" ? distinctCourses : quantity;
+    const reference = countsDistinctCourses(promo) ? distinctCourses : quantity;
     if (reference < promo.minQuantity) return false;
   }
   if (promo.minAmount != null && amount < promo.minAmount) return false;
@@ -258,6 +262,55 @@ export function computePricing({
     couponError,
     appliedCoupon,
   };
+}
+
+export interface PromoHint {
+  promo: Promo;
+  /** Unidades (o cursos distintos, en el combo) que faltan; 0 si ya aplica. */
+  missing: number;
+  /** Avance 0..1 hacia el mínimo de la promo. */
+  progress: number;
+  countsCourses: boolean;
+}
+
+/**
+ * Promo automática por cantidad más cercana a cumplirse con el carrito actual,
+ * para empujar a sumar inscripciones. Si todas ya aplican, devuelve la de mayor
+ * valor (missing = 0).
+ */
+export function nextPromoHint(
+  items: CartItem[],
+  promos: Promo[],
+  now: Date = new Date()
+): PromoHint | null {
+  const hints = promos
+    .filter((p) => p.trigger === "AUTO" && p.minQuantity != null && p.minAmount == null)
+    .filter((p) => isPromoLive(p, now))
+    .flatMap((promo): PromoHint[] => {
+      const { amount, quantity, distinctCourses } = promoBase(promo, items);
+      if (amount <= 0) return [];
+      const countsCourses = countsDistinctCourses(promo);
+      const reference = countsCourses ? distinctCourses : quantity;
+      const min = promo.minQuantity as number;
+      return [
+        {
+          promo,
+          missing: Math.max(0, min - reference),
+          progress: Math.min(1, reference / min),
+          countsCourses,
+        },
+      ];
+    });
+
+  const pending = hints.filter((h) => h.missing > 0).sort((a, b) => a.missing - b.missing);
+  const reached = hints
+    .filter((h) => h.missing === 0)
+    .sort((a, b) => b.promo.value - a.promo.value)[0];
+  // Si ya ganó un descuento igual o mayor que el próximo, se lo mostramos aplicado.
+  if (reached && (!pending.length || reached.promo.value >= pending[0].promo.value)) {
+    return reached;
+  }
+  return pending[0] ?? null;
 }
 
 function couponRequirement(promo: Promo): string {

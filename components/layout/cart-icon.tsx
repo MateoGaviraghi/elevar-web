@@ -1,11 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { cartCount } from "@/lib/cart";
+import { useEffect, useRef, useState } from "react";
+import { cartCount, openCartDrawer } from "@/lib/cart";
+import { gsap, prefersReducedMotion } from "@/lib/gsap";
 
 export function CartIcon() {
   const [count, setCount] = useState(0);
+  const badge = useRef<HTMLSpanElement>(null);
+  const bag = useRef<SVGSVGElement>(null);
+  // -1 = todavía no leímos el carrito guardado.
+  const prev = useRef(-1);
 
   useEffect(() => {
     setCount(cartCount());
@@ -21,13 +26,37 @@ export function CartIcon() {
     };
   }, []);
 
+  // El número salta cuando suben las inscripciones.
+  useEffect(() => {
+    // El valor guardado al cargar la página no cuenta como "subió".
+    if (prev.current < 0) {
+      if (count === cartCount()) prev.current = count;
+      return;
+    }
+    const grew = count > prev.current;
+    prev.current = count;
+    if (!grew || prefersReducedMotion()) return;
+    if (badge.current) {
+      gsap.fromTo(badge.current, { scale: 1.5 }, { scale: 1, duration: 0.5, ease: "power3.out" });
+    }
+    if (bag.current) {
+      gsap.fromTo(bag.current, { y: -3 }, { y: 0, duration: 0.5, ease: "power3.out" });
+    }
+  }, [count]);
+
   return (
     <Link
       href="/carrito"
+      onClick={(e) => {
+        e.preventDefault();
+        openCartDrawer();
+      }}
       aria-label={`Carrito${count > 0 ? ` — ${count} item${count !== 1 ? "s" : ""}` : ""}`}
+      aria-haspopup="dialog"
       className="relative inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-ink-800 hover:text-brand-500 transition-colors"
     >
       <svg
+        ref={bag}
         xmlns="http://www.w3.org/2000/svg"
         width="22"
         height="22"
@@ -45,6 +74,7 @@ export function CartIcon() {
       </svg>
       {count > 0 && (
         <span
+          ref={badge}
           aria-hidden="true"
           className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-brand-500 text-neutral-0 text-[10px] font-semibold leading-none"
         >

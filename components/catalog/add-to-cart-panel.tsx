@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
 import type { CartItem, Course, CourseSession, Promo } from "@/types";
-import { addItem } from "@/lib/cart";
+import { addItem, openCartDrawer } from "@/lib/cart";
 import { getPromos } from "@/lib/api";
 import { promoBadge } from "@/lib/promos";
 import { buttonClasses } from "@/components/ui/button";
 import { formatARS, formatDate } from "@/lib/formatters";
-import { ModalityThumb } from "@/components/catalog/modality-thumb";
+import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { WebinarSignupModal } from "@/components/formacion/webinar-signup";
 
 function seatsLabel(s: CourseSession): { text: string; soldOut: boolean; low: boolean } {
@@ -34,7 +33,11 @@ export function AddToCartPanel({ course }: { course: Course }) {
   const firstSelectable = sessions.find((s) => s.seats_available == null || s.seats_available > 0);
   const [sessionId, setSessionId] = useState<number | null>(firstSelectable?.id ?? null);
   const [quantity, setQuantity] = useState(1);
-  const [added, setAdded] = useState(false);
+  // idle → "Agregando…" → "Agregado ✓" (y se abre el panel del carrito) → idle.
+  const [status, setStatus] = useState<"idle" | "adding" | "added">("idle");
+  const check = useRef<SVGPolylineElement>(null);
+  const timers = useRef<number[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
   const [webinarOpen, setWebinarOpen] = useState(false);
   const [promos, setPromos] = useState<Promo[]>([]);
 
@@ -63,7 +66,7 @@ export function AddToCartPanel({ course }: { course: Course }) {
   const lineTotal = parseFloat(course.price) * quantity;
 
   function handleAdd() {
-    if (!canAdd) return;
+    if (!canAdd || status !== "idle") return;
     const item: CartItem = {
       courseId: course.id,
       sessionId: needsSession ? sessionId : null,
@@ -80,9 +83,27 @@ export function AddToCartPanel({ course }: { course: Course }) {
           ? Array.from({ length: quantity }, () => ({ name: "", email: "" }))
           : undefined,
     };
-    addItem(item);
-    setAdded(true);
+    const reduce = prefersReducedMotion();
+    setStatus("adding");
+    timers.current.push(
+      window.setTimeout(() => {
+        addItem(item);
+        setStatus("added");
+        openCartDrawer();
+      }, reduce ? 0 : 450),
+      window.setTimeout(() => setStatus("idle"), reduce ? 2000 : 2800)
+    );
   }
+
+  // El tilde se dibuja al confirmar.
+  useEffect(() => {
+    if (status !== "added" || !check.current || prefersReducedMotion()) return;
+    gsap.fromTo(
+      check.current,
+      { strokeDashoffset: 24 },
+      { strokeDashoffset: 0, duration: 0.6, ease: "power2.out" }
+    );
+  }, [status]);
 
   return (
     <div className="border border-neutral-200 bg-neutral-0">
@@ -177,7 +198,6 @@ export function AddToCartPanel({ course }: { course: Course }) {
               max={maxQty}
               onChange={(q) => {
                 setQuantity(q);
-                setAdded(false);
               }}
             />
             {quantity > 1 && !isFree && (
@@ -246,29 +266,34 @@ export function AddToCartPanel({ course }: { course: Course }) {
               sessionId={sessionId}
             />
           </>
-        ) : added ? (
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 text-sm font-semibold text-emerald-700">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              Agregado al carrito
-            </div>
-            <Link href="/carrito" className={buttonClasses({ variant: "primary", size: "md", className: "w-full" })}>
-              Ir al carrito
-            </Link>
-            <Link href="/formacion" className={buttonClasses({ variant: "link", className: "justify-center" })}>
-              Seguir viendo cursos
-            </Link>
-          </div>
         ) : (
           <button
             type="button"
             onClick={handleAdd}
             disabled={!canAdd}
-            className={buttonClasses({ variant: "primary", size: "lg", className: "w-full" })}
+            aria-live="polite"
+            className={buttonClasses({
+              variant: "primary",
+              size: "lg",
+              className: `w-full ${status === "added" ? "!bg-ink-900" : ""} ${status === "adding" ? "cursor-progress" : ""}`,
+            })}
           >
-            {noSessions ? "Sin fechas disponibles" : isFree ? "Inscribirme gratis" : "Agregar al carrito"}
+            {noSessions ? (
+              "Sin fechas disponibles"
+            ) : status === "adding" ? (
+              "Agregando…"
+            ) : status === "added" ? (
+              <span className="inline-flex items-center gap-2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <polyline ref={check} points="20 6 9 17 4 12" strokeDasharray="24" />
+                </svg>
+                Agregado
+              </span>
+            ) : isFree ? (
+              "Inscribirme gratis"
+            ) : (
+              "Agregar al carrito"
+            )}
           </button>
         )}
 
@@ -292,14 +317,6 @@ export function AddToCartPanel({ course }: { course: Course }) {
         </ul>
       </div>
 
-      {/* Confirmación de agregado */}
-      <AddedToCartModal
-        open={added && !isWebinar}
-        onClose={() => setAdded(false)}
-        course={course}
-        quantity={quantity}
-        sessionLabel={chosenSession ? formatDate(chosenSession.starts_at) : null}
-      />
     </div>
   );
 }
@@ -355,95 +372,6 @@ export function QuantityStepper({
         +
       </button>
     </div>
-  );
-}
-
-function AddedToCartModal({
-  open,
-  onClose,
-  course,
-  quantity,
-  sessionLabel,
-}: {
-  open: boolean;
-  onClose: () => void;
-  course: Course;
-  quantity: number;
-  sessionLabel: string | null;
-}) {
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
-
-  const isFree = parseFloat(course.price) === 0;
-
-  return (
-    <AnimatePresence>
-      {open && (
-        <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 bg-ink-900"
-            aria-hidden
-          />
-          <motion.div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Curso agregado al carrito"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 24 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full max-w-md border border-neutral-200 bg-neutral-0 shadow-lg sm:mx-4"
-          >
-            <div className="flex items-center gap-2 border-b border-neutral-200 px-6 py-4 text-sm font-semibold text-emerald-700">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              Agregado al carrito
-            </div>
-
-            <div className="flex items-start gap-4 p-6">
-              <ModalityThumb modality={course.modality} code={course.code} className="h-16 w-16" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium leading-snug text-ink-900">{course.title}</p>
-                {sessionLabel && (
-                  <p className="mt-1 text-xs text-neutral-500">{sessionLabel}</p>
-                )}
-                <p className="mt-2 text-xs text-neutral-500">
-                  {quantity} {quantity === 1 ? "inscripción" : "inscripciones"} ·{" "}
-                  <span className="font-semibold text-ink-900">
-                    {isFree ? "Gratis" : formatARS(parseFloat(course.price) * quantity)}
-                  </span>
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3 border-t border-neutral-200 p-6 sm:flex-row">
-              <Link
-                href="/carrito"
-                className={buttonClasses({ variant: "primary", size: "md", className: "flex-1" })}
-              >
-                Ir al carrito
-              </Link>
-              <button
-                type="button"
-                onClick={onClose}
-                className={buttonClasses({ variant: "outline", size: "md", className: "flex-1" })}
-              >
-                Seguir comprando
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
   );
 }
 

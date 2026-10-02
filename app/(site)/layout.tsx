@@ -3,6 +3,7 @@ import { Footer } from "@/components/layout/footer";
 import { ScrollManager } from "@/components/anim/scroll-manager";
 import { WhatsAppFab } from "@/components/common/whatsapp";
 import { SmoothScroll } from "@/components/anim/smooth-scroll";
+import { CartDrawer } from "@/components/cart/cart-drawer";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <main className="min-h-screen">{children}</main>
       <Footer />
       <WhatsAppFab />
+      <CartDrawer />
     </>
   );
 }

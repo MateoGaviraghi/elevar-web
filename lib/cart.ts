@@ -121,6 +121,14 @@ export function clearCart(): void {
   persist({ items: [], coupon: null });
 }
 
+/** Abre el panel lateral del carrito (montado una vez en el layout del sitio). */
+export const CART_OPEN_EVENT = "elevar-cart-open";
+
+export function openCartDrawer(): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event(CART_OPEN_EVENT));
+}
+
 /** Unidades totales (no líneas), que es lo que muestra el ícono del header. */
 export function cartCount(): number {
   if (typeof window === "undefined") return 0;

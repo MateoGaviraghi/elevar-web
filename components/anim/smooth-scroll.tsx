@@ -20,6 +20,15 @@ import { ScrollTrigger, prefersReducedMotion } from "@/lib/gsap";
 // Compartida para poder resetear el scroll al navegar.
 let lenisRef: Lenis | null = null;
 
+/** Congela el scroll de la página mientras hay un panel encima (carrito). */
+export function setScrollLocked(locked: boolean): void {
+  if (lenisRef) {
+    if (locked) lenisRef.stop();
+    else lenisRef.start();
+  }
+  document.documentElement.style.overflow = locked ? "hidden" : "";
+}
+
 export function SmoothScroll() {
   const pathname = usePathname();
 
