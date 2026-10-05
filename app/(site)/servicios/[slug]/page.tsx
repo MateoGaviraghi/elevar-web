@@ -6,6 +6,7 @@ import { Reveal } from "@/components/anim/reveal";
 import { MediaHero } from "@/components/media/media-hero";
 import { buttonClasses } from "@/components/ui/button";
 import { SERVICIOS_DATA, getServicioById } from "@/lib/servicios";
+import { RevealImage } from "@/components/anim/reveal-image";
 
 // Foto de hero por servicio (mockup lab/ciencia).
 const HERO_IMG: Record<string, string> = {
@@ -93,15 +94,12 @@ export default function ServicioDetailPage({
                 ))}
               </div>
 
-              <figure className="mt-10 overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={BODY_IMG[servicio.id] ?? "/assets/mockup/m1.jpg"}
-                  alt=""
-                  aria-hidden
-                  className="aspect-[16/9] w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
-                />
-              </figure>
+              <RevealImage
+                src={BODY_IMG[servicio.id] ?? "/assets/mockup/m1.jpg"}
+                alt=""
+                className="mt-10"
+                imgClassName="aspect-[16/9]"
+              />
             </Reveal>
 
             {/* Qué incluye */}

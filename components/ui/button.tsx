@@ -18,13 +18,15 @@ export interface ButtonProps {
   arrow?: boolean;
 }
 
+// Relleno que sube al pasar el mouse (0,8 s expo.out), como los botones de Sanalys:
+// una placa ::before crece desde abajo detrás del texto.
 const BASE =
-  "group inline-flex items-center justify-center gap-2 font-semibold tracking-wide rounded-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-40 disabled:pointer-events-none";
+  "group relative isolate inline-flex items-center justify-center gap-2 overflow-hidden font-semibold tracking-wide rounded-none transition-colors duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] before:absolute before:inset-0 before:-z-10 before:origin-bottom before:scale-y-0 before:transition-transform before:duration-[800ms] before:ease-[cubic-bezier(0.16,1,0.3,1)] hover:before:scale-y-100 motion-reduce:before:duration-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-40 disabled:pointer-events-none";
 
 const VARIANTS: Record<Exclude<Variant, "link">, string> = {
-  primary: "bg-brand-500 text-neutral-0 hover:bg-brand-600 active:bg-brand-700",
-  outline: "border border-ink-900 text-ink-900 hover:bg-ink-900 hover:text-neutral-0",
-  ghost: "text-ink-800 hover:text-brand-500",
+  primary: "bg-brand-500 text-neutral-0 before:bg-ink-900 active:before:bg-ink-800",
+  outline: "border border-ink-900 text-ink-900 before:bg-ink-900 hover:text-neutral-0",
+  ghost: "text-ink-800 before:hidden hover:text-brand-500",
 };
 
 const SIZES: Record<Size, string> = {

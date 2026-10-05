@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useRef } from "react";
-import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, ScrollTrigger, SplitText, useGSAP, prefersReducedMotion } from "@/lib/gsap";
 import { Container } from "@/components/ui/container";
 
 export interface MediaHeroProps {
@@ -44,41 +44,51 @@ export function MediaHero({
   const bgRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
+  // Entrada: imagen, título y texto llegan juntos (nada aparece antes que el resto).
+  // La imagen se abre acercándose y el título sube línea por línea desde una máscara.
   useGSAP(
-    () => {
+    (_ctx, contextSafe) => {
       const root = ref.current;
       const bg = bgRef.current;
-      if (!root || !bg || prefersReducedMotion()) return;
-
-      // Entrada: zoom-out sutil al cargar (da vida sin animación perpetua).
-      gsap.from(bg, { scale: 1.18, duration: 1.6, ease: "power2.out" });
-
-      // El contenido (eyebrow, título, subtítulo) entra escalonado.
       const content = contentRef.current;
-      if (content) {
-        gsap.from(content.children, {
-          y: 26,
-          opacity: 0,
-          duration: 1,
-          ease: "power3.out",
-          stagger: 0.12,
-          delay: 0.12,
-        });
+      if (!root || !bg || !content) return;
+      if (prefersReducedMotion()) {
+        gsap.set(root.querySelectorAll("[data-hero-in]"), { visibility: "inherit" });
+        return;
       }
+
+      // Todo arranca en el mismo instante, cuando las fuentes están listas (si no,
+      // el título partido en líneas llegaría tarde respecto del resto).
+      gsap.set([bg, content], { autoAlpha: 0 });
+      let split: SplitText | null = null;
+      const h1 = content.querySelector("h1");
+      const parts = Array.from(content.children).filter((c) => c.tagName !== "H1");
+      document.fonts.ready.then(contextSafe!(() => {
+        if (!ref.current) return;
+        const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
+        tl.fromTo(bg, { autoAlpha: 0, scale: 1.22 }, { autoAlpha: 1, scale: 1, duration: 1.8 }, 0)
+          .set(content, { autoAlpha: 1 }, 0)
+          .from(parts, { y: 24, autoAlpha: 0, duration: 1.2, stagger: 0.08 }, 0.05);
+        if (h1) {
+          split = SplitText.create(h1, {
+            type: "lines",
+            mask: "lines",
+            autoSplit: true,
+            onSplit(self) {
+              return gsap.from(self.lines, { yPercent: 110, duration: 1.3, ease: "expo.out", stagger: 0.08, delay: 0.05 });
+            },
+          });
+        }
+      }));
 
       // Parallax: el fondo (sobredimensionado) se traslada con el scroll.
       gsap.to(bg, {
         yPercent: 16,
         ease: "none",
-        scrollTrigger: {
-          trigger: root,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
+        scrollTrigger: { trigger: root, start: "top top", end: "bottom top", scrub: true },
       });
-
       ScrollTrigger.refresh();
+      return () => split?.revert();
     },
     { scope: ref }
   );
@@ -89,7 +99,7 @@ export function MediaHero({
       className={`relative flex items-end overflow-hidden bg-ink-900 text-neutral-0 ${SIZES[size]} ${className}`}
     >
       {/* Fondo sobredimensionado (overscan) para que el parallax no muestre bordes */}
-      <div ref={bgRef} className="pointer-events-none absolute -inset-[12%] -z-0 will-change-transform">
+      <div ref={bgRef} data-hero-in="" className="pointer-events-none absolute -inset-[12%] -z-0 will-change-transform">
         {video ? (
           <video
             className="h-full w-full object-cover"
@@ -116,7 +126,7 @@ export function MediaHero({
       />
 
       <Container className="relative w-full">
-        <div ref={contentRef} className="max-w-3xl">
+        <div ref={contentRef} data-hero-in="" className="max-w-3xl">
           {children}
           {eyebrow && (
             <div className="mb-5 flex items-center gap-3">

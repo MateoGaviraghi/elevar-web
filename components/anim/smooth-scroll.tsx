@@ -41,7 +41,7 @@ export function SmoothScroll() {
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
     const lenis = new Lenis({
-      lerp: 0.085, // más bajo = más “pesado”/suave; 0.08–0.1 es el dulce
+      lerp: 0.075, // "cinemático" (el elegido en Sanalys): una muesca se asienta en ~1 s
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 1.6,

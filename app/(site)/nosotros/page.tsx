@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/anim/reveal";
 import { Counter } from "@/components/anim/counter";
 import { Pictogram } from "@/components/ui/pictogram";
+import { RevealImage } from "@/components/anim/reveal-image";
 
 export const metadata: Metadata = {
   title: "Nosotros — Elevar",
@@ -81,16 +82,12 @@ export default function NosotrosPage() {
               </div>
             </Reveal>
 
-            <Reveal as="div">
-              <div className="overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/assets/mockup/m1.jpg"
-                  alt="Profesional de ELEVAR en un laboratorio"
-                  className="aspect-[4/5] w-full object-cover"
-                />
-              </div>
-            </Reveal>
+            <RevealImage
+              src="/assets/mockup/m1.jpg"
+              alt="Profesional de ELEVAR en un laboratorio"
+              imgClassName="aspect-[4/5]"
+              curtain="bg-ink-900"
+            />
           </div>
 
           <div className="mt-14 flex flex-wrap gap-x-12 gap-y-6 border-t border-neutral-0/10 pt-8">
@@ -114,16 +111,14 @@ export default function NosotrosPage() {
       <section className="bg-neutral-50 py-20 md:py-28">
         <Container>
           <div className="grid items-stretch gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-            <Reveal as="div" className="lg:sticky lg:top-28 lg:self-start">
-              <div className="overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/assets/mockup/m6.jpg"
-                  alt="Instrumental de laboratorio"
-                  className="aspect-[4/5] w-full object-cover"
-                />
-              </div>
-            </Reveal>
+            <div className="lg:sticky lg:top-28 lg:self-start">
+              <RevealImage
+                src="/assets/mockup/m6.jpg"
+                alt="Instrumental de laboratorio"
+                imgClassName="aspect-[4/5]"
+                curtain="bg-neutral-50"
+              />
+            </div>
             <Reveal as="div" className="space-y-6">
               {MV.map((b) => (
                 <article

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { SplitLines } from "@/components/anim/split-lines";
 
 interface SectionHeaderAction {
   label: string;
@@ -49,13 +50,13 @@ export function SectionHeader({
         }`}
       >
         <div>
-          <h2
+          <SplitLines
             className={`font-display text-3xl md:text-4xl font-semibold tracking-tight max-w-2xl ${
               dark ? "text-neutral-0" : "text-ink-900"
             } ${isCentered ? "mx-auto" : ""}`}
           >
             {title}
-          </h2>
+          </SplitLines>
 
           {lead && (
             <p

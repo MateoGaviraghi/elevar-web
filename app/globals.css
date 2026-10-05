@@ -37,6 +37,14 @@ body {
   color: #fff;
 }
 
+/* Entradas con GSAP: ocultas desde el primer cuadro sólo si hay JS y movimiento. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal],
+  .js [data-hero-in] {
+    visibility: hidden;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -103,4 +111,15 @@ body {
   .group:focus-visible .pictogram-scale {
     transform: none;
   }
+}
+
+/* Hero del Inicio: el indicador activo se llena durante la diapositiva. */
+@keyframes hc-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.hc-progress {
+  animation-name: hc-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
 }

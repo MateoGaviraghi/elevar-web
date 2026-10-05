@@ -9,6 +9,7 @@ import { AddToCartPanel } from "@/components/catalog/add-to-cart-panel";
 import { RelatedCourses } from "@/components/catalog/related-courses";
 import { ApiError, getCourse } from "@/lib/api";
 import type { Course } from "@/types";
+import { RevealImage } from "@/components/anim/reveal-image";
 
 // Fase 0 (mockup sobre next dev): se renderiza on-demand. En Fase 1 (export estático)
 // añadir generateStaticParams() con los slugs publicados.
@@ -128,15 +129,12 @@ export default async function CourseDetailPage({
               </div>
 
               {/* Imagen editorial */}
-              <figure className="mt-10 overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={BODY_IMG[course.modality]}
-                  alt=""
-                  aria-hidden
-                  className="aspect-[16/9] w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
-                />
-              </figure>
+              <RevealImage
+                src={BODY_IMG[course.modality]}
+                alt=""
+                className="mt-10"
+                imgClassName="aspect-[16/9]"
+              />
 
               {/* Ficha técnica */}
               <h2 className="mt-14 font-display text-2xl font-semibold tracking-tight text-ink-900">
