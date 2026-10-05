@@ -1,3 +1,5 @@
+import { CONTACT } from "@/lib/contact";
+
 // Cada servicio tiene su propia página de detalle.
 export const SERVICIOS = [
   { label: "Acreditación ISO/IEC 17025", href: "/servicios/acreditacion-iso-17025" },
@@ -18,8 +20,8 @@ export const FORMACION = [
 
 export const PLATAFORMA_URL = "https://aulavirtual.elevar.com.ar";
 
-/** WhatsApp comercial (1 a 1). */
-export const WHATSAPP_URL = "https://wa.me/5493446507779";
+/** WhatsApp comercial (1 a 1). El número vive en `lib/contact.ts`. */
+export const WHATSAPP_URL = CONTACT.whatsappUrl;
 
 /**
  * Comunidad de WhatsApp de Elevar. El enlace de invitación definitivo lo provee

@@ -70,6 +70,11 @@ export function CourseCarousel({
             },
           }
         );
+        // El carrusel se arma después que las entradas de más abajo (carga los cursos
+        // en el cliente): sin reordenar, esas entradas calculan su disparo sin el
+        // largo que agrega el fijado y se disparan ~1 pantalla antes de verse.
+        ScrollTrigger.sort();
+        ScrollTrigger.refresh();
         return () => tween.scrollTrigger?.kill();
       });
 

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { CommunityButton, WhatsAppIcon } from "@/components/common/whatsapp";
+import { ChannelGroup, ChannelIcon, ChannelRow } from "@/components/common/channel-link";
+import { CONTACT_CHANNELS, SOCIAL_CHANNELS } from "@/lib/contact";
 
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
@@ -13,61 +15,6 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
     </Link>
   );
 }
-
-const IconInstagram = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.75"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <rect x="2" y="2" width="20" height="20" rx="5" />
-    <circle cx="12" cy="12" r="4" />
-    <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
-  </svg>
-);
-
-const IconLinkedin = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.75"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <rect x="2" y="2" width="20" height="20" rx="3" />
-    <line x1="8" y1="11" x2="8" y2="17" />
-    <line x1="8" y1="7" x2="8" y2="8" />
-    <path d="M12 17v-4a2 2 0 014 0v4" />
-    <line x1="12" y1="11" x2="12" y2="17" />
-  </svg>
-);
-
-const IconFacebook = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.75"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <rect x="2" y="2" width="20" height="20" rx="3" />
-    <path d="M15 8h-2a2 2 0 00-2 2v2H9v3h2v5h3v-5h2l1-3h-3v-2" />
-  </svg>
-);
 
 const SERVICIOS_LINKS = [
   { label: "Formación profesional", href: "/formacion" },
@@ -100,55 +47,24 @@ export function Footer() {
             <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-500">
               ¿Dónde estamos?
             </h3>
-            <p className="text-sm leading-relaxed text-neutral-400">
-              Bolívar 393 C (E2820), Gualeguaychú, Provincia de Entre Ríos, República Argentina.
-            </p>
-            <a
-              href="https://wa.me/5493446507779"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 block text-sm text-neutral-400 hover:text-neutral-0 transition-colors"
-            >
-              (+54) 9 3446 507779
-            </a>
-            <a
-              href="mailto:info@elevar.com.ar"
-              className="mt-1.5 block text-sm text-neutral-400 hover:text-neutral-0 transition-colors"
-            >
-              info@elevar.com.ar
-            </a>
-            <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-neutral-500">
+            <ChannelGroup className="space-y-3">
+              {CONTACT_CHANNELS.map((c) => (
+                <ChannelRow
+                  key={c.brand}
+                  channel={c}
+                  size="sm"
+                  textClassName="text-neutral-400 group-hover:text-neutral-0"
+                />
+              ))}
+            </ChannelGroup>
+            <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-neutral-500">
               Síganos en:
             </p>
-            <div className="mt-2 flex items-center gap-4">
-              <a
-                href="https://instagram.com/elevarcalidad"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram @elevarcalidad"
-                className="text-neutral-400 hover:text-neutral-0 transition-colors"
-              >
-                <IconInstagram />
-              </a>
-              <a
-                href="https://linkedin.com/company/elevarcalidad"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn Elevar Calidad"
-                className="text-neutral-400 hover:text-neutral-0 transition-colors"
-              >
-                <IconLinkedin />
-              </a>
-              <a
-                href="https://facebook.com/elevarcalidad"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook @elevarcalidad"
-                className="text-neutral-400 hover:text-neutral-0 transition-colors"
-              >
-                <IconFacebook />
-              </a>
-            </div>
+            <ChannelGroup className="mt-3 flex items-center gap-2.5">
+              {SOCIAL_CHANNELS.map((c) => (
+                <ChannelIcon key={c.brand} channel={c} size="sm" />
+              ))}
+            </ChannelGroup>
           </div>
 
           {/* Col 3 — Servicios */}

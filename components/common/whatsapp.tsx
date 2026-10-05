@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { COMUNIDAD_WHATSAPP_URL } from "@/lib/nav";
+import { CONTACT } from "@/lib/contact";
 import { joinCommunity } from "@/lib/api";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -78,7 +79,7 @@ export function WhatsAppFab() {
               </div>
               <div className="flex flex-col gap-2 p-4">
                 <a
-                  href="https://wa.me/5493446507779"
+                  href={CONTACT.whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-ink-900 transition-colors hover:bg-[#1FBE5A]"

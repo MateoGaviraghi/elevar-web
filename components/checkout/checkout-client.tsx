@@ -13,6 +13,7 @@ import type {
 import { getCart, clearCart, setAttendees as persistAttendees } from "@/lib/cart";
 import { validateCart, checkout, simulatePayment, ApiError } from "@/lib/api";
 import { arsToUsd, formatARS, formatUSD, USD_RATE } from "@/lib/formatters";
+import { CONTACT } from "@/lib/contact";
 import { ModalityThumb } from "@/components/catalog/modality-thumb";
 import { MercadoPagoLogo, CardBrands, MP_BLUE, MP_BLUE_DARK } from "./mercado-pago";
 import { PayPalLogo, PAYPAL_BLUE, PAYPAL_YELLOW, PAYPAL_YELLOW_DARK } from "./paypal";
@@ -331,7 +332,7 @@ export function CheckoutClient() {
                     automáticos y confirmamos la inscripción manualmente.
                   </p>
                   <a
-                    href="https://wa.me/5493446507779"
+                    href={CONTACT.whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-3 inline-flex items-center gap-2 text-xs font-semibold text-brand-600 underline-offset-4 hover:underline"

@@ -1,11 +1,14 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useRef, useState, FormEvent } from "react";
 import { Container } from "@/components/ui/container";
 import { FormField } from "@/components/ui/form-field";
 import { Button } from "@/components/ui/button";
 import { AlertBanner } from "@/components/ui/alert-banner";
 import { Reveal } from "@/components/anim/reveal";
+import { gsap, prefersReducedMotion, START, useGSAP } from "@/lib/gsap";
+import { ChannelGroup, ChannelIcon, ChannelRow } from "@/components/common/channel-link";
+import { CONTACT_CHANNELS, SOCIAL_CHANNELS } from "@/lib/contact";
 import { createLead, ApiError } from "@/lib/api";
 
 interface FormState {
@@ -26,111 +29,6 @@ const EMPTY: FormState = {
   message: "",
 };
 
-const IconPin = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5 mt-0.5 text-brand-500 shrink-0"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.75"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7z" />
-    <circle cx="12" cy="9" r="2.5" />
-  </svg>
-);
-
-const IconPhone = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5 mt-0.5 text-brand-500 shrink-0"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.75"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
-  </svg>
-);
-
-const IconMail = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5 mt-0.5 text-brand-500 shrink-0"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.75"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <rect x="2" y="4" width="20" height="16" rx="2" />
-    <polyline points="2,4 12,13 22,4" />
-  </svg>
-);
-
-const IconInstagram = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.75"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <rect x="2" y="2" width="20" height="20" rx="5" />
-    <circle cx="12" cy="12" r="4" />
-    <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
-  </svg>
-);
-
-const IconLinkedin = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.75"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <rect x="2" y="2" width="20" height="20" rx="3" />
-    <line x1="8" y1="11" x2="8" y2="17" />
-    <line x1="8" y1="7" x2="8" y2="8" />
-    <path d="M12 17v-4a2 2 0 014 0v4" />
-    <line x1="12" y1="11" x2="12" y2="17" />
-  </svg>
-);
-
-const IconFacebook = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.75"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <rect x="2" y="2" width="20" height="20" rx="3" />
-    <path d="M15 8h-2a2 2 0 00-2 2v2H9v3h2v5h3v-5h2l1-3h-3v-2" />
-  </svg>
-);
-
 export function ContactSection({ showHeading = true }: { showHeading?: boolean }) {
   const [fields, setFields] = useState<FormState>(EMPTY);
   const [fieldErrors, setFieldErrors] = useState<Partial<FormState>>({});
@@ -144,6 +42,37 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
       setFieldErrors((prev) => ({ ...prev, [key]: undefined }));
     };
   }
+
+  const stage = useRef<HTMLDivElement>(null);
+
+  // Entrada en 3D: la tarjeta llega inclinada hacia atrás y se endereza; el panel
+  // aterriza sobre el formulario 0,12 s después y la sombra crece al asentarse.
+  useGSAP(
+    () => {
+      const el = stage.current!;
+      if (prefersReducedMotion()) {
+        gsap.set(el, { visibility: "inherit" });
+        return;
+      }
+      const mobile = window.matchMedia("(max-width: 1023px)").matches;
+      gsap.set(el, { visibility: "inherit" });
+      gsap
+        .timeline({ scrollTrigger: { trigger: el, start: START, once: true } })
+        .fromTo(
+          ".ct-card",
+          { rotateX: mobile ? 8 : 12, y: 80, scale: 0.94, autoAlpha: 0, transformOrigin: "50% 100%" },
+          { rotateX: 0, y: 0, scale: 1, autoAlpha: 1, duration: 1.4, ease: "expo.out", clearProps: "transform" }
+        )
+        .fromTo(
+          ".ct-panel",
+          { y: -28, scale: 1.03, autoAlpha: 0 },
+          { y: 0, scale: 1, autoAlpha: 1, duration: 1.2, ease: "expo.out", clearProps: "transform" },
+          0.12
+        )
+        .fromTo(".ct-shadow", { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.4, ease: "power2.out" }, 0.2);
+    },
+    { scope: stage }
+  );
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -205,10 +134,13 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
           </Reveal>
         )}
 
-        <Reveal as="div" className={showHeading ? "" : ""}>
-          <div className="grid overflow-hidden border border-neutral-200 bg-neutral-0 shadow-[0_24px_70px_-32px_rgba(15,23,42,0.35)] lg:grid-cols-[0.82fr_1.18fr]">
+        {/* Tarjeta en dos piezas: el panel oscuro se apoya sobre el formulario
+            (sobresale 24 px arriba y abajo en escritorio, 16 px sobre él en el
+            teléfono) y la tarjeta entra en 3D al llegar con el scroll. */}
+        <div ref={stage} data-reveal="" className="[perspective:1600px]">
+          <div className="ct-card relative isolate grid lg:grid-cols-[0.82fr_1.18fr]">
             {/* Panel de info (oscuro, branded) */}
-            <div className="relative overflow-hidden bg-ink-900 p-6 text-neutral-0 sm:p-8 md:p-10">
+            <div className="ct-panel relative z-10 overflow-hidden bg-ink-900 p-6 text-neutral-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_40px_-16px_rgba(11,30,51,0.55)] sm:p-8 md:p-10 lg:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),24px_0_48px_-16px_rgba(11,30,51,0.45),0_48px_96px_-24px_rgba(11,30,51,0.45)]">
               <span
                 className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand-500/25 blur-3xl"
                 aria-hidden
@@ -224,61 +156,31 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
                   Estamos en Gualeguaychú y trabajamos con laboratorios de toda América Latina.
                 </p>
 
-                <ul className="mt-8 space-y-5">
-                  <li className="flex items-start gap-4">
-                    <IconPin />
-                    <span className="text-sm leading-relaxed text-neutral-300">
-                      Bolívar 393 C (E2820), Gualeguaychú, Entre Ríos, Argentina.
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-4">
-                    <IconPhone />
-                    <a
-                      href="https://wa.me/5493446507779"
-                      className="text-sm text-neutral-300 transition-colors hover:text-neutral-0"
-                    >
-                      (+54) 9 3446 507779
-                    </a>
-                  </li>
-                  <li className="flex items-start gap-4">
-                    <IconMail />
-                    <a
-                      href="mailto:info@elevar.com.ar"
-                      className="text-sm text-neutral-300 transition-colors hover:text-neutral-0"
-                    >
-                      info@elevar.com.ar
-                    </a>
-                  </li>
-                </ul>
+                <ChannelGroup className="mt-8 space-y-4">
+                  {CONTACT_CHANNELS.map((c) => (
+                    <ChannelRow key={c.brand} channel={c} />
+                  ))}
+                </ChannelGroup>
 
                 <div className="mt-10">
                   <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-neutral-500">
                     Seguinos
                   </p>
-                  <div className="flex items-center gap-3">
-                    {[
-                      { href: "https://instagram.com/elevarcalidad", label: "Instagram", Icon: IconInstagram },
-                      { href: "https://linkedin.com/company/elevarcalidad", label: "LinkedIn", Icon: IconLinkedin },
-                      { href: "https://facebook.com/elevarcalidad", label: "Facebook", Icon: IconFacebook },
-                    ].map(({ href, label, Icon }) => (
-                      <a
-                        key={label}
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={label}
-                        className="grid h-10 w-10 place-items-center border border-neutral-0/15 text-neutral-300 transition-colors hover:border-brand-500 hover:text-brand-500"
-                      >
-                        <Icon />
-                      </a>
+                  <ChannelGroup className="flex items-center gap-3">
+                    {SOCIAL_CHANNELS.map((c) => (
+                      <ChannelIcon key={c.brand} channel={c} />
                     ))}
-                  </div>
+                  </ChannelGroup>
                 </div>
               </div>
             </div>
 
-            {/* Formulario (claro) */}
-            <div className="p-6 sm:p-8 md:p-10">
+            {/* Formulario (claro): la pieza de base, con borde, filo de luz y sombra en tres capas */}
+            <div className="relative mx-3 -mt-4 border border-neutral-200 bg-neutral-0 p-6 pt-10 shadow-[inset_0_1px_0_rgba(255,255,255,1)] sm:p-8 sm:pt-12 md:p-10 md:pt-14 lg:mx-0 lg:my-6 lg:mt-6 lg:border-l-0 lg:p-10">
+              <span
+                aria-hidden
+                className="ct-shadow pointer-events-none absolute inset-0 -z-10 shadow-[0_1px_2px_rgba(11,30,51,0.06),0_12px_24px_-8px_rgba(11,30,51,0.12),0_48px_96px_-24px_rgba(11,30,51,0.28)]"
+              />
               {success && (
                 <AlertBanner variant="success" className="mb-6">
                   ¡Mensaje enviado! Te respondemos a la brevedad.
@@ -364,7 +266,7 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
               </form>
             </div>
           </div>
-        </Reveal>
+        </div>
       </Container>
     </section>
   );

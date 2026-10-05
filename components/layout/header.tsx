@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { SERVICIOS, FORMACION, PLATAFORMA_URL, WHATSAPP_URL } from "@/lib/nav";
 import { CommunityButton } from "@/components/common/whatsapp";
+import { CONTACT } from "@/lib/contact";
 import { CartIcon } from "./cart-icon";
 import { MobileDrawer } from "./mobile-drawer";
 
@@ -37,7 +38,7 @@ export function Header() {
               className="inline-flex items-center gap-2 transition-colors hover:text-neutral-0"
             >
               <span className="h-1 w-1 rounded-full bg-brand-500" />
-              WhatsApp +54&nbsp;9&nbsp;3446&nbsp;507779
+              WhatsApp {CONTACT.phoneShort.replace(/ /g, " ")}
             </a>
             <div className="flex items-center gap-6">
               <CommunityButton

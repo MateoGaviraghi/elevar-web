@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/container";
 import { buttonClasses } from "@/components/ui/button";
 import { getOrder } from "@/lib/api";
 import { formatARS, formatDate, formatUSD } from "@/lib/formatters";
+import { CONTACT } from "@/lib/contact";
 import type { Order, OrderStatus, PaymentMethod } from "@/types";
 
 const STATUS_UI: Record<
@@ -231,7 +232,7 @@ export function OrderStatusClient({ publicId }: { publicId: string }) {
           )}
           {order.status === "FAILED" && (
             <a
-              href="https://wa.me/5493446507779"
+              href={CONTACT.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={buttonClasses({ variant: "ghost", size: "md" })}
