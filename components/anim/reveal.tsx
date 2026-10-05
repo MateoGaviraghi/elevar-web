@@ -40,6 +40,23 @@ function fromVars(variant: RevealVariant, d: number): gsap.TweenVars {
   }
 }
 
+function toVars(variant: RevealVariant): gsap.TweenVars {
+  switch (variant) {
+    case "up":
+      return { y: 0 };
+    case "blur":
+      return { y: 0, filter: "blur(0px)" };
+    case "left":
+    case "right":
+      return { x: 0 };
+    case "scale":
+      return { scale: 1 };
+    case "fade":
+    default:
+      return {};
+  }
+}
+
 /**
  * Entrada al viewport con GSAP ScrollTrigger: sube (o entra de costado) con
  * expo.out, y con `stagger` escalona los hijos directos. Arranca oculto desde el
@@ -69,9 +86,12 @@ export function Reveal({
       }
       const targets = stagger != null ? Array.from(el.children) : [el];
       if (stagger != null) gsap.set(el, { visibility: "inherit" });
-      gsap.from(targets, {
-        ...fromVars(variant, y),
-        autoAlpha: 0,
+      // Valor final explícito: un hijo con transición CSS (p. ej. `transition-all`)
+      // puede estar a mitad de camino cuando el efecto vuelve a correr, y un
+      // `from` tomaría ese valor intermedio (opacidad 0) como destino.
+      gsap.fromTo(targets, { ...fromVars(variant, y), autoAlpha: 0 }, {
+        ...toVars(variant),
+        autoAlpha: 1,
         duration: Math.max(duration, 1.1),
         ease: "expo.out",
         delay,

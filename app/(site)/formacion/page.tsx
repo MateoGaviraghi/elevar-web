@@ -136,13 +136,9 @@ export default async function FormacionPage() {
           </Reveal>
 
           {featured && featured.results.length > 0 ? (
-            <Reveal
-              as="div"
-              className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              stagger={0.08}
-            >
-              {featured.results.map((course) => (
-                <CourseCard key={course.id} course={course} />
+            <Reveal as="div" className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2" stagger={0.08}>
+              {featured.results.map((course, i) => (
+                <CourseCard key={course.id} course={course} index={i} />
               ))}
             </Reveal>
           ) : (
