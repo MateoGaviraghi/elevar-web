@@ -6,6 +6,7 @@ import { ModalityChip } from "@/components/ui/modality-chip";
 import { Reveal } from "@/components/anim/reveal";
 import { MediaHero } from "@/components/media/media-hero";
 import { AddToCartPanel } from "@/components/catalog/add-to-cart-panel";
+import { RelatedCourses } from "@/components/catalog/related-courses";
 import { ApiError, getCourse } from "@/lib/api";
 import type { Course } from "@/types";
 
@@ -165,6 +166,8 @@ export default async function CourseDetailPage({
           </div>
         </Container>
       </section>
+
+      <RelatedCourses courseId={course.id} modality={course.modality} categorySlug={course.category?.slug} />
     </>
   );
 }

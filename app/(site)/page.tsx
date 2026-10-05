@@ -9,6 +9,7 @@ import { WhyUsSection } from "@/components/home/why-us";
 import { ClientsSection } from "@/components/home/clients";
 import { ContactSection } from "@/components/home/contact";
 import { PromoStrip } from "@/components/promos/promo-strip";
+import { FeaturedCoursesSection } from "@/components/home/featured-courses";
 
 export const metadata: Metadata = {
   title: "Elevar — Formación y Asistencia Técnica para Laboratorios ISO/IEC 17025",
@@ -28,6 +29,7 @@ export default function HomePage() {
         </p>
       </ParallaxBand>
       <ModalitiesSection />
+      <FeaturedCoursesSection />
       <PromoStrip />
       <ShowcaseSection />
       <ValuesSection />
