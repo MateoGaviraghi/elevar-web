@@ -1,7 +1,7 @@
 // Fuente única de los datos de contacto de ELEVAR. Todo el sitio (contacto, footer,
 // header, WhatsApp flotante, checkout, estado de la orden) lee de acá: un cambio de
 // número o de cuenta se hace en un solo lugar.
-// URLs de redes sociales: pendientes de confirmar con ELEVAR.
+// URLs de redes sociales confirmadas por Mateo el 2026-10-08.
 
 /** Canales con ícono propio (ver `components/common/brand-icons.tsx`). */
 export type BrandId = "instagram" | "linkedin" | "facebook" | "whatsapp" | "gmail" | "googlemaps" | "phone";
@@ -42,7 +42,7 @@ export const CONTACT_CHANNELS: Channel[] = [
 
 /** Redes sociales. */
 export const SOCIAL_CHANNELS: Channel[] = [
-  { brand: "instagram", text: "@elevarcalidad", href: "https://instagram.com/elevarcalidad", aria: "Instagram @elevarcalidad", external: true },
-  { brand: "linkedin", text: "Elevar Calidad", href: "https://linkedin.com/company/elevarcalidad", aria: "LinkedIn Elevar Calidad", external: true },
-  { brand: "facebook", text: "@elevarcalidad", href: "https://facebook.com/elevarcalidad", aria: "Facebook @elevarcalidad", external: true },
+  { brand: "instagram", text: "@elevarcalidad", href: "https://www.instagram.com/elevarcalidad/", aria: "Instagram @elevarcalidad", external: true },
+  { brand: "linkedin", text: "Elevar Calidad", href: "https://www.linkedin.com/in/elevar-calidad-7315191a4/", aria: "LinkedIn Elevar Calidad", external: true },
+  { brand: "facebook", text: "@elevarcalidad", href: "https://www.facebook.com/elevarcalidad", aria: "Facebook @elevarcalidad", external: true },
 ];
