@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/container";
 import { CommunityButton, WhatsAppIcon } from "@/components/common/whatsapp";
 import { ChannelGroup, ChannelIcon, ChannelRow } from "@/components/common/channel-link";
 import { CONTACT_CHANNELS, SOCIAL_CHANNELS } from "@/lib/contact";
+import { Logo } from "@/components/brand/logo";
 
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
@@ -32,11 +33,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {/* Col 1 — Logo + tagline */}
           <div>
-            <img
-              src="/assets/isologotipo.png"
-              alt="Elevar"
-              className="h-12 w-auto mb-4"
-            />
+            <Logo wordColor="#FFFFFF" trigger="scroll" className="mb-4 h-12" />
             <p className="max-w-xs text-sm leading-relaxed text-neutral-400">
               Consultoría de calidad para laboratorios. Formación y asistencia técnica bajo ISO/IEC&nbsp;17025 en Argentina y LATAM.
             </p>

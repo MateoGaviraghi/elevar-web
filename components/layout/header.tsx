@@ -9,6 +9,8 @@ import { CommunityButton } from "@/components/common/whatsapp";
 import { CONTACT } from "@/lib/contact";
 import { CartIcon } from "./cart-icon";
 import { MobileDrawer } from "./mobile-drawer";
+import { Logo } from "@/components/brand/logo";
+import { LOGO_GRAY } from "@/components/brand/logo-geometry";
 
 export function Header() {
   const pathname = usePathname();
@@ -71,7 +73,7 @@ export function Header() {
         <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <Link href="/" className="flex-shrink-0" aria-label="Elevar — Inicio">
-              <img src="/assets/logo.png" alt="Elevar" className="h-7 w-auto" />
+              <Logo wordColor={LOGO_GRAY} className="h-7" />
             </Link>
 
             <nav className="hidden items-center gap-9 lg:flex" aria-label="Navegación principal">

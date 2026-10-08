@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { SERVICIOS, FORMACION, PLATAFORMA_URL } from "@/lib/nav";
 import { CommunityButton } from "@/components/common/whatsapp";
+import { Logo } from "@/components/brand/logo";
+import { LOGO_GRAY } from "@/components/brand/logo-geometry";
 
 export interface MobileDrawerProps {
   open: boolean;
@@ -90,8 +92,9 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 h-14 border-b border-neutral-200">
-              <Link href="/" onClick={onClose} className="flex-shrink-0">
-                <img src="/assets/logo.png" alt="Elevar" className="h-8 w-auto" />
+              <Link href="/" onClick={onClose} className="flex-shrink-0" aria-label="Elevar — Inicio">
+                {/* Entra con el panel: el cajón tarda ~0,3 s en abrirse. */}
+                <Logo wordColor={LOGO_GRAY} delay={0.3} className="h-8" />
               </Link>
               <button
                 onClick={onClose}
