@@ -8,7 +8,7 @@ export type BrandId = "instagram" | "linkedin" | "facebook" | "whatsapp" | "gmai
 
 const PHONE_E164 = "+5493446507779";
 const EMAIL = "info@elevar.com.ar";
-const ADDRESS = "Bolívar 393 C (E2820), Gualeguaychú, Entre Ríos, Argentina";
+const ADDRESS = "Pellegrini 189, oficina 9 (E2820), Gualeguaychú, Entre Ríos, Argentina";
 
 export const CONTACT = {
   address: ADDRESS,

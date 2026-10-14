@@ -55,7 +55,7 @@ export function Footer() {
               ))}
             </ChannelGroup>
             <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-neutral-500">
-              Síganos en:
+              Seguinos en:
             </p>
             <ChannelGroup className="mt-3 flex items-center gap-2.5">
               {SOCIAL_CHANNELS.map((c) => (

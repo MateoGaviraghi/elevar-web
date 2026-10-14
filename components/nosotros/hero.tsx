@@ -49,10 +49,11 @@ export function NosotrosHero() {
 
   return (
     <section ref={root} className="relative isolate overflow-hidden bg-ink-900 text-neutral-0">
-      {/* Isotipo: a la derecha y cortado por el borde en escritorio; debajo del texto en el teléfono. */}
+      {/* Isotipo completo (pedido de Mateo, 2026-10-14: antes se cortaba por el borde):
+          a la derecha en escritorio; debajo del texto en el teléfono. */}
       <div
         aria-hidden
-        className="nh-mark pointer-events-none absolute -bottom-24 right-[-18%] h-[26rem] sm:right-[-8%] sm:h-[32rem] lg:-bottom-10 lg:right-[-4%] lg:top-10 lg:h-auto"
+        className="nh-mark pointer-events-none absolute bottom-10 right-[8%] h-[19rem] sm:h-[24rem] lg:bottom-16 lg:right-[6%] lg:top-16 lg:h-auto"
       >
         <svg viewBox="-2 0 676 981" className="h-full w-auto overflow-visible">
           <defs>

@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useRef } from "react";
-import { gsap, ScrollTrigger, SplitText, useGSAP, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, ScrollTrigger, SplitText, useGSAP, prefersReducedMotion, airMasks, LINE_FROM } from "@/lib/gsap";
 import { Container } from "@/components/ui/container";
 
 export interface MediaHeroProps {
@@ -75,7 +75,8 @@ export function MediaHero({
             mask: "lines",
             autoSplit: true,
             onSplit(self) {
-              return gsap.from(self.lines, { yPercent: 110, duration: 1.3, ease: "expo.out", stagger: 0.08, delay: 0.05 });
+            airMasks(self.masks);
+              return gsap.from(self.lines, { yPercent: LINE_FROM, duration: 1.3, ease: "expo.out", stagger: 0.08, delay: 0.05 });
             },
           });
         }

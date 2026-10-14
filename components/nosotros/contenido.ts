@@ -65,6 +65,20 @@ export const VALORES = [
   { img: "/assets/valores/pictograma3.3_sugerir.png", title: "Sugerir", desc: "Sugerir soluciones adaptadas a las necesidades y recursos de nuestros clientes." },
 ];
 
+/** "Nuestra red de colaboradores": texto de Laura (revisión 1.0), sin fotos ni nombres. */
+export const COLABORADORES = {
+  title: "Nuestra red de colaboradores",
+  lead: [
+    ["En ELEVAR contamos con una red de profesionales y especialistas de "],
+    ["distintos países de Latinoamérica", true],
+    [", con amplia trayectoria en áreas técnicas, científicas y de gestión."],
+  ] as Tramo[],
+  paragraphs: [
+    "Nuestros colaboradores aportan conocimientos y experiencias en diferentes disciplinas, lo que nos permite ofrecer formación y asesoramiento especializado, adaptado a las necesidades de cada organización.",
+    "Esta diversidad de experiencias y enfoques enriquece nuestras propuestas y nos permite abordar los desafíos de los laboratorios desde una perspectiva integral, práctica y actualizada.",
+  ],
+};
+
 export const CIERRE = {
   title: "¿Trabajamos juntos?",
   text: "Contanos sobre tu laboratorio y te ayudamos a dar el próximo paso hacia la acreditación.",

@@ -69,7 +69,7 @@ function Seal({ className = "" }: { className?: string }) {
           <path id="dr-ring" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0" />
         </defs>
         <text className="fill-neutral-0" style={{ fontSize: 8.6, letterSpacing: "0.12em", fontWeight: 600 }}>
-          <textPath href="#dr-ring">EXPERTA TÉCNICA · ORGANISMO ARGENTINO DE ACREDITACIÓN · </textPath>
+          <textPath href="#dr-ring" textLength={282} lengthAdjust="spacing">EXPERTA TÉCNICA · EVALUADORA COORDINADORA · </textPath>
         </text>
       </svg>
       <span className="absolute inset-0 flex items-center justify-center font-display text-2xl font-semibold leading-none text-neutral-0">OAA</span>
@@ -153,7 +153,7 @@ export function Direccion() {
             <div data-reveal="" className="dr-intro lg:pt-6">
               <p className="dr-in font-medium text-brand-400">{LAURA.role}</p>
               <p className="dr-in mt-4 font-display text-2xl font-medium leading-snug tracking-tight text-neutral-0 md:text-3xl">{LAURA.lead}</p>
-              <p className="dr-in mt-6 leading-relaxed text-neutral-300">Experta técnica del {LAURA.seal.detail} (OAA).</p>
+              <p className="dr-in mt-6 leading-relaxed text-neutral-300">Experta técnica y evaluadora coordinadora en el {LAURA.seal.detail} (OAA).</p>
               <div className="dr-in mt-8">
                 <a href={LAURA.cv} download={LAURA.cvFileName} className={CV_BUTTON}>
                   Descargar CV

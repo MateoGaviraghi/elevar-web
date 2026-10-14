@@ -9,7 +9,7 @@ export const LAURA = {
   cv: "/docs/cv-laura-delissi.pdf",
   cvFileName: "CV Laura Delissi.pdf",
   /** Credencial destacada (el "sello"). */
-  seal: { title: "Experta técnica del OAA", detail: "Organismo Argentino de Acreditación" },
+  seal: { title: "Experta técnica y evaluadora coordinadora del OAA", detail: "Organismo Argentino de Acreditación" },
 };
 
 export interface CredRow {

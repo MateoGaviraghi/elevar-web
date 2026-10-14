@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { gsap, prefersReducedMotion, SplitText, useGSAP } from "@/lib/gsap";
+import { gsap, prefersReducedMotion, SplitText, useGSAP, airMasks, LINE_FROM } from "@/lib/gsap";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 
@@ -103,8 +103,9 @@ export function HeroCarousel() {
             mask: "lines",
             autoSplit: true,
             onSplit(self) {
+            airMasks(self.masks);
               gsap.set(h1, { autoAlpha: 1 });
-              return gsap.from(self.lines, { yPercent: 110, duration: 1.3, ease: "expo.out", stagger: 0.08, delay: 0.14 });
+              return gsap.from(self.lines, { yPercent: LINE_FROM, duration: 1.3, ease: "expo.out", stagger: 0.08, delay: 0.14 });
             },
           });
         }));

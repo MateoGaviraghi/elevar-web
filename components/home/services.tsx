@@ -2,37 +2,37 @@ import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/anim/reveal";
 import { Pictogram } from "@/components/ui/pictogram";
 
-// Copy real del sitio de Elevar. Orden row-major: índices pares = columna izq, impares = der.
+// Textos de Laura (revisión 1.0, oct 2026). Orden row-major: índices pares = columna izq, impares = der.
 const SERVICES = [
   {
-    title: "Formación Profesional",
+    title: "Formación profesional",
     img: "/assets/servicios/pictograma1.1_formacion.png",
-    desc: "Los profesionales de Elevar brindan la posibilidad de formación en temas de gestión, laboratorio, auditoría y metrología en diferentes modalidades.",
+    desc: "Ofrecemos cursos, talleres y webinars especializados en gestión de calidad, actividades de laboratorio, auditorías y metrología. Nuestras capacitaciones combinan conocimientos técnicos con herramientas prácticas para fortalecer las competencias de los profesionales y facilitar su aplicación en el trabajo diario.",
   },
   {
-    title: "Asistencia Técnica",
+    title: "Asistencia técnica especializada",
     img: "/assets/servicios/pictograma1.2_asistencia.png",
-    desc: "Contamos con el respaldo normativo y una trayectoria de más de 20 años, tanto en empresas privadas como en organismos públicos de toda América Latina.",
+    desc: "Brindamos asesoramiento técnico a laboratorios de ensayo y calibración, acompañándolos en la resolución de problemas, la interpretación de requisitos normativos y la mejora de sus procesos. Contamos con profesionales con más de 20 años de experiencia en organizaciones públicas y privadas.",
   },
   {
-    title: "Acreditación ISO/IEC 17025",
+    title: "Acompañamiento en la acreditación ISO/IEC 17025",
     img: "/assets/servicios/pictograma1.3_acreditacion.png",
-    desc: "Asistimos en la acreditación ISO/IEC 17025 en un alcance definido, con el objeto de buscar reconocimiento y posicionamiento en el mercado, entre otros motivos.",
+    desc: "Acompañamos a los laboratorios durante todo el proceso de acreditación ISO/IEC 17025, desde el diagnóstico inicial hasta la evaluación del organismo de acreditación. Brindamos asistencia en la preparación de documentación, la implementación de requisitos, la formación del personal y el tratamiento de no conformidades.",
   },
   {
-    title: "Implementación Normativa",
+    title: "Implementación de sistemas de gestión",
     img: "/assets/servicios/pictograma1.4_implementacion.png",
-    desc: "Acompañamos para implementar y mejorar los sistemas de gestión de los laboratorios basados en la norma ISO/IEC 17025 en su versión vigente.",
+    desc: "Asesoramos a laboratorios de ensayo y calibración en el diseño, la implementación y la mejora de sistemas de gestión basados en ISO/IEC 17025. Desarrollamos soluciones adaptadas a las actividades, la estructura y las necesidades de cada organización, buscando sistemas eficaces, prácticos y sostenibles.",
   },
   {
-    title: "Auditorías Internas",
+    title: "Auditorías internas",
     img: "/assets/servicios/pictograma1.5_auditorias.png",
-    desc: "Ofrecemos auditorías internas para sistemas de calidad basados en ISO/IEC 17025 o sistemas de calidad combinados de ISO/IEC 17025 e ISO 9001.",
+    desc: "Realizamos auditorías internas de sistemas de gestión basados en ISO/IEC 17025 y auditorías combinadas con ISO 9001. Evaluamos el cumplimiento de los requisitos aplicables, identificamos oportunidades de mejora y proporcionamos información objetiva para fortalecer el desempeño del laboratorio.",
   },
   {
-    title: "Servicios de Gestión",
+    title: "Mantenimiento y mejora del sistema de gestión",
     img: "/assets/servicios/pictograma1.6_gestion.png",
-    desc: "Los laboratorios necesitan asegurar que su sistema de gestión represente las actividades de la rutina, se fortalezca en el tiempo y permita la mejora continua.",
+    desc: "Acompañamos a los laboratorios en el mantenimiento y la mejora continua de sus sistemas de gestión. Brindamos asistencia periódica para asegurar que los requisitos se integren a las actividades cotidianas, se mantenga la eficacia del sistema y se facilite la preparación para las evaluaciones externas.",
   },
 ];
 

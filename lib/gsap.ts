@@ -17,3 +17,14 @@ export const EASE = "expo.out";
 export const START = "top 78%";
 
 export { gsap, ScrollTrigger, SplitText, useGSAP };
+
+/**
+ * Las máscaras de SplitText (`mask: "lines"`) miden lo mismo que el interlineado,
+ * y con interlineados apretados (1,04) cortan las colas de g, j, p, y y el "¿".
+ * Esto les da aire arriba y abajo sin mover el texto (padding compensado con
+ * margen negativo). Las líneas tienen que arrancar a 135 % para quedar ocultas.
+ */
+export function airMasks(masks: Element[]) {
+  gsap.set(masks, { paddingTop: "0.1em", marginTop: "-0.1em", paddingBottom: "0.22em", marginBottom: "-0.22em" });
+}
+export const LINE_FROM = 135;

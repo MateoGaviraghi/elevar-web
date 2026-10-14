@@ -1,7 +1,7 @@
 "use client";
 
 import { ElementType, ReactNode, useRef } from "react";
-import { gsap, prefersReducedMotion, SplitText, START, useGSAP } from "@/lib/gsap";
+import { gsap, prefersReducedMotion, SplitText, START, useGSAP, airMasks, LINE_FROM } from "@/lib/gsap";
 
 /**
  * Título que entra línea por línea desde atrás de una máscara (SplitText),
@@ -39,9 +39,10 @@ export function SplitLines({
           mask: "lines",
           autoSplit: true,
           onSplit(self) {
+            airMasks(self.masks);
             gsap.set(el, { visibility: "inherit" });
             return gsap.from(self.lines, {
-              yPercent: 110,
+              yPercent: LINE_FROM,
               duration: 1.2,
               ease: "expo.out",
               stagger: 0.08,
