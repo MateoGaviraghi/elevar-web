@@ -1,583 +1,168 @@
-// Catálogo ESTÁTICO (mockup) capturado de la API. El front no requiere backend.
-// Generado por scripts/gen-mock-catalog.mjs. Para regenerar: levantar el backend y correr el script.
-import type { Category, Course } from "@/types";
+// Catálogo ESTÁTICO (mockup): los 78 cursos reales publicados en elevar.com.ar,
+// relevados el 2026-10-19 (lib/data/cursos-elevar.json). Reemplaza a los 20 cursos
+// de muestra. Cuando exista el admin con backend, estos datos son su carga inicial.
+// Los bloques iguales por modalidad (incluye, certificado, pagos…) viven en
+// lib/formacion-templates.ts.
+import type { Category, Course, CourseSession, Modality } from "@/types";
+import data from "@/lib/data/cursos-elevar.json";
 
 export const CATEGORIES: Category[] = [
-  {
-    "id": 8,
-    "name": "Laboratorio de Microbiología",
-    "slug": "microbiologia"
-  },
-  {
-    "id": 9,
-    "name": "Calidad y Metrología",
-    "slug": "calidad-metrologia"
-  },
-  {
-    "id": 10,
-    "name": "Laboratorio de Fisicoquímica",
-    "slug": "fisicoquimica"
-  }
+  { id: 8, name: "Laboratorio de Microbiología", slug: "microbiologia" },
+  { id: 9, name: "Calidad y Metrología", slug: "calidad-metrologia" },
+  { id: 10, name: "Laboratorio de Fisicoquímica", slug: "fisicoquimica" },
 ];
 
-export const COURSES: Course[] = [
-  {
-    "id": 48,
-    "code": "CA17",
-    "title": "Estimación de la incertidumbre de la medición en ensayos microbiológicos en aguas y alimentos",
-    "slug": "estimacion-de-la-incertidumbre-de-la-medicion-en-ensayos-microbiologicos-en-aguas-y-alimentos-ca17",
-    "summary": "Estimación de la incertidumbre de la medición en ensayos microbiológicos en aguas y alimentos. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "ASYNC",
-    "price": "30000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Avanzado",
-    "duration_hours": 14,
-    "instructor_names": "Laura Delissi",
-    "badge": null,
-    "is_featured": true,
-    "sessions": []
-  },
-  {
-    "id": 46,
-    "code": "CA12",
-    "title": "Validación y verificación de métodos de ensayo microbiológico según ISO 16140-3",
-    "slug": "validacion-y-verificacion-de-metodos-de-ensayo-microbiologico-segun-iso-16140-3-ca12",
-    "summary": "Validación y verificación de métodos de ensayo microbiológico según ISO 16140-3. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "ASYNC",
-    "price": "34000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Avanzado",
-    "duration_hours": 16,
-    "instructor_names": "Laura Delissi",
-    "badge": "NUEVO",
-    "is_featured": true,
-    "sessions": []
-  },
-  {
-    "id": 52,
-    "code": "CA63",
-    "title": "Test de promoción de crecimiento en los medios de cultivo",
-    "slug": "test-de-promocion-de-crecimiento-en-los-medios-de-cultivo-ca63",
-    "summary": "Test de promoción de crecimiento en los medios de cultivo. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "ASYNC",
-    "price": "22000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Intermedio",
-    "duration_hours": 6,
-    "instructor_names": "Natalia Arévalo",
-    "badge": null,
-    "is_featured": false,
-    "sessions": []
-  },
-  {
-    "id": 51,
-    "code": "CA18",
-    "title": "Gestión de ensayos de aptitud en pruebas biológicas y Microbiológicas cualitativas, cuantitativas y semicuantitativas",
-    "slug": "gestion-de-ensayos-de-aptitud-en-pruebas-biologicas-y-microbiologicas-cualitativas-cuantitativas-y-semicuantitativas-ca18",
-    "summary": "Gestión de ensayos de aptitud en pruebas biológicas y Microbiológicas cualitativas, cuantitativas y semicuantitativas. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "ASYNC",
-    "price": "28000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Avanzado",
-    "duration_hours": 12,
-    "instructor_names": "Daniela Kuba",
-    "badge": null,
-    "is_featured": false,
-    "sessions": []
-  },
-  {
-    "id": 49,
-    "code": "CA20",
-    "title": "Gestión de Cepas de Referencia y Trabajo en el Laboratorio Microbiológico",
-    "slug": "gestion-de-cepas-de-referencia-y-trabajo-en-el-laboratorio-microbiologico-ca20",
-    "summary": "Gestión de Cepas de Referencia y Trabajo en el Laboratorio Microbiológico. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "ASYNC",
-    "price": "24000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Intermedio",
-    "duration_hours": 8,
-    "instructor_names": "Daniela Kuba",
-    "badge": null,
-    "is_featured": false,
-    "sessions": []
-  },
-  {
-    "id": 50,
-    "code": "CA37",
-    "title": "Manejo de muestras microbiológicas en aguas y alimentos",
-    "slug": "manejo-de-muestras-microbiologicas-en-aguas-y-alimentos-ca37",
-    "summary": "Manejo de muestras microbiológicas en aguas y alimentos. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "ASYNC",
-    "price": "24000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Inicial",
-    "duration_hours": 8,
-    "instructor_names": "Natalia Arévalo",
-    "badge": null,
-    "is_featured": false,
-    "sessions": []
-  },
-  {
-    "id": 47,
-    "code": "CA35",
-    "title": "Aseguramiento de la validez de los resultados en ensayos microbiológicos",
-    "slug": "aseguramiento-de-la-validez-de-los-resultados-en-ensayos-microbiologicos-ca35",
-    "summary": "Aseguramiento de la validez de los resultados en ensayos microbiológicos. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "ASYNC",
-    "price": "30000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Intermedio",
-    "duration_hours": 12,
-    "instructor_names": "Laura Delissi",
-    "badge": "NUEVO",
-    "is_featured": false,
-    "sessions": []
-  },
-  {
-    "id": 45,
-    "code": "CA61",
-    "title": "Determinación del Número Más Probable (NMP) usando calculadoras según ISO 7218",
-    "slug": "determinacion-del-numero-mas-probable-nmp-usando-calculadoras-segun-iso-7218-ca61",
-    "summary": "Determinación del Número Más Probable (NMP) usando calculadoras según ISO 7218. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "ASYNC",
-    "price": "28000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Intermedio",
-    "duration_hours": 10,
-    "instructor_names": "Daniela Kuba",
-    "badge": "NUEVO",
-    "is_featured": false,
-    "sessions": []
-  },
-  {
-    "id": 44,
-    "code": "CA58",
-    "title": "Métodos de siembra: Buenas prácticas y errores comunes",
-    "slug": "metodos-de-siembra-buenas-practicas-y-errores-comunes-ca58",
-    "summary": "Métodos de siembra: Buenas prácticas y errores comunes. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "ASYNC",
-    "price": "26000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Intermedio",
-    "duration_hours": 8,
-    "instructor_names": "Daniela Kuba",
-    "badge": null,
-    "is_featured": false,
-    "sessions": []
-  },
-  {
-    "id": 53,
-    "code": "CV49",
-    "title": "Detección de outliers: fundamentos estadísticos y aplicación práctica",
-    "slug": "deteccion-de-outliers-fundamentos-estadisticos-y-aplicacion-practica-cv49",
-    "summary": "Detección de outliers: fundamentos estadísticos y aplicación práctica. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 9,
-      "name": "Calidad y Metrología",
-      "slug": "calidad-metrologia"
-    },
-    "modality": "LIVE",
-    "price": "90000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Avanzado",
-    "duration_hours": 16,
-    "instructor_names": "Laura Delissi",
-    "badge": "NUEVO",
-    "is_featured": true,
-    "sessions": [
-      {
-        "id": 27,
-        "starts_at": "2026-06-17T15:25:04.720285-03:00",
-        "ends_at": "2026-06-17T19:25:04.720285-03:00",
-        "timezone": "America/Argentina/Cordoba",
-        "capacity": 30,
-        "seats_available": 27,
-        "status": "SCHEDULED"
-      },
-      {
-        "id": 28,
-        "starts_at": "2026-07-18T15:25:04.720285-03:00",
-        "ends_at": "2026-07-18T19:25:04.720285-03:00",
-        "timezone": "America/Argentina/Cordoba",
-        "capacity": 30,
-        "seats_available": 30,
-        "status": "SCHEDULED"
-      }
-    ]
-  },
-  {
-    "id": 57,
-    "code": "CV45",
-    "title": "Validación y verificación de métodos de ensayo según ISO 16140-3",
-    "slug": "validacion-y-verificacion-de-metodos-de-ensayo-segun-iso-16140-3-cv45",
-    "summary": "Validación y verificación de métodos de ensayo según ISO 16140-3. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "LIVE",
-    "price": "92000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Avanzado",
-    "duration_hours": 18,
-    "instructor_names": "Laura Delissi",
-    "badge": "PROXIMO",
-    "is_featured": false,
-    "sessions": [
-      {
-        "id": 32,
-        "starts_at": "2026-08-02T15:25:04.720285-03:00",
-        "ends_at": "2026-08-02T19:25:04.720285-03:00",
-        "timezone": "America/Argentina/Cordoba",
-        "capacity": 25,
-        "seats_available": 25,
-        "status": "SCHEDULED"
-      }
-    ]
-  },
-  {
-    "id": 56,
-    "code": "CV46",
-    "title": "Monitoreo ambiental en microbiología",
-    "slug": "monitoreo-ambiental-en-microbiologia-cv46",
-    "summary": "Monitoreo ambiental en microbiología. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "LIVE",
-    "price": "85000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Intermedio",
-    "duration_hours": 12,
-    "instructor_names": "César Collino",
-    "badge": null,
-    "is_featured": false,
-    "sessions": [
-      {
-        "id": 31,
-        "starts_at": "2026-07-13T15:25:04.720285-03:00",
-        "ends_at": "2026-07-13T19:25:04.720285-03:00",
-        "timezone": "America/Argentina/Cordoba",
-        "capacity": 30,
-        "seats_available": 30,
-        "status": "SCHEDULED"
-      }
-    ]
-  },
-  {
-    "id": 54,
-    "code": "CV48",
-    "title": "Cómo asegurar resultados confiables en métodos cuantitativos clásicos",
-    "slug": "como-asegurar-resultados-confiables-en-metodos-cuantitativos-clasicos-cv48",
-    "summary": "Cómo asegurar resultados confiables en métodos cuantitativos clásicos. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "LIVE",
-    "price": "88000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Intermedio",
-    "duration_hours": 14,
-    "instructor_names": "Daniela Kuba",
-    "badge": null,
-    "is_featured": false,
-    "sessions": [
-      {
-        "id": 29,
-        "starts_at": "2026-06-24T15:25:04.720285-03:00",
-        "ends_at": "2026-06-24T19:25:04.720285-03:00",
-        "timezone": "America/Argentina/Cordoba",
-        "capacity": 25,
-        "seats_available": 2,
-        "status": "SCHEDULED"
-      }
-    ]
-  },
-  {
-    "id": 55,
-    "code": "CV47",
-    "title": "Gestión de medios de cultivo en laboratorios de microbiología",
-    "slug": "gestion-de-medios-de-cultivo-en-laboratorios-de-microbiologia-cv47",
-    "summary": "Gestión de medios de cultivo en laboratorios de microbiología. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "LIVE",
-    "price": "88000.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Intermedio",
-    "duration_hours": 14,
-    "instructor_names": "Daniela Kuba",
-    "badge": null,
-    "is_featured": false,
-    "sessions": [
-      {
-        "id": 30,
-        "starts_at": "2026-07-01T15:25:04.720285-03:00",
-        "ends_at": "2026-07-01T19:25:04.720285-03:00",
-        "timezone": "America/Argentina/Cordoba",
-        "capacity": 25,
-        "seats_available": 19,
-        "status": "SCHEDULED"
-      }
-    ]
-  },
-  {
-    "id": 58,
-    "code": "W54",
-    "title": "Cómo detectar problemas antes de que aparezca una no conformidad",
-    "slug": "como-detectar-problemas-antes-de-que-aparezca-una-no-conformidad-w54",
-    "summary": "Cómo detectar problemas antes de que aparezca una no conformidad. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 9,
-      "name": "Calidad y Metrología",
-      "slug": "calidad-metrologia"
-    },
-    "modality": "WEBINAR",
-    "price": "0.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Inicial",
-    "duration_hours": 1,
-    "instructor_names": "Laura Delissi",
-    "badge": "NUEVO",
-    "is_featured": true,
-    "sessions": [
-      {
-        "id": 33,
-        "starts_at": "2026-06-14T09:25:04.720285-03:00",
-        "ends_at": "2026-06-14T10:25:04.720285-03:00",
-        "timezone": "America/Argentina/Cordoba",
-        "capacity": null,
-        "seats_available": null,
-        "status": "SCHEDULED"
-      }
-    ]
-  },
-  {
-    "id": 62,
-    "code": "W49",
-    "title": "Política de calidad, visión, misión y valores - la carta de presentación del laboratorio",
-    "slug": "politica-de-calidad-vision-mision-y-valores-la-carta-de-presentacion-del-laboratorio-w49",
-    "summary": "Política de calidad, visión, misión y valores - la carta de presentación del laboratorio. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 9,
-      "name": "Calidad y Metrología",
-      "slug": "calidad-metrologia"
-    },
-    "modality": "WEBINAR",
-    "price": "0.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Inicial",
-    "duration_hours": 1,
-    "instructor_names": "Laura Delissi",
-    "badge": null,
-    "is_featured": false,
-    "sessions": [
-      {
-        "id": 37,
-        "starts_at": "2026-07-04T09:25:04.720285-03:00",
-        "ends_at": "2026-07-04T10:25:04.720285-03:00",
-        "timezone": "America/Argentina/Cordoba",
-        "capacity": null,
-        "seats_available": null,
-        "status": "SCHEDULED"
-      }
-    ]
-  },
-  {
-    "id": 63,
-    "code": "W47",
-    "title": "Cómo prepararse para una auditoría con foco en la realidad del laboratorio",
-    "slug": "como-prepararse-para-una-auditoria-con-foco-en-la-realidad-del-laboratorio-w47",
-    "summary": "Cómo prepararse para una auditoría con foco en la realidad del laboratorio. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 9,
-      "name": "Calidad y Metrología",
-      "slug": "calidad-metrologia"
-    },
-    "modality": "WEBINAR",
-    "price": "0.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Inicial",
-    "duration_hours": 1,
-    "instructor_names": "Guillermo Teruel",
-    "badge": null,
-    "is_featured": false,
-    "sessions": [
-      {
-        "id": 38,
-        "starts_at": "2026-07-09T09:25:04.720285-03:00",
-        "ends_at": "2026-07-09T10:25:04.720285-03:00",
-        "timezone": "America/Argentina/Cordoba",
-        "capacity": null,
-        "seats_available": null,
-        "status": "SCHEDULED"
-      }
-    ]
-  },
-  {
-    "id": 61,
-    "code": "W50",
-    "title": "No toda queja es una no conformidad: criterios técnicos para su gestión",
-    "slug": "no-toda-queja-es-una-no-conformidad-criterios-tecnicos-para-su-gestion-w50",
-    "summary": "No toda queja es una no conformidad: criterios técnicos para su gestión. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 9,
-      "name": "Calidad y Metrología",
-      "slug": "calidad-metrologia"
-    },
-    "modality": "WEBINAR",
-    "price": "0.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Inicial",
-    "duration_hours": 1,
-    "instructor_names": "Laura Delissi",
-    "badge": null,
-    "is_featured": false,
-    "sessions": [
-      {
-        "id": 36,
-        "starts_at": "2026-06-29T09:25:04.720285-03:00",
-        "ends_at": "2026-06-29T10:25:04.720285-03:00",
-        "timezone": "America/Argentina/Cordoba",
-        "capacity": null,
-        "seats_available": null,
-        "status": "SCHEDULED"
-      }
-    ]
-  },
-  {
-    "id": 59,
-    "code": "W53",
-    "title": "Control ambiental en laboratorio",
-    "slug": "control-ambiental-en-laboratorio-w53",
-    "summary": "Control ambiental en laboratorio. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 8,
-      "name": "Laboratorio de Microbiología",
-      "slug": "microbiologia"
-    },
-    "modality": "WEBINAR",
-    "price": "0.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Inicial",
-    "duration_hours": 1,
-    "instructor_names": "Daniela Kuba",
-    "badge": null,
-    "is_featured": false,
-    "sessions": [
-      {
-        "id": 34,
-        "starts_at": "2026-06-19T09:25:04.720285-03:00",
-        "ends_at": "2026-06-19T10:25:04.720285-03:00",
-        "timezone": "America/Argentina/Cordoba",
-        "capacity": null,
-        "seats_available": null,
-        "status": "SCHEDULED"
-      }
-    ]
-  },
-  {
-    "id": 60,
-    "code": "W51",
-    "title": "Indicadores de gestión: ¿medimos o cuantificamos?",
-    "slug": "indicadores-de-gestion-medimos-o-cuantificamos-w51",
-    "summary": "Indicadores de gestión: ¿medimos o cuantificamos?. Capacitación para profesionales de laboratorio bajo ISO/IEC 17025.",
-    "category": {
-      "id": 9,
-      "name": "Calidad y Metrología",
-      "slug": "calidad-metrologia"
-    },
-    "modality": "WEBINAR",
-    "price": "0.00",
-    "currency": "ARS",
-    "cover_image": null,
-    "level": "Inicial",
-    "duration_hours": 1,
-    "instructor_names": "Laura Delissi",
-    "badge": null,
-    "is_featured": false,
-    "sessions": [
-      {
-        "id": 35,
-        "starts_at": "2026-06-24T09:25:04.720285-03:00",
-        "ends_at": "2026-06-24T10:25:04.720285-03:00",
-        "timezone": "America/Argentina/Cordoba",
-        "capacity": null,
-        "seats_available": null,
-        "status": "SCHEDULED"
-      }
-    ]
+interface RawCourse {
+  id: number;
+  modality: string;
+  category: string | null;
+  code: string;
+  codeSuffix: string | null;
+  title: string;
+  objetivos: string;
+  temario: string[];
+  disertante: string[];
+  duracion: string | null;
+  fecha: string | null;
+  hora: string | null;
+  ars: number | null;
+  usd: number | null;
+  gratuito: boolean;
+}
+
+/** Día del relevamiento: las fechas sin año se ubican respecto de este día. */
+const SURVEY = new Date("2026-10-19T00:00:00-03:00");
+
+const MONTHS: Record<string, number> = {
+  enero: 0, febrero: 1, marzo: 2, abril: 3, mayo: 4, junio: 5, julio: 6,
+  agosto: 7, septiembre: 8, setiembre: 8, octubre: 9, noviembre: 10, diciembre: 11,
+};
+
+const slugify = (s: string) =>
+  s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+function categoryFor(raw: RawCourse): Category {
+  const byName = CATEGORIES.find((c) => c.name.toLowerCase() === raw.category?.toLowerCase());
+  if (byName) return byName;
+  // En vivo y webinars no tienen categoría en el sitio actual: se deduce del título.
+  const t = raw.title.toLowerCase();
+  if (/microbiol/.test(t)) return CATEGORIES[0];
+  if (/químic|quimic|fisicoqu|cromatogr|espectro/.test(t)) return CATEGORIES[2];
+  return CATEGORIES[1];
+}
+
+/** "26 de Noviembre" + "13:00 a 17:00" + año → inicio y fin (hora de Argentina). */
+function sessionDates(fecha: string, hora: string | null, year: number) {
+  const m = fecha.toLowerCase().match(/(\d{1,2})\s+de\s+([a-záéíóú]+)/);
+  if (!m) return null;
+  const day = Number(m[1]);
+  const month = MONTHS[m[2]];
+  if (month == null) return null;
+  const [from, to] = (hora ?? "10:00 a 12:00").split(/\s+a\s+/);
+  const iso = (hm: string) =>
+    `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}T${hm.trim().padStart(5, "0")}:00-03:00`;
+  return { starts: iso(from), ends: iso(to ?? from), month, day };
+}
+
+/** Próxima vez que cae ese día y mes desde el relevamiento. */
+function nextYear(month: number, day: number): number {
+  const y = SURVEY.getFullYear();
+  return new Date(y, month, day) >= new Date(y, SURVEY.getMonth(), SURVEY.getDate()) ? y : y + 1;
+}
+
+const raws = (data as { courses: RawCourse[] }).courses;
+
+// Los webinars no publican el año. Se numeran en orden (W58 → W74): el más nuevo
+// cae en su próxima fecha y cada anterior en el último año que no lo pase.
+const webinarYear = new Map<number, number>();
+{
+  const ws = raws
+    .filter((r) => r.modality === "WEBINAR" && r.fecha)
+    .sort((a, b) => Number(b.code.replace(/\D/g, "")) - Number(a.code.replace(/\D/g, "")));
+  let limit: Date | null = null;
+  for (const w of ws) {
+    const d = sessionDates(w.fecha!, w.hora, 2000);
+    if (!d) continue;
+    let year: number = limit ? limit.getFullYear() : nextYear(d.month, d.day);
+    if (limit && new Date(year, d.month, d.day) > limit) year -= 1;
+    webinarYear.set(w.id, year);
+    limit = new Date(year, d.month, d.day);
   }
-];
+}
+
+function sessionsFor(raw: RawCourse): CourseSession[] {
+  if (!raw.fecha) return [];
+  const probe = sessionDates(raw.fecha, raw.hora, 2000);
+  if (!probe) return [];
+  const suffixYear = raw.codeSuffix?.match(/\/(\d{2})$/)?.[1];
+  const year = suffixYear
+    ? 2000 + Number(suffixYear)
+    : webinarYear.get(raw.id) ?? nextYear(probe.month, probe.day);
+  const d = sessionDates(raw.fecha, raw.hora, year)!;
+  return [
+    {
+      id: raw.id * 10,
+      starts_at: d.starts,
+      ends_at: d.ends,
+      timezone: "America/Argentina/Buenos_Aires",
+      capacity: null,
+      seats_available: null,
+      status: new Date(d.starts) < SURVEY ? "FINISHED" : "SCHEDULED",
+    },
+  ];
+}
+
+function toCourse(raw: RawCourse): Course {
+  const modality = raw.modality as Modality;
+  // "CA55 - Autoclaves…" → "Autoclaves…"
+  const title = raw.title.replace(new RegExp(`^${raw.code}\\s*-\\s*`), "").trim();
+  const [name = "", ...role] = raw.disertante;
+  const hours = raw.duracion ? parseInt(raw.duracion, 10) : NaN;
+  return {
+    id: raw.id,
+    code: raw.code,
+    title,
+    slug: `${slugify(title)}-${raw.code.toLowerCase()}`,
+    summary: raw.objetivos,
+    description: raw.objetivos,
+    category: categoryFor(raw),
+    modality,
+    price: raw.gratuito || raw.ars == null ? "0.00" : raw.ars.toFixed(2),
+    currency: "ARS",
+    cover_image: null,
+    level: "",
+    duration_hours: Number.isNaN(hours) ? null : hours,
+    instructor_names: name,
+    badge: null,
+    is_featured: false,
+    sessions: sessionsFor(raw),
+    objectives: raw.objetivos,
+    syllabus: raw.temario,
+    instructor: name ? { name, role: role.join(" · ") } : null,
+    price_usd: raw.usd == null ? null : raw.usd.toFixed(2),
+    pdf_url: null,
+    code_suffix: raw.codeSuffix,
+  };
+}
+
+const ALL = raws.map(toCourse);
+
+// Destacados: los 4 asincrónicos más nuevos del sitio actual (primeros de su lista)
+// y los 2 cursos en vivo y 2 webinars con la fecha más próxima.
+const soonest = (m: Modality, n: number) =>
+  ALL.filter((c) => c.modality === m && c.sessions[0]?.status === "SCHEDULED")
+    .sort((a, b) => a.sessions[0].starts_at.localeCompare(b.sessions[0].starts_at))
+    .slice(0, n)
+    .map((c) => c.id);
+const FEATURED = new Set([
+  ...ALL.filter((c) => c.modality === "ASYNC").slice(0, 4).map((c) => c.id),
+  ...soonest("LIVE", 2),
+  ...soonest("WEBINAR", 2),
+]);
+
+export const COURSES: Course[] = ALL.map((c) => ({ ...c, is_featured: FEATURED.has(c.id) }));

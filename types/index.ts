@@ -50,6 +50,21 @@ export interface Course {
   description?: string;
   /** Publicado/oculto en el sitio público (se administra desde el panel). */
   is_published?: boolean;
+  /** Campos de la ficha (tarjeta KAN-10). Datos reales: lib/data/cursos-elevar.json. */
+  /** Bajada corta que escribe ELEVAR desde el admin; si falta, la ficha arma un resumen con los datos. */
+  lead?: string | null;
+  /** "Objetivos": un párrafo. */
+  objectives?: string;
+  /** "Temario": un punto por línea; los que empiezan con "MÓDULO" son módulos. */
+  syllabus?: string[];
+  /** Disertante con su cargo, tal como lo publica ELEVAR. */
+  instructor?: { name: string; role: string } | null;
+  /** Precio para otros países, en dólares. */
+  price_usd?: string | null;
+  /** PDF propio subido desde el admin; si no hay, se usa la ficha para imprimir. */
+  pdf_url?: string | null;
+  /** Mes y año del código de los cursos en vivo ("NOV/27"). */
+  code_suffix?: string | null;
 }
 
 export interface Paginated<T> {

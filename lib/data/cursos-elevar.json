@@ -1,0 +1,2120 @@
+{
+  "source": "https://elevar.com.ar/formacion (sitio actual de ELEVAR)",
+  "fetchedAt": "2026-10-19T16:34:06.744Z",
+  "note": "Copia literal de los 78 cursos publicados en elevar.com.ar. Los bloques iguales en todos los cursos de cada modalidad (incluye, modalidad, certificado, formas de pago, promociones) viven en lib/formacion-templates.ts. La pagina de Talleres del sitio actual muestra E-Books sin items. El boton DESCARGAR INFORMACION PDF del sitio actual no tiene enlace.",
+  "courses": [
+    {
+      "id": 360,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/360",
+      "code": "CA55",
+      "codeSuffix": null,
+      "title": "CA55 - Autoclaves en el laboratorio de microbiología: uso, monitoreo y trazabilidad",
+      "objetivos": "Difundir criterios técnicos para el control del autoclave en laboratorios de microbiología, considerando el enfoque de ISO 7218, Standard Methods 9020 y la guía Eurachem aplicable a microbiología, con énfasis en el uso previsto del equipo, los parámetros críticos del ciclo, los controles físicos, químicos y biológicos, la trazabilidad documental y el manejo de ciclos no conformes.",
+      "temario": [
+        "Contexto normativo y técnico del autoclave en microbiología",
+        "Uso previsto del autoclave y tipos de carga",
+        "Parámetros críticos del ciclo de autoclave",
+        "Controles físicos, químicos y biológicos",
+        "Registros y trazabilidad",
+        "Manejo de ciclos no conformes o dudosos"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Biólogo - Microbiólogo – Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": "2 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 50000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 358,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/358",
+      "code": "CA58",
+      "codeSuffix": null,
+      "title": "CA58 - Métodos de siembra: Buenas prácticas y errores comunes.",
+      "objetivos": "Brindar herramientas teórico-prácticas para la correcta aplicación de métodos de siembra microbiológica, promoviendo buenas prácticas de trabajo, técnica aséptica y prevención de errores comunes, con el fin de mejorar la calidad, confiabilidad y reproducibilidad de los resultados microbiológicos.",
+      "temario": [
+        "Módulo 1 | Preparación y técnica aséptica: a) Área de trabajo y bioseguridad - b) Preparación de muestra y diluciones",
+        "Módulo 2 | Medios de cultivo y materiales: a) Selección de medios y materiales.",
+        "Módulo 3 | Métodos de siembra: a) Estriado por agotamiento - b) Extensión en superficie - c) Vertido en placa - d) Filtración por membrana.",
+        "Módulo 4 | Errores comunes y prevención: a) Contaminación cruzada: causas típicas - b) Fallas de técnica: distribución, burbujas, condensación, placa humedad - c) Variabilidad del analista"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Biólogo - Microbiólogo – Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": "2 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 50000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 353,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/353",
+      "code": "CA61",
+      "codeSuffix": null,
+      "title": "CA61 - Determinación de Número más probable (NMP) usando calculadoras según ISO 7218",
+      "objetivos": "Brindar las herramientas para utilizar las calculadoras NMP que ofrece la norma ISO 7218",
+      "temario": [
+        "Enumeración de microorganismos usando medios líquidos, según ISO 7218: Procedimiento general NMP, Limitaciones de la técnica y Elección de la configuración NMP",
+        "Determinación de valores NMP usando calculadoras",
+        "Categorías de rareza",
+        "Ejemplos reales de aplicación"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Biólogo - Microbiólogo – Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": "2 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 65000,
+      "usd": 45,
+      "gratuito": false
+    },
+    {
+      "id": 352,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/352",
+      "code": "CA12",
+      "codeSuffix": null,
+      "title": "CA12 - Validación y verificación de métodos de ensayo microbiológicos según ISO 16140",
+      "objetivos": "Brindar los conceptos, criterios y herramientas prácticas necesarias para planificar, ejecutar, evaluar y documentar la verificación o validación de métodos de ensayo, de acuerdo con los requisitos de la ISO/IEC 17025, la guía ISO/IEC 16140-3 y la guía ISO/IEC 16140-4, abordando tanto métodos cuantitativos como cualitativos, mediante la correcta selección de matrices y la estimación de parámetros claves en laboratorios microbiológicos.",
+      "temario": [
+        "VALIDACIÓN DE MÉTODOS DE ENSAYO SEGÚN ISO 16140-4: MÉTODOS CUANTITATIVOS - MÉTODOS CUALITATIVOS",
+        "VERIFICACIÓN DE MÉTODOS DE ENSAYO SEGÚN ISO/IEC 16140-3: SELECCIÓN DE MATRICES - MÉTODOS CUANTITATIVOS: Reproducibilidad Intralaboratorio (SIR) - Sesgo estimado (eBias) - MÉTODOS CUALITATIVOS: límite de Detección (eLOD50)"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Microbiólogo - Biólogo - Especialista en SGC basados en ISO/IEC 17025"
+      ],
+      "duracion": "4 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 70000,
+      "usd": 70,
+      "gratuito": false
+    },
+    {
+      "id": 350,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/350",
+      "code": "CA35",
+      "codeSuffix": null,
+      "title": "CA35 - Aseguramiento de la validez de los resultados en ensayos microbiológicos",
+      "objetivos": "Proporcionar criterios técnicos y herramientas prácticas para interpretar y aplicar los requisitos de la norma ISO/IEC 17025 relacionados con el aseguramiento de la validez de los resultados, mediante la correcta planificación, ejecución, análisis y evaluación de actividades de seguimiento.",
+      "temario": [
+        "REQUISITOS PARA EL ASEGURAMIENTO DE VALIDEZ DE RESULTADOS SEGÚN ISO/IEC 17025",
+        "ACTIVIDADES PARA EL SEGUIMIENTO DE LA VALIDEZ DE LOS RESULTADOS: Materiales de referencia / Instrumentos alternativos / Comprobaciones funcionales / Uso de patrones / Comprobaciones intermedias / Repetición del ensayo / Reensayo / Correlación de resultados / Revisión de los resultados / Comparaciones intralaboratorio / Muestras ciegas / Planificación y análisis de datos para la toma de decisiones / Ejemplos reales de laboratorio",
+        "ACTIVIDADES PARA EL SEGUIMIENTO AL DESEMPEÑO DEL LABORATORIO: Ensayos de aptitud e Intercomparaciones / Planificación y análisis de datos para la toma de decisiones"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Microbiólogo - Biólogo - Especialista en SGC basados en ISO/IEC 17025"
+      ],
+      "duracion": "4 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 80000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 331,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/331",
+      "code": "CA17",
+      "codeSuffix": null,
+      "title": "CA17 - Estimación de la incertidumbre de la medición en ensayos microbiológicos en aguas y alimentos",
+      "objetivos": "Brindar los conocimientos conceptuales, normativos y prácticos necesarios para comprender, estimar y aplicar correctamente la incertidumbre de medición en ensayos microbiológicos de alimentos y aguas, integrando los fundamentos estadísticos, las estrategias de muestreo y el uso de herramientas experimentales.",
+      "temario": [
+        "MÓDULO 1 - Conceptos y definiciones básicas",
+        "MÓDULO 2 - Incertidumbre en métodos cualitativos (fuentes) y cuantitativos",
+        "MÓDULO 3 - NMP en Ensayos Microbiológicos: Determinación con calculadoras ISO 7218",
+        "MÓDULO 4 - Estimación de la incertidumbre de medición en ensayos microbiológicos de aguas y alimentos\" basados en ISO 19036, ISO 29201, Standard Methods y Eurachem"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Microbiólogo – Biólogo - Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": "6 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 85000,
+      "usd": 65,
+      "gratuito": false
+    },
+    {
+      "id": 329,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/329",
+      "code": "CA20",
+      "codeSuffix": null,
+      "title": "CA20 - Gestión de Cepas de Referencia y Trabajo en el Laboratorio Microbiológico",
+      "objetivos": "Comprender el concepto de trazabilidad metrológica y su relevancia en los ensayos microbiológicos.\nConocer las normativas y estándares internacionales que regulan la trazabilidad y el manejo de cepas en laboratorios microbiológicos.\nIdentificar las características y fuentes de adquisición de cepas de referencia.\nDiferenciar los tipos de cepas microbiológicas.\nImplementar buenas prácticas para el manejo, conservación y control de cepas.",
+      "temario": [
+        "Módulo 1 | Trazabilidad Metrológica en Ensayos de Microbiología: ¿Qué es la trazabilidad metrológica? - Importancia en microbiología - Elementos clave de la trazabilidad - Normativas y estándar ISO/IEC 17025",
+        "Módulo 2 | Cepas de Referencia: Definición y características - Adquisición y fuentes - Mantenimiento y almacenamiento",
+        "Módulo 3 | Manejo de cepas de reserva de referencia, cultivos stock, cepas de trabajo: Según ISO 11133 - Según Eurachem - Accreditation for Microbiological Laboratories."
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Microbiólogo – Biólogo - Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": "4 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 70000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 327,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/327",
+      "code": "CA37",
+      "codeSuffix": null,
+      "title": "CA37 - Manejo de muestras microbiológicas en aguas y alimentos",
+      "objetivos": "Comprender los principios del muestreo microbiológico de agua y alimentos - Conocer los requisitos de conservación, transporte y almacenamiento de muestras - Aplicar criterios de trazabilidad y registro en todo el proceso de manejo de muestras - Identificar fuentes de contaminación cruzada o pérdida de viabilidad microbiológica durante el proceso de manipulación de muestras - Desarrollar buenas prácticas de laboratorio.",
+      "temario": [
+        "Módulo 1: Toma, transporte y recepción de muestras microbiológicas en alimentos y aguas",
+        "Módulo 2: Almacenamiento de muestras de alimentos y aguas",
+        "Módulo 3: Reglas generales para la preparación de muestras y diluciones: a. Muestras de alimentos (ISO 6887-1) b. Muestras de aguas Standard Methods)",
+        "Módulo 4: Reglas específicas: a. ISO 6887-2. Reglas específicas para la preparación de carne y productos cárnicos. b. ISO 6887-3. Reglas específicas para la preparación de productos de pescado y mariscos. c. ISO 6887-4. Reglas específicas para la preparación de productos diversos. d. ISO 6887-5. Reglas específicas para la preparación de leche y productos lácteos. e. ISO 6887-6. Reglas específicas para la preparación de muestras tomadas en la etapa primaria de producción."
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Microbiólogo y biólogo - Especialista en Sistemas de gestión – Evaluador líder y experto técnico en International Acreditation Service (ISA) de USA"
+      ],
+      "duracion": "4 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 70000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 326,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/326",
+      "code": "CA18",
+      "codeSuffix": null,
+      "title": "CA18 - Gestión de ensayos de aptitud en pruebas biológicas y Microbiológicas cualitativas, cuantitativas y semicuantitativas",
+      "objetivos": "Brindar herramientas para gestionar ensayos de aptitud con eficiencia\nAprender a seleccionar proveedores de ensayos de aptitud\nInterpretar resultados en función de pruebas estadísticas\nConocer cómo gestionar resultados no satisfactorios\nDefinir frecuencias de participación y planificación",
+      "temario": [
+        "Módulo 1 | Introducción : a. Conceptos fundamentales - b. Objetivos de los ensayos de aptitud",
+        "Módulo 2 | Selección de Ensayos de Aptitud: a. Criterios de selección específicos: Evaluación del proveedor y determinación de pertinencia técnica - b. Aspectos prácticos: Uso de base de datos EPTIS y proveedores regionales",
+        "Módulo 3 | Interpretación de resultados: a. Análisis estadístico aplicado: Sesgo y dispersión - b. Gestión de no conformes",
+        "Módulo 4 | Frecuencia de participación y planificación: a. Definición de los campos de prueba - b. Planificación y frecuencia recomendada"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Microbiólogo – Biólogo - Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": "4 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 70000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 270,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/270",
+      "code": "CA63",
+      "codeSuffix": null,
+      "title": "CA63 - Test de promoción de crecimiento en los medios de cultivo",
+      "objetivos": "Brindar los conceptos y conocimientos necesarios para llevar a cabo de forma eficiente test de promoción de crecimiento en diferentes medios de cultivo.",
+      "temario": [
+        "Medios de cultivo: definición – tipos - Aseguramiento de la calidad - consideraciones claves",
+        "Conceptos y definiciones: Bach – microorganismo target y no target – promoción de crecimiento – especificidad y selectividad de un medio de cultivo – propiedad indicadora",
+        "Planificación y documentación de la promoción del crecimiento: porqué y para qué realizar test – organización del laboratorio para la realización de la prueba – documentación clave",
+        "Cepas: cepas de referencia, prueba y reserva – colección de cultivos – BPL para cepas – lineamientos USP",
+        "Test de promoción de crecimiento: propiedades inhibidoras e indicadoras en medios sólidos y líquidos",
+        "Preguntas frecuentes sobre Bach, cepas y documentación para las pruebas de promoción de crecimiento"
+      ],
+      "disertante": [
+        "Téc. Daniela Kuba",
+        "Téc. Química Daniela Kuba – (Ex analista de microbiología en laboratorio de INTI) – Analista de microbiología en industria farmacéutica."
+      ],
+      "duracion": "3 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 45000,
+      "usd": 48,
+      "gratuito": false
+    },
+    {
+      "id": 260,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/260",
+      "code": "CA49",
+      "codeSuffix": null,
+      "title": "CA49 - Control térmico de medios isotermos - Perfiles térmicos e interpretación y uso de certificados de calibración",
+      "objetivos": "Brindar los conocimientos para interpretar certificados de calibración de equipos de calor aplicados en ensayos microbiológicos Aplicar las correcciones adecuadas para el buen uso de los perfiles térmicos",
+      "temario": [
+        "MÓDULO 1 | CONTROL Y PERFIL TÉRMICO DE AUTOCLAVES Y OTROS MEDIOS ISOTERMOS : El laboratorio de ensayo como emisor de resultados - Temperatura y medios isotermos - Calibración vs. Calificación - Perfil térmico: definición, proveedores, desarrollo y frecuencia de realización - Ejemplo de perfil térmico de autoclave y estufa de incubación",
+        "MÓDULO 2 | INTERPRETACIÓN Y USO DE LOS CERTIFICADOS DE CALIBRACIÓN EN MEDIOS ISOTERMOS: Importancia de controlar la temperatura en los equipos microbiológicos - Uso del certificado de calibración - Proveedores de calibraciones de medios isotermos - Cálculo del rango de aceptación - Casos de aplicación"
+      ],
+      "disertante": [
+        "Téc. Daniela Kuba",
+        "Experta técnica OAA (Organismo Argentino de acreditación) para laboratorios de ensayo y proveedores de ensayo de aptitud. Analista documental de control de calidad. ."
+      ],
+      "duracion": "2 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 55000,
+      "usd": 42,
+      "gratuito": false
+    },
+    {
+      "id": 251,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/251",
+      "code": "CA39",
+      "codeSuffix": null,
+      "title": "CA39 - Monitoreo ambiental en laboratorios de microbiología",
+      "objetivos": "Brindar los conocimientos teóricos y prácticos necesarios para comprender, seleccionar e implementar adecuadamente desinfectantes y planes de desinfección, así como diseñar y ejecutar métodos de muestreo ambiental (aire) y de superficies en contacto con alimentos, aplicando métodos de ensayo validados y criterios de aceptación que permitan evaluar la eficacia de la limpieza y desinfección, asegurando el control microbiológico y la confiabilidad de los resultados",
+      "temario": [
+        "Desinfectantes y desinfección de superficies",
+        "Métodos y Plan de muestreo aplicado a ambientes (aire) y superficie de contacto con alimentos",
+        "Métodos de ensayo",
+        "Criterios de aceptación",
+        "Mirada del monitoreo ambiental en áreas controladas del laboratorio microbiológico con enfoque ISO/IEC 17025"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Biólogo - Microbiólogo – Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": "4 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 80000,
+      "usd": 60,
+      "gratuito": false
+    },
+    {
+      "id": 250,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/250",
+      "code": "CA38",
+      "codeSuffix": null,
+      "title": "ACTUALIZACIÓN PREVISTA CON CONTENIDO AMPLIADO: OCTUBRE - CA38 - Buenas prácticas en el laboratorio de microbiología",
+      "objetivos": "Obtener los conocimientos necesarios para trabajar de forma segura en el laboratorio de microbiología",
+      "temario": [
+        "Generalidades sobre buenas prácticas de laboratorio",
+        "Objetivo de las buenas prácticas de laboratorio",
+        "Competencia y formación del personal",
+        "Instalaciones y condiciones ambientales",
+        "Control, identificación y almacenamiento de materiales",
+        "Preparación, identificación y almacenamiento de medios de cultivo",
+        "Preparación de material estéril",
+        "Manejo del cepario y cultivos de referencia",
+        "Equipos en el laboratorio de microbiología",
+        "Métodos de ensayo",
+        "Manipulación de muestras",
+        "Ensayos de aptitud",
+        "Buenas Prácticas de Documentación"
+      ],
+      "disertante": [
+        "Téc. Daniela Kuba",
+        "Téc. Química Daniela Kuba – (Ex analista de microbiología en laboratorio de INTI) – Analista de microbiología en industria farmacéutica."
+      ],
+      "duracion": "2 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 38000,
+      "usd": 38,
+      "gratuito": false
+    },
+    {
+      "id": 247,
+      "modality": "ASYNC",
+      "category": "Laboratorio de microbiología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/247",
+      "code": "CA29",
+      "codeSuffix": null,
+      "title": "CA29 - Gestión de medios de cultivo",
+      "objetivos": "Brindar los conocimientos necesarios para asegurar la calidad de los medios de cultivo en el laboratorio de microbiología",
+      "temario": [
+        "Módulo 1 | Métodos para el ensayo de desempeño de medios de cultivo sólidos: Métodos para ensayos cuantitativos - Ensayo de medios de cultivo utilizados para filtración por membrana - Métodos para ensayos cualitativos",
+        "Módulo 2 | Métodos para el ensayo de desempeño de medios de cultivo líquidos - Método cuantitativo en tubo para el ensayo de desempeño de medios líquidos de enriquecimiento - Método cualitativo en tubo para el ensayo de desempeño de medios líquidos selectivos - Método cualitativo de tubo único para el ensayo de desempeño de medios líquidos",
+        "Módulo 3| Métodos para el ensayo de desempeño de diluyentes y medios de transporte - Método cuantitativo para el ensayo de diluyentes (procedimiento e interpretación de resultados."
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Diego Uribe – biólogo - microbiólogo – especialista en sistemas de gestión"
+      ],
+      "duracion": "4 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 70000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 355,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/355",
+      "code": "CA41",
+      "codeSuffix": null,
+      "title": "¡NUEVO! DISPONIBLE DESDE 1 DE OCTUBRE - Gestión y calificación de equipos según ISO/IEC 17025",
+      "objetivos": "Brindar los conocimientos y herramientas prácticas necesarias para calificar y gestionar adecuadamente los equipos de laboratorio de físico-química, asegurando su confiabilidad metrológica, la trazabilidad de las mediciones y el cumplimiento de los requisitos de la norma ISO/IEC 17025, desde el enfoque del ciclo de vida del equipo hasta su evaluación en auditorías internas y externas.",
+      "temario": [
+        "PRIMERA PARTE – GESTIÓN DE EQUIPOS",
+        "Módulo 1 | Introducción a la gestión de equipos y confiabilidad metrológica.",
+        "Módulo 2 | Requisitos de ISO/IEC 17025 aplicables a los equipos",
+        "Módulo 3 | Implementación práctica de la gestión de equipos",
+        "Módulo 4 | Trazabilidad metrológica e interpretación de certificados",
+        "Módulo 5 | Gestión de equipos desde la auditoría interna",
+        "SEGUNDA PARTE – CALIFICACIÓN DE EQUIPOS: Definiciones y relación calificación – ISO/IEC 17025 - tipos de calificación – factores claves en el proceso de calificación - Calificación de diseño - Calificación de instalación - Calificación de operación - Calificación de desempeño - Recalificación - Aseguramiento de la calidad"
+      ],
+      "disertante": [
+        "Laura Delissi - Pedro Fornero",
+        "Laura Delissi: Lic. en Bromatología // Pedro Formero: Téc. Industrias Alimentarias"
+      ],
+      "duracion": "8 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 70000,
+      "usd": 65,
+      "gratuito": false
+    },
+    {
+      "id": 351,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/351",
+      "code": "CA21",
+      "codeSuffix": null,
+      "title": "CA21 - Verificación interna de termómetros",
+      "objetivos": "Brindar criterios y herramientas prácticas para verificar termómetros de laboratorio mediante métodos simples y compara-tivos, interpretar correctamente los resultados y tomar decisiones para su uso en la rutina analítica.",
+      "temario": [
+        "Módulo 1. Conceptos básicos: Verificación vs calibración - Cuándo y por qué verificar – Rol de las verificaciones en el aseguramiento de resultados.",
+        "Módulo 2. Termómetros: Tipos habituales y aplicaciones – Resolución y exactitud.",
+        "Módulo 3. Criterios de aceptación: Tolerancias de fabricante, método o proceso - Error máximo permitido (EMP) - Decisión conforme / no conforme.",
+        "Módulo 4. Desarrollo de métodos de verificación: Método 1 – Verificación por punto fijo (0 °C) Fundamento de baño de hielo: principio, ventajas y limitaciones - Procedimiento práctico: preparación de baño, inmersión, estabilización, lectura y cálculo de error. Método 2 – Verificación con termómetro patrón Requisitos de termómetro patrón: calibración y trazabilidad - Procedimiento comparativo: uso de medio isotermo, estabilidad y uniformidad, lecturas y cálculo de error – Uso de resultados de calibración del patrón",
+        "Módulo 5. Resultados no conformes: Qué hacer si no cumple – Consideración de la incertidumbre en la interpretación de resultados - Impacto en mediciones previas - Acciones y registros - Qué espera un auditor - Errores frecuentes."
+      ],
+      "disertante": [
+        "Raúl Sejzer",
+        "Ingeniero electrónico – Director KAI Group - Experto Técnico de Laboratorios de Calibración, Laboratorios de Ensayos para Metrología Legal y Proveedores de Ensayos de Aptitud para Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "4 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 75000,
+      "usd": 65,
+      "gratuito": false
+    },
+    {
+      "id": 328,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/328",
+      "code": "CA08",
+      "codeSuffix": null,
+      "title": "CA08 - Redacción de no conformidades",
+      "objetivos": "Brindar los conocimientos claves para redactar de forma correcta y completa las no conformidades en la organización",
+      "temario": [
+        "MÓDULO 1 | SECCIÓN TEÓRICA: Importancia de la correcta redacción de No Conformidades - Bloques de redacción: evidencia, registro y declaración de la No Conformidad - Pistas de auditoria - Expresiones incorrectas en la redacción de No Conformidades - Ejemplos reales",
+        "MÓDULO 2 | SECCIÓN PRÁCTICA: Desarrollo de ejercicios en la plataforma de capacitación de ELEVAR"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "4 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 65000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 304,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/304",
+      "code": "CA80",
+      "codeSuffix": null,
+      "title": "CA80 - Gestión de calidad aplicada al laboratorio",
+      "objetivos": "Brindar las herramientas para conocer los fundamentos de la calidad en el laboratorio\nDefinir las diferentes formas de generar la mejora continua en el laboratorio\nCuidar los costos de la calidad\nDesarrollar actividades con eficiencia conociendo la cultura de la organización",
+      "temario": [
+        "Módulo 1 – Gestión por procesos",
+        "Módulo 2 – Historia de la calidad",
+        "Módulo 3 - Costos de la calidad",
+        "Módulo 4 - Mejora continua",
+        "Módulo 5 – Herramientas de control de calidad",
+        "Módulo 6 - Planes de calidad",
+        "Módulo 7 - Cultura organizacional",
+        "Módulo 8 – Contextos y partes interesadas"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "12 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 75000,
+      "usd": 60,
+      "gratuito": false
+    },
+    {
+      "id": 300,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/300",
+      "code": "CA36",
+      "codeSuffix": null,
+      "title": "CA36 - Expresión de la incertidumbre de medición en los informes de ensayo y certificados de calibración",
+      "objetivos": "Conocer el concepto de incertidumbre desde una mirada metrológica y estadística en función del VIM\nUtilizar las cifras significativas de forma correcta, en concordancia y criterio con los decimales del resultado a informar\nRedondear resultados sin que pierdan su trazabilidad metrológica\nExpresar la incertidumbre de medición en función de las recomendaciones internacionales como ser criterios de organismos de acreditación o GUM",
+      "temario": [
+        "Definición y concepto de incertidumbre",
+        "Cifras significativas: definición, criterios, reglas y redondeo",
+        "Formas de expresión de la incertidumbre: expresión en unidades y en porcentaje - pautas para el uso de cifras significativas y decimales en la expresión de la incertidumbre – Nivel de confianza como parte de una expresión correcta – contribuciones a la incertidumbre como aporte de decimales en la expresión de la incertidumbre",
+        "Ejemplos reales: expresiones correcta e incorrecta de la incertidumbre de medición."
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "1 hora",
+      "fecha": null,
+      "hora": null,
+      "ars": 38000,
+      "usd": 35,
+      "gratuito": false
+    },
+    {
+      "id": 279,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/279",
+      "code": "CA73",
+      "codeSuffix": null,
+      "title": "CA73 - Estrategias para asegurar la competencia del personal",
+      "objetivos": "Conocer las diferentes formas para seleccionar, formar, supervisar y realizar seguimiento del personal Interpretar los diferentes requisitos de competencias al momento de generar un perfil de puesto",
+      "temario": [
+        "Requisitos de competencia para cada perfil de puesto",
+        "Procedimientos y registros necesarios para asegurar la competencia del personal",
+        "Selección de personal",
+        "Formación y supervisión técnica",
+        "Autorización y seguimiento de las competencias",
+        "Aprendizaje en función de las diferentes formas de obtener conocimientos",
+        "Indicadores para medición de la competencia del personal"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA) CARGA HORARIA"
+      ],
+      "duracion": "2 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 45000,
+      "usd": 32,
+      "gratuito": false
+    },
+    {
+      "id": 274,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/274",
+      "code": "CA66",
+      "codeSuffix": null,
+      "title": "CA66 - Indicadores de gestión aplicados al laboratorio",
+      "objetivos": "Proporcionar las habilidades y conocimientos necesarios para medir, evaluar y mejorar el rendimiento de los laboratorios a partir de indicadores de gestión.\nDiseñar indicadores que permitan mejorar la eficiencia, la calidad y la efectividad en la operación de los laboratorios.",
+      "temario": [
+        "Objetivos: definición y clasificación",
+        "La gestión por procesos y su importancia y relación con los indicadores",
+        "Conceptos de indicadores de gestión",
+        "Beneficios y atributos de los indicadores de gestión",
+        "Tipos de indicadores de gestión",
+        "Diseño de indicadores de gestión",
+        "Herramientas para el diseño de indicadores de gestión",
+        "Revisión de la gestión de indicadores",
+        "Normativa de referencia e indicadores",
+        "Ejemplos de indicadores de gestión en el laboratorio"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "6 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 85000,
+      "usd": 60,
+      "gratuito": false
+    },
+    {
+      "id": 263,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/263",
+      "code": "CA54",
+      "codeSuffix": null,
+      "title": "CA54 - Confirmación metrológica e intervalos de calibración",
+      "objetivos": "Brindar los conocimientos para comprender la forma de asegurar la confirmación metrológica en el laboratorio y determinar, actualizar o modificar intervalos de calibración en los equipos utilizados en el laboratorio",
+      "temario": [
+        "Módulo 1 | Confirmación Metrológica: Requisitos normativos - Norma ISO 10012 - Etapas de la confirmación metrológica - Evaluación de consistencia - Prueba de relación de exactitud (TAR) - Índice de consistencia - Índice de capacidad de medición - Prueba de relación de incertidumbre (TUR) - Reglas de decisión",
+        "Módulo 2 | Intervalos de calibración: Concepto de intervalo de calibración - Costo vs. Calidad - Requisitos normativos - Factores que influyen en la determinación de los intervalos de calibración - ILAC G24 - OIML D 10 - Métodos para determinar intervalos de calibración. Ventajas, desventajas y usos"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Este curso es dirigido por la Lic. Laura Delissi y dictado por metrólogos expertos en el tema"
+      ],
+      "duracion": "3 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 75000,
+      "usd": 55,
+      "gratuito": false
+    },
+    {
+      "id": 261,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/261",
+      "code": "CA51",
+      "codeSuffix": null,
+      "title": "CA51 - Gráficos de control: elaboración y análisis de tendencias",
+      "objetivos": "Brindar los conocimientos para elaborar gráficos de control, comprender la utilización y realizar el seguimiento mediante la interpretación de las tendencias como parte del control de calidad interno para ensayos físico - químicos",
+      "temario": [
+        "Fundamentos de las cartas de control",
+        "Tipos de cartas de control",
+        "Pasos para elaborar un gráfico de control",
+        "Pasos para elaborar Gráficos de recuperación",
+        "Seguimiento y análisis de tendencias",
+        "Revisión y actualización de límites de control",
+        "Frecuencia de control e incorporación de resultados en la cartas de control",
+        "Acciones ante resultados fuera de control o tendencias"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "6 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 75000,
+      "usd": 60,
+      "gratuito": false
+    },
+    {
+      "id": 259,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/259",
+      "code": "CA48",
+      "codeSuffix": null,
+      "title": "CA48 - Orientaciones para el aseguramiento de la validez de los resultados en ensayos químicos. Basado en ISO/IEC 17025:2017",
+      "objetivos": "Brindar los conocimientos para aplicar correctamente actividades de aseguramiento de la validez de los resultados en ensa-yos químicos teniendo en cuenta la norma ISO/IEC 17025.",
+      "temario": [
+        "MÓDULO 1 | RESULTADOS ANALITICOS: Aseguramiento de la validez del resultado - Cumplimiento normativo - Interpretación ISO/IEC 17025 en función de la validez de los resultados",
+        "MÓDULO 2 | CONTROLES DE CALIDAD INTERNOS: Materiales de referencia: Conceptos. Aplicaciones en procesos de validación y actividades de rutina - Resultados trazables a partir del uso de equipos calibrados: Conceptos de calibración. Importancia de la calibración. Cuando y porque calibrar un equipo. Elección del laboratorio de calibración para asegurar trazabilidad metrológica -Comprobaciones funcionales de equipos: fundamentos y aplicaciones prácticas en los ensayos de rutina - Patrones de verificación y patrones de trabajo: conceptos, usos de los patrones. Generación e interpretación de gráficos de control -Comprobaciones intermedias: concepto. Diferencia entre comprobación intermedia y calibración. Cuando y porqué realizar una comprobación intermedia en equipos - Establecimiento de técnicas estadística para establecer la forma de identificar la necesidad de repetición de ensayos - Orientaciones para conservar el ítem de ensayo hasta el momento del reensayo - Fundamentos para el establecimiento de correlación entre resultados analíticos - Revisión de informes de ensayo: cuando y cómo revisarlos - Importancia de su revisión. Cualificación del personal - Comparaciones intralaboratorio y ensayo de muestras ciegas: diferencias y similitudes. Importancia y uso dentro del control de calidad interno.",
+        "MÓDULO 3 | CONTROLES DE CALIDAD EXTERNOS: Ensayos de aptitud y comparaciones interlaboratorio - Selección del proveedor de ensayo de aptitud - Evaluación de los resultados de los ensayos de aptitud",
+        "MÓDULO 4 | SEGUIMIENTO DE LOS DATOS: Mejora continua -",
+        "Acciones correctivas - No conformidades y riesgos"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "6 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 80000,
+      "usd": 60,
+      "gratuito": false
+    },
+    {
+      "id": 254,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/254",
+      "code": "CA43",
+      "codeSuffix": null,
+      "title": "CA43 - Metrología aplicada al laboratorio de ensayo y calibración - Conceptos, fundamentos y vocabulario",
+      "objetivos": "Brindar conceptos para interpretar correctamente definiciones del VIM (Vocabulario Internacional de Metrología), las cuales se aplican cotidianamente en las actividades del laboratorio",
+      "temario": [
+        "ANTECEDENTES HISTÓRICOS: Evolución desde los primeros patrones antropométricos hasta los patrones de medición actuales, repasando la búsqueda de patrones de mayor exactitud y estabilidad.",
+        "ESTRUCTURA INTERNACIONAL DE LA METROLOGÍA: Convención del metro. Estructura de la convención del metro, CGPM, CIPM y BIPM. Acuerdos CIPM-MRA. Organismos regionales. Intercomparaciones.",
+        "ORGANISMOS Y DOCUMENTOS CLAVE: Infraestructura internacional y nacional de la calidad, Marco legal, Metrología, Normalización y Acreditación. Evaluación de la conformidad, ensayos, certificación e inspección. Documentos y normas clave para la metrología.",
+        "METROLOGÍA, MAGNITUDES Y UNIDADES: Importancia de las mediciones, Metrología científica, Metrología industrial y Metrología legal. Definición de magnitud. Sistema internacional de unidades.",
+        "MEDICIONES: Resultado de una medición, reglas de escritura, cumplimiento de una especificación, definición de mensu-rando, distribuciones de probabilidad. Exactitud, veracidad y precisión. Concepto de valor verdadero. Errores de medida. Causas. Errores sistemáticos y aleatorios. Sesgo, repetibilidad y reproducibilidad. Incertidumbre. Causas. Cálculo de la in-certidumbre. Error relativo y porcentual. Calibración, trazabilidad y tipos de patrones. Cadena de trazabilidad. validación, ajuste, calibración y verificación. Corrección de un valor medido."
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Este curso es dirigido por la Lic. Laura Delissi y dictado por metrólogos expertos en el tema"
+      ],
+      "duracion": "5 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 80000,
+      "usd": 70,
+      "gratuito": false
+    },
+    {
+      "id": 246,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/246",
+      "code": "CA28",
+      "codeSuffix": null,
+      "title": "CA28 - Pesas y balanzas: usos y cuidados en la rutina analítica",
+      "objetivos": "Instalar correctamente las balanzas analíticas en el laboratorio en función de las instalaciones edilicias existentes y pro-yectadas.\nUtilizar las balanzas, cuidando de su uso con el fin de mejorar su rendimiento y alargar la vida útil\nBrindar las herramientas para la limpieza cuidadosa y analítica de las balanzas\nIdentificar y resolver problemas analíticos desarrollados por las pesadas\nCuidar y utilizar adecuadamente las pesas en el laboratorio como patrón de verificación",
+      "temario": [
+        "MÓDULO 1 - Ubicación e instalación de balanzas: vibraciones – temperatura ambiente y luz – humedad relativa – corriente de aire – condiciones edilicias – conexión a red – nivelación",
+        "MÓDULO 2 - Limpieza de balanzas: frecuencia – modo de limpieza – prevención de ensuciamiento – productos de limpieza adecuados",
+        "MÓDULO 3 - Pesadas analíticas: problemas y soluciones: temperatura – absorción de humedad – carga electrostática – magnetismo",
+        "MÓDULO 4 - Operativa analítica – postura y ergometría: postura parada y sentada – alcance de materiales – tamaño de pantalla",
+        "MÓDULO 5 - Pesas – Manipulación y cuidados: conceptos – clase de pesas – mantenimiento y limpieza."
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "6 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 68000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 243,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/243",
+      "code": "CA26",
+      "codeSuffix": null,
+      "title": "CA26 - Orientaciones para la gestión de la información documentada en los sistemas de calidad",
+      "objetivos": "Controlar la información documentada de manera correcta\nDiseñar y estructurar la documentación del sistema de gestión para cada proceso definido.\nImplementar un control efectivo de versiones y cambios.\nValidar y gestionar planillas de cálculo para su uso en ensayos.\nOptimizar la distribución y acceso a documentos clave.",
+      "temario": [
+        "MÓDULO 1 | GENERALIDADES DE LA INFORMACIÓN DOCUMENTADA",
+        "Procesos – generación de la información documentada – Medios y formatos – fuentes de obtención de información documentada – propósito de la información documentada.",
+        "MÓDULO 2 | CONTROL DE LA INFORMACIÓN DOCUMENTADA",
+        "Identificación –disponibilidad – protección – distribución – almacenamiento – revisión y aprobación – actualización y control de cambios – uso de documentos obsoletos.",
+        "MÓDULO 3 | INFORMACIÓN DOCUMENTADA A MANTENER",
+        "Alcance – política – objetivos - manual de calidad – organigrama - mapas de proceso, diagramas de flujo de procesos y/o descripciones de proceso - procedimientos e instrucciones de trabajo - flujos de trabajo automatizados - especificaciones del producto y el servicio - comunicaciones internas y externas - formularios y checklists - información documentada de origen externo – anexos y enmiendas.",
+        "MÓDULO 4 | INFORMACIÓN DOCUMENTADA A CONSERVAR",
+        "Registros – registros técnicos – validación de hojas de cálculo."
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Experta en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "10 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 85000,
+      "usd": 65,
+      "gratuito": false
+    },
+    {
+      "id": 242,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/242",
+      "code": "CA24",
+      "codeSuffix": null,
+      "title": "CA24 - Contenido e interpretación de certificados de calibración",
+      "objetivos": "Conocer conceptos relacionados con la metrología y los certificados de calibración\nIdentificar los diferentes requisitos definidos en la norma ISO/IEC 17025 relacionados con la información de un certificado de calibración\nInterpretar el contenido de un certificado de calibración\nUtilizar correctamente el contenido de los certificados de calibración",
+      "temario": [
+        "Definición de certificado",
+        "Requisitos normativos de cumplimiento en un certificado",
+        "Requisitos específicos de cumplimiento en un certificado",
+        "Contenido mínimo de un certificado",
+        "Utilidad del certificado en la confirmación metrológica"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Este curso es dirigido por la Lic. Laura Delissi y dictado por metrólogos expertos en el tema"
+      ],
+      "duracion": "3 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 75000,
+      "usd": 65,
+      "gratuito": false
+    },
+    {
+      "id": 241,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/241",
+      "code": "CA22",
+      "codeSuffix": null,
+      "title": "CA22 - Formación de auditores internos para sistema de gestión de calidad según ISO/IEC 17025:2017 – basado en directrices ISO 19011:2018",
+      "objetivos": "Desarrollar auditorias internas en sistemas de gestión de calidad donde se aplica la norma ISO/IEC 17025:2017 en función de los conceptos descriptos en ISO 19011:2018\nConocer e interpretar conceptos relacionados con el proceso de auditoría\nGestionar adecuadamente programa y plan de auditoria\nSeleccionar satisfactoriamente equipos auditores\nDesarrollar auditorías manteniendo comunicaciones adecuadas y respetuosas\nMantener auditorias virtuales satisfactorias",
+      "temario": [
+        "MÓDULO 1 | MARCO NORMATIVO: ISO 19011:2018 “Directrices para la auditoría de los sistemas de gestión” - ISO 17025:2017 \"Requisitos generales para la competencia de los laboratorios de ensayo y calibración”",
+        "MÓDULO 2 | CONCEPTOS Y CLASIFICACIÓN: Conceptos claves en el proceso de auditoria - Clasificación de auditorias - Principios de auditoria",
+        "MÓDULO 3 | PROGRAMA DE AUDITORIA: Concepto del programa de auditoria - Gestión del programa de auditoria",
+        "MÓDULO 4 | REALIZACIÓN DE LA AUDITORIA: Integrantes de la auditoria - El paso a paso del proceso de auditoria",
+        "MÓDULO 5 | PERFIL DE AUDITOR: Conocimientos del auditor - Comportamiento personal - Determinación de la competencia del auditor - Logro de la competencia - Mantenimiento y mejora de las competencias - Criterios y métodos para evaluación del auditor - Evaluación del auditor",
+        "MÓDULO 6 | LISTAS DE VERIFICACIÓN: Características de las listas de verificación - Elaboración de una lista de verificación",
+        "MÓDULO 7 | REDACCIÓN DE NO CONFORMIDADES: Descripción - Evidencia - Referencia - Ejemplos",
+        "MÓDULO 8 | AUDITORIAS VIRTUALES: Desarrollo - Competencia del auditor - Consideraciones frente al proceso de auditoria - Obtención de evidencias objetivas",
+        "MÓDULO 9 | BONUS TRACK: Comunicación efectiva - ¿Cómo mantener el control en la auditoria? - Actitudes indeseadas"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Experta en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "16 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 95000,
+      "usd": 70,
+      "gratuito": false
+    },
+    {
+      "id": 239,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/239",
+      "code": "CA16",
+      "codeSuffix": null,
+      "title": "CA16- Interpretación de la norma ISO/IEC 17025:2017 – Requisitos para la competencia de los laboratorios de ensayo y calibración",
+      "objetivos": "Brindar los conocimientos y formación necesaria para interpretar la norma numeral a numeral de forma que pueda ser imple-mentada en laboratorios de forma correcta y representativa a las actividades.",
+      "temario": [
+        "MÓDULO 1 | INTRODUCCIÓN",
+        "MÓDULO 2 | HISTORIA",
+        "MÓDULO 3 | ACTUALIZACIÓN NORMATIVA",
+        "MÓDULO 4 | REQUISITOS GENERALES",
+        "MÓDULO 5 | REQUISITOS RELATIVOS A LA ESTRUCTURA",
+        "MÓDULO 6 | REQUISITOS RELATIVOS A LOS RECURSOS",
+        "MÓDULO 7 | REQUISITOS RELATIVOS AL PROCESO",
+        "MÓDULO 8 | REQUISITOS DEL SISTEMA DE GESTIÓN",
+        "INTERPRETACIÓN DE ANEXOS",
+        "Para visualizar el temario completo descarga el archivo que se comparte en el lateral derecho de la página"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Experta en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA) CARGA HORARIA"
+      ],
+      "duracion": "16 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 95000,
+      "usd": 70,
+      "gratuito": false
+    },
+    {
+      "id": 238,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/238",
+      "code": "CA15",
+      "codeSuffix": null,
+      "title": "CA15 - Selección, uso e interpretación de ensayos de aptitud",
+      "objetivos": "Aprender a seleccionar el mejor ensayo de aptitud a utilizarse en el laboratorio de ensayo y calibración, teniendo en cuenta los lineamientos de la norma ISO/IEC 17043 Conocer los fundamentos para interpretar los resultados obtenidos en las pruebas con el fin de implementar acciones de mejora.\nIdentificar diferentes fuentes de error en la participación de ensayos de aptitud",
+      "temario": [
+        "Comparaciones interlaboratorio",
+        "Indicadores de desempeño",
+        "Tipos de ensayo de aptitud",
+        "Selección del ensayo de aptitud",
+        "Utilización de ensayos de aptitud",
+        "Interpretación de resultados de ensayo de aptitud",
+        "Posibles fuentes de error"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Experta en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "3 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 50000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 237,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/237",
+      "code": "CA13",
+      "codeSuffix": null,
+      "title": "CA13 - ¿Cómo desarrollar de forma exitosa la revisión por la dirección?",
+      "objetivos": "Interpretar correctamente las entradas y salidas de la revisión planteadas por las normas de gestión\nDesarrollar de forma real la revisión, a fin de cumplimentar los requisitos normativos concernientes a la norma ISO 9001 e ISO/IEC 17025.\nConocer las diferentes formas de realizar la revisión con el fin de desarrollar las entradas y salidas de las normas de gestión.\nIncorporar el uso de indicadores para describir las entradas y salidas de la revisión",
+      "temario": [
+        "¿Qué es la revisión por la dirección?",
+        "Integrantes de la revisión por la dirección",
+        "Planificación de la revisión por la dirección",
+        "Indicadores de desempeño: definición, indicadores de eficacia y eficiencia. Ejemplos y utilidad de cada uno de ellos.",
+        "Entradas de la revisión por la revisión: conceptos y análisis normativo. Estudio de las entradas mediante la utilización de indicadores de eficacia y eficiencia",
+        "Salidas de la revisión por la dirección: conceptos, análisis normativo y acciones a tomar - Formato para documentar la revisión por la dirección"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Experta en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "2 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 45000,
+      "usd": 45,
+      "gratuito": false
+    },
+    {
+      "id": 235,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/235",
+      "code": "CA05",
+      "codeSuffix": null,
+      "title": "CA05 - Evaluación y tratamiento de riesgos en el laboratorio",
+      "objetivos": "Brindar los conceptos y herramientas para gestionar de manera efectiva los riesgos identificados en el laboratorio de ensayo y calibración, según las directrices de la Norma ISO 31000:2018 y los requisitos explicitados en la norma ISO/IEC 17025:2017 Generar matrices de riesgos reales en función de los contextos del laboratorio Realizar un correcto seguimiento de las acciones implementadas para los riesgos definidos",
+      "temario": [
+        "MÓDULO 1 | Gestión por proceso aplicada al laboratorio",
+        "MÓDULO 2 | definición de pensamiento basado en riesgo – norma ISO/IEC 17025:2017 y la gestión de riesgos",
+        "MÓDULO 3 | Conceptos y fundamentos: riesgo – consecuencia – evento – gestión del riesgo – proceso de gestión del riesgo - marco de referencia – evaluación del riesgo – dueño del riesgo",
+        "MÓDULO 4 | Gestión del riesgo – características de la gestión del riesgo – componente de la gestión del riesgo",
+        "MÓDULO 5 | Principios del riesgo",
+        "MÓDULO 6 | Marco de referencia – identificación del contexto y las partes interesadas – componentes del marco de referencia",
+        "MÓDULO 7 | Componentes del proceso del riesgo – comunicación y consulta – identificación del alcance, contextos y criterios – evaluación y tratamiento del riesgo – seguimiento y revisión del riesgo – registro e informe del riesgo",
+        "MÓDULO 8 | Oportunidades – conceptos y relación con la norma ISO/IEC 17025 – tratamiento y seguimiento de mejoras.",
+        "EJEMPLOS PRÁCTICOS"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "12 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 85000,
+      "usd": 70,
+      "gratuito": false
+    },
+    {
+      "id": 234,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/234",
+      "code": "CA04",
+      "codeSuffix": null,
+      "title": "CA04 - Elaboración, implementación y seguimiento del programa de calibraciones",
+      "objetivos": "Brindar los conceptos necesarios para gestionar de manera correcta el programa de calibraciones y así cumplir con los requisitos explicitados en la norma ISO/IEC 17025:2017 Implementar y mantener el programa de calibraciones de forma segura y real, teniendo en cuenta proveedores y actividades del laboratorio",
+      "temario": [
+        "Definiciones y conceptos: calibración, verificación de calibración, ajuste y tiempo de yapa. - Certificados de calibración: ¿Quién los genera? ¿Cuándo caducan? -Importancia de la verificación de calibración sobre el programa de calibraciones",
+        "Elaboración de programa de calibraciones: ¿Qué es un programa de calibraciones? ¿Por qué y para qué se genera un programa de calibraciones? ¿Qué equipamientos incluir en el programa de calibraciones? ¿Qué información debe contener el programa de calibraciones? ¿Cuál es el formato adecuado para el programa de calibraciones? ¿Cómo seleccionar los puntos de calibración? ¿Cómo determinar la frecuencia de recalibración?",
+        "Implementación y seguimiento del programa de calibraciones: los 7 puntos a tener en cuenta en la implementa-ción del programa de calibraciones - ¿Cuándo es conveniente revisar y ajustar el programa de calibraciones?",
+        "Mantenimiento preventivo: ¿Cuáles son las principales actividades de mantenimiento preventivo? ¿A qué equipamiento se aplica el mantenimiento preventivo? ¿Cuáles son los tipos de mantenimiento preventivo? ¿Cómo realizar un mantenimiento preventivo eficiente?"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Experta en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "2 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 40000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 233,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/233",
+      "code": "CA01",
+      "codeSuffix": null,
+      "title": "CA01 - Reglas de decisión para ensayos cuantitativos según ISO/IEC 17025:2017",
+      "objetivos": "Brindar los conocimientos para aplicar e interpretar reglas de decisión según los lineamientos de la norma ISO/IEC 17025.",
+      "temario": [
+        "Concepto de regla de decisión",
+        "Construcción de la regla de decisión",
+        "Aplicación de la regla de decisión",
+        "Requisitos de la ISO/IEC/17025:2017 frente a las reglas de decisión",
+        "Fundamentos teóricos",
+        "Evaluación de la conformidad empleando reglas de decisión"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Experta en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "2 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 40000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 232,
+      "modality": "ASYNC",
+      "category": "Calidad y metrología",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/232",
+      "code": "CA02",
+      "codeSuffix": null,
+      "title": "CA02 - Gestión eficaz de No conformidades y Trabajos No conformes en el laboratorio de ensayo y calibración",
+      "objetivos": "Interpretar conceptos relacionados con la gestión de las No conformidades\nDesarrollar una metodología eficaz en el tratamiento de No Conformidades y Trabajos No Conformes\nInterpretar como gestionar No Conformidades y Trabajos No Conformes en función de los requisitos inherentes a la norma ISO/IEC 17025\nRedactar No conformidades de forma completa y clara\nRealizar una correcta y crítica evaluación de la eficacia de las acciones tomadas",
+      "temario": [
+        "Introducción: Definiciones y conceptos ISO 9000 e ISO 17025: No conformidad, requisito, trabajo no conforme, evidencia objetiva. Requerimientos normativos.",
+        "Módulo 1 | Tratamiento de la No Conformidad - Detección y registro. Evaluación: gestión de corrección y acción correctiva, pertinencia, acciones, plazos, responsables y re-cursos. Ejemplos reales. Consejos para gestionar correctamente las correcciones y acciones correctivas. Gestión para la re-solución de la no conformidad. Evaluación de la eficacia de las acciones.",
+        "Módulo 2 | Herramientas de calidad - Definición, concepto, formas de aplicación y ejemplos de: Tormenta de ideas. Diagrama de Ishikawa. 5 por qué. 5W2H.",
+        "Módulo 3 | Redacción de No Conformidades - Bloques de redacción: evidencia, requisito y declaración de incumplimiento. Redacción, lectura y comprensión eficaz. Ejemplos.",
+        "Módulo 4 | Quejas - Definición. Cumplimiento normativo. Mapa de proceso. Tratamiento. Actitudes frente a las quejas. Errores comunes en las quejas. Ejemplos.",
+        "Módulo 5 | Mejoras - Definición. Cumplimiento normativo. Diferencia entre mejora y oportunidad de mejora. Formas de encontrar mejoras. Tratamiento. Ejemplos."
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Experta en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "12",
+      "fecha": null,
+      "hora": null,
+      "ars": 70000,
+      "usd": 65,
+      "gratuito": false
+    },
+    {
+      "id": 354,
+      "modality": "ASYNC",
+      "category": "Laboratorio de fisicoquímica",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/354",
+      "code": "CA57",
+      "codeSuffix": null,
+      "title": "CA57 - Buenas prácticas en laboratorio químico",
+      "objetivos": "Brindar conocimientos y criterios prácticos necesarios para aplicar correctamente las Buenas Prácticas de Laboratorio en en-sayos químicos, fortaleciendo el manejo de instalaciones, equipos, reactivos, muestras, métodos y seguridad, con el fin de asegurar la confiabilidad de los resultados, la trazabilidad de los procesos y la protección del personal, en el trabajo cotidiano del laboratorio",
+      "temario": [
+        "Concepto de BPL",
+        "Instalaciones: principios – distribución de las áreas de trabajo – planeamiento del diseño del laboratorio",
+        "Personal: competencia y formación del personal - Requisitos normativos",
+        ", Manipulación de muestras: recepción y almacenamiento – trazabilidad de la información – manipula-ción",
+        "Método de ensayo: método normalizado y método no normalizado – aseguramiento de los resulta-dos",
+        "Equipamientos: calificación – balanzas - Espectrofotómetros - Cromatógrafos - Espectrofotometros de abosrción atómica - Centrífuga - pHmetro - Material de vidrio – Campana ácido - Medios isotermos – Drogas, reactivos y soluciones",
+        "Información documentada: utilización y resguardo de datos – organización del trabajo",
+        "Seguridad: consideraciones generales – hojas de seguridad – puertas – cañerías – sistema eléctrico – gases – sustancias peligrosas – peligro y riesgo – incidente y accidente – emergencias - agentes de seguridad - riesgos ergonómicos - elementos de protección personal",
+        "Orden y distribución del trabajo: rutinas y actividades para: calcular tiempo de ensayos y de entrega de informes, establecimiento de horarios de trabajo, sincronización de actividades, distribución de la carga de trabajo, actividades administrativas, distribución de equipos, muestra y reactivos en las mesadas, organización del mobiliario, entre otros."
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "12 Horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 80000,
+      "usd": 60,
+      "gratuito": false
+    },
+    {
+      "id": 290,
+      "modality": "ASYNC",
+      "category": "Laboratorio de fisicoquímica",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/290",
+      "code": "CA77",
+      "codeSuffix": null,
+      "title": "CA77 - Gestión de reactivos: cómo controlar la vida útil y etiquetarlos correctamente",
+      "objetivos": "Conocer diferentes formas de definir vencimientos de reactivos preparados en el laboratorio Identificar riesgos y cuidados en los reactivos preparados en el laboratorio Asegurar el etiquetado de los reactivos para la validez de los resultados analíticos",
+      "temario": [
+        "Módulo 1: Vida útil de reactivos: Concepto de reactivos en el laboratorio - Cómo definir la vida útil de los reactivos preparados en el laboratorio - Plan de acción para evitar vencimiento de reactivos -Buenas prácticas en el uso de reactivos -Riesgos asociados al uso de reactivos vencidos",
+        "Módulo 2: Etiqueta de reactivos: Porqué y cuándo etiquetar los reactivos - Contenido del etiquetado -Trazabilidad de la información - Consecuencias de la falta de etiquetado - Formas de etiquetado"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "3 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 50000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 281,
+      "modality": "ASYNC",
+      "category": "Laboratorio de fisicoquímica",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/281",
+      "code": "CA76",
+      "codeSuffix": null,
+      "title": "CA76 - Lavado y acondicionamiento de material de vidrio en laboratorio químico",
+      "objetivos": "Conocer las diferentes formas de lavado de material volumétrico Identificar posibles causas y consecuencias en un lavado incorrecta Definir la propia forma de lavado de material en función de los recursos y tiempos propios de cada laboratorio",
+      "temario": [
+        "Causas y consecuencias del incorrecto lavado de material volumétrico",
+        "Lavado manual y automático de material",
+        "Ventajas y desventajas del lavado manual vs. Lavado automático",
+        "Circulo de Sinner: concepto y aplicabilidad en el laboratorio",
+        "Control de limpieza con indicadores",
+        "Formas de acondicionamiento del material",
+        "Lavado de material cromatográfico"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "2 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 50000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 280,
+      "modality": "ASYNC",
+      "category": "Laboratorio de fisicoquímica",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/280",
+      "code": "CA74",
+      "codeSuffix": null,
+      "title": "CA74 - Optimización del trabajo en laboratorios de química",
+      "objetivos": "Planificar correctamente el uso de instrumentos, reactivos y materiales, evitando tiempos muertos.\nAsegurar que los ensayos se realicen dentro de los tiempos establecidos.\nDistribuir el tiempo adecuadamente, minimizando los errores por prisa o distracciones.\nEvitar trabajos que puedan generar riesgos por falta de atención. Reducir la presión en los analistas, disminuyendo errores humanos asociados al agotamiento.\nAsegurar que la carga de trabajo sea equilibrada entre los miembros del equipo",
+      "temario": [
+        "Limpieza interna del laboratorio",
+        "Optimización de recursos",
+        "Distribución de la carga de trabajo diaria",
+        "Flujo de trabajo",
+        "Gestión del tiempo",
+        "Habilidades del personal",
+        "Control de inventario de productos químicos y materiales",
+        "Orden en el laboratorio: trabajo sobre mesada, almacenamiento de reactivos, muestras y equipamiento, utilización y resguardo de información documentada",
+        "Seguridad en el trabajo de laboratorio: elementos de protección personal, cuales y cuando utilizar, preparación y uso de soluciones, uso seguro de equipos de calor, manejo responsable de ácidos y reactivos."
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "2 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 32000,
+      "usd": 35,
+      "gratuito": false
+    },
+    {
+      "id": 278,
+      "modality": "ASYNC",
+      "category": "Laboratorio de fisicoquímica",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/278",
+      "code": "CA71",
+      "codeSuffix": null,
+      "title": "CA71 - Control de calidad en ensayos cromatográficos",
+      "objetivos": "Conocer el concepto y la importancia de la calificación de operación de cromatógrafos Responder frente a controles fuera de especificaciones Conocer sobre diferentes herramientas para asegurar la validez de los resultados en cromatografía",
+      "temario": [
+        "Principios básicos de los sistemas de calidad y del control de calidad basados en ISO/IEC 17025",
+        "Importancia de la validación de métodos como parte del aseguramiento de los resultados",
+        "Calificación de equipos",
+        "Cromatografía gaseosa y los modelos de separación cromatográfica",
+        "Planificación de la calificación de desempeño en cromatógrafos",
+        "Criterios de aceptación y frecuencias de la calificación de desempeño en cromatógrafos",
+        "Planes de mantenimiento preventivo de cromatógrafos"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Este curso es dirigido por la Lic. Laura Delissi y dictado por expertos en química con experiencia en el manejo de cromatógrafos"
+      ],
+      "duracion": "1 hora",
+      "fecha": null,
+      "hora": null,
+      "ars": 48000,
+      "usd": 35,
+      "gratuito": false
+    },
+    {
+      "id": 268,
+      "modality": "ASYNC",
+      "category": "Laboratorio de fisicoquímica",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/268",
+      "code": "CA62",
+      "codeSuffix": null,
+      "title": "CA62 - Consideraciones prácticas para la preparación de estándares",
+      "objetivos": "Identificar las buenas prácticas en el laboratorio al momento de preparar estándares\nReconocer los diferentes métodos de preparación de estándares\nDistinguir la criticidad de los estándares en procesos analíticos para definir formas de preparación\nConocer los cuidados en la preparación y uso de curvas de calibrado reconociendo a éstas como estándares dentro del laboratorio.",
+      "temario": [
+        "Capítulo 1 – Métodos de preparación de estándares: Trazabilidad de las soluciones patrón - Certificado de análisis (COA) de estándares comerciales - Ventajas y desventajas de la preparación gravimétrica de patrones - Ventajas y desventajas de la preparación volumétrica de patrones - Consideraciones prácticas para el uso del material volumétrico y balanzas",
+        "Capítulo 2 – Elaboración, usos y cuidados de curvas de calibrado: ¿Qué es una curva de calibrado? - Elaboración de una curva de calibrado - Buenas prácticas: uso del material volumétrico, almacenamiento de las curvas de calibrado, almacenamiento de mate-rial volumétrico, rotulado, equipamientos y condiciones de laboratorio."
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Este curso es dirigido por la Lic. Laura Delissi y dictado por expertos en química con experiencia en el manejo de ensayos químicos cromatográficos y MRC"
+      ],
+      "duracion": "2 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 65000,
+      "usd": 45,
+      "gratuito": false
+    },
+    {
+      "id": 262,
+      "modality": "ASYNC",
+      "category": "Laboratorio de fisicoquímica",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/262",
+      "code": "CA53",
+      "codeSuffix": null,
+      "title": "CA53 - Buenas prácticas en cromatografía gaseosa",
+      "objetivos": "Brindar orientaciones sobre buenas prácticas en diferentes actividades y procesos al realizar ensayos cromatográficos",
+      "temario": [
+        "Principios básicos de cromatografía de gases: Conceptos básicos, partes del sistema y requisitos de muestras",
+        "Gases portadores y de apoyo: Pureza de gases y filtro de gases portadores.",
+        "Sistemas de inyección de muestra: Tipos de inyectores, consideraciones de uso, mantenimiento y uso de consumibles (Septas, liners, jeringas, O-rings)",
+        "Columnas cromatográficas: Tipos de columnas de GC, acondicionamiento y mantenimiento de columnas, evaluación del rendimiento y causas de deterioro.",
+        "Detectores de cromatografía gaseosa: Mantenimiento, operación y problemáticas más comunes de detectores.",
+        "Problemáticas más comunes: Reconocimiento y solución de los problemas más comunes asociados al uso de un GC."
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Este curso es dirigido por la Lic. Laura Delissi y dictado por expertos en química con experiencia en el manejo de cromatógrafos"
+      ],
+      "duracion": "3 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 68000,
+      "usd": 52,
+      "gratuito": false
+    },
+    {
+      "id": 258,
+      "modality": "ASYNC",
+      "category": "Laboratorio de fisicoquímica",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/258",
+      "code": "CA47",
+      "codeSuffix": null,
+      "title": "CA47 - Calificación de equipos",
+      "objetivos": "Definir las formas de calificación cromatógrafos, espectrofotómetros de absorción atómica, espectrofotómetro ultravioleta visible, pHmetros, balanzas, estufas, muflas, baños termostáticos y autoclaves",
+      "temario": [
+        "Definiciones claves",
+        "Calificación de diseño",
+        "Calificación de instalación",
+        "Calificación de operación",
+        "Calificación de desempeño",
+        "Recalificación de equipos",
+        "Sistemas de medición",
+        "Aseguramiento de calidad"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "3 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 38000,
+      "usd": 42,
+      "gratuito": false
+    },
+    {
+      "id": 256,
+      "modality": "ASYNC",
+      "category": "Laboratorio de fisicoquímica",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/256",
+      "code": "CA45",
+      "codeSuffix": null,
+      "title": "CA45 - Análisis de efecto matriz en cromatografía",
+      "objetivos": "Brindar los conocimientos para identificar y controlar el efecto matriz en ensayos de cromatografía líquida y gaseosa",
+      "temario": [
+        "Análisis estadístico de efecto matriz en cromatografía gaseosa y cromatografía líquida",
+        "Consideraciones prácticas para el análisis de recuperación o eficiencia del método",
+        "Herramientas prácticas para superar el efecto matriz",
+        "Evaluación cuantitativa del efecto matriz",
+        "Generación de calibración matrix match",
+        "Elaboración y cuidado en la preparación de estándares y fortificados de muestras",
+        "Estrategias para trabajar con el efecto matriz"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Este curso es dirigido por la Lic. Laura Delissi y dictado por expertos en química con experiencia en el manejo de cromatógrafos"
+      ],
+      "duracion": "1 hora",
+      "fecha": null,
+      "hora": null,
+      "ars": 45000,
+      "usd": 35,
+      "gratuito": false
+    },
+    {
+      "id": 255,
+      "modality": "ASYNC",
+      "category": "Laboratorio de fisicoquímica",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/255",
+      "code": "CA44",
+      "codeSuffix": null,
+      "title": "CA44 - Validación y verificación de métodos químicos",
+      "objetivos": "Comprender la estadística básica aplicada en los procesos de validación\nInterpretar las diferentes pruebas estadísticas aplicables en las validaciones de métodos\nDesarrollar diferentes características de desempeño\nInterpretar los resultados de las pruebas de validación mediante fundamentos estadísticos",
+      "temario": [
+        "MÓDULO 1 | INFRAESTRUCTURA DE LA CALIDAD: Metrología - Normalización - Acreditación - Infraestructura",
+        "MÓDULO 2 | ESTADÍSITCA BÁSICA: Variabilidad de los resultados - Error de medida: error sistemático, error aleatorio, fuentes de errores - distribución normal - grados de libertad - pruebas de hipótesis - contrastes de significación: prueba t y prueba f",
+        "MÓDULO 3 | VALIDACION Y VERIFICACIÓN DE MÉTODOS: Validación: conceptos descriptos en diferentes normas de referencia - ¿Cuándo validar un método? - ¿Cómo validar un método? - ¿Cuánto validar un método? - Verificación - Revalidación - Documentación de una validación",
+        "MÓDULO 4 | CONSIDERACIONES PRÁCTICAS PARA EL DESARROLLO DE LA VALIDACIÓN: Definición del alcance de la validación - Herramientas de validación - Preparación del estudio de validación",
+        "MÓDULO 5 | EVALUACIÓN DE CARACTERISTICAS DE DESEMPEÑO: Selectividad - Intervalo de trabajo - Límite de detección y límite de cuantificación - Precisión - Veracidad - Robustez - Incertidumbre",
+        "MÓDULO 6 | CONTROLES DE CALIDAD: Control de calidad interno: cumplimiento normativo ISO/IEC 17025 e identificación del control adecuado para cada método de ensayo - Control de calidad externo: ensayos de aptitud, indicador de desempeño, errores insatisfactorios en un en-sayo de aptitud o interlaboratorio"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "12 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 95000,
+      "usd": 80,
+      "gratuito": false
+    },
+    {
+      "id": 244,
+      "modality": "ASYNC",
+      "category": "Laboratorio de fisicoquímica",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/244",
+      "code": "CA27",
+      "codeSuffix": null,
+      "title": "CA27 - Verificación del material volumétrico",
+      "objetivos": "Brindar los conocimientos para generar una dinámica de trabajo dentro del laboratorio que permita verificar el material volumétrico estableciendo de forma segura el uso del material volumétrico en el laboratorio",
+      "temario": [
+        "Calibración, ajuste y verificación intermedia",
+        "Tipo de material volumétrico Consideraciones técnicas de verificación",
+        "Verificación gravimétrica",
+        "Cálculos para verificación de matraces, probetas, buretas, pipetas y micropipetas",
+        "Error de medida",
+        "Aceptación y rechazo de resultados"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "6 horas",
+      "fecha": null,
+      "hora": null,
+      "ars": 70000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 240,
+      "modality": "ASYNC",
+      "category": "Laboratorio de fisicoquímica",
+      "url": "https://elevar.com.ar/formacion/cursos-asincronicos/240",
+      "code": "CA19",
+      "codeSuffix": null,
+      "title": "CA19 - Usos y cuidados de micropipetas",
+      "objetivos": "Conocer cómo utilizar de forma adecuada las micropipetas en el laboratorio Identificar cuidados de las micro pipetas para mejorar la precisión y alargar su vida útil",
+      "temario": [
+        "¿Qué es una micropipeta?",
+        "Principio de funcionamiento",
+        "Usos correctos de la micropipeta: Selección de la micropipeta -Selección del volumen -Selección de la punta - Pipeteo correcto",
+        "Cuidados de la micropipeta: Almacenamiento – Limpieza – Esterilización – Engrase – Filtros - Calibraciones y comprobaciones intermedias"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Experta en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": "1 hora",
+      "fecha": null,
+      "hora": null,
+      "ars": 35000,
+      "usd": 30,
+      "gratuito": false
+    },
+    {
+      "id": 390,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/390",
+      "code": "CV57",
+      "codeSuffix": "NOV/27",
+      "title": "CV57 - Liderazgo y gestión de equipos de laboratorio: herramientas para comunicar, delegar y resolver conflictos",
+      "objetivos": "Desarrollar habilidades y aplicar herramientas prácticas de liderazgo y gestión de equipos de trabajo, fortaleciendo la comunicación, la delegación de responsabilidades, la motivación y la resolución de conflictos, con el fin de favorecer un ambiente laboral colaborativo, mejorar el desempeño del personal y contribuir al cumplimiento de los objetivos del laboratorio",
+      "temario": [
+        "MÓDULO 1| LIDERAZGO Y GESTIÓN DE EQUIPOS DE TRABAJO",
+        "MÓDULO 2 | COMUNICACIÓN EFECTIVA EN LOS EQUIPOS",
+        "MÓDULO 3. DELEGACIÓN DE TAREAS Y MOTIVACIÓN DEL PERSONAL",
+        "MÓDULO 4. GESTIÓN DE CONFLICTOS Y SITUACIONES DIFÍCILES"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "26 de Noviembre",
+      "hora": "13:00 a 17:00",
+      "ars": 48000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 389,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/389",
+      "code": "CV43",
+      "codeSuffix": null,
+      "title": "CV43 - Aseguramiento de la validez de los resultados en ensayos microbiológicos",
+      "objetivos": "Proporcionar criterios técnicos y herramientas prácticas para interpretar y aplicar los requisitos de la norma ISO/IEC 17025 relacionados con el aseguramiento de la validez de los resultados, mediante la correcta planificación, ejecución, análisis y evaluación de actividades de seguimiento.",
+      "temario": [
+        "REQUISITOS PARA EL ASEGURAMIENTO DE VALIDEZ DE RESULTADOS SEGÚN ISO/IEC 17025",
+        "ACTIVIDADES PARA EL SEGUIMIENTO DE LA VALIDEZ DE LOS RESULTADOS: Materiales de referencia / Instrumentos alternativos / Comprobaciones funcionales / Uso de patrones / Comprobaciones intermedias / Repetición del ensayo / Reensayo / Correlación de resultados / Revisión de los resultados / Comparaciones intralaboratorio / Muestras ciegas - Planificación y análisis de datos para la toma de decisiones - Ejemplos reales de laboratorio - Limpieza del material de vidrio y cómo verificar que no afecta los ensayos microbiológicos.",
+        "ACTIVIDADES PARA EL SEGUIMIENTO AL DESEMPEÑO DEL LABORATORIO: Ensayos de aptitud e Intercomparaciones - Planificación y análisis de datos para la toma de decisiones"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Biólogo - Microbiólogo – Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": null,
+      "fecha": "05 de Noviembre",
+      "hora": "10:00 a 14:00",
+      "ars": 45000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 387,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/387",
+      "code": "CV40",
+      "codeSuffix": "JUL/27",
+      "title": "CV40 - Manejo de muestras microbiológicas en aguas y alimentos",
+      "objetivos": "Comprender y aplicar los principios y buenas prácticas del muestreo y manejo de muestras microbiológicas de agua y alimentos, considerando los criterios de representatividad, conservación, transporte, trazabilidad y prevención de la contaminación, con el fin de preservar la integridad de las muestras y asegurar la confiabilidad de los resultados analíticos.",
+      "temario": [
+        "Toma, transporte y recepción de muestras microbiológicas en alimentos y aguas",
+        "Muestras complejas: buenas prácticas, errores frecuentes y soluciones",
+        "Almacenamiento de muestras de alimentos y aguas",
+        "Reglas generales para la preparación de muestras y diluciones:",
+        "a. Muestras de alimentos (ISO 6887-1) b. Muestras de aguas (Standard Methods) c. Diluciones seriadas sin errores",
+        "Reglas específicas: a. ISO 6887-2. Reglas específicas para la preparación de carne y productos cárnicos. b. ISO 6887-3. Reglas específicas para la preparación de productos de pescado y mariscos. c. ISO 6887-4. Reglas específicas para la preparación de productos diversos. d. ISO 6887-5. Reglas específicas para la preparación de leche y productos lácteos. e. ISO 6887-6. Reglas específicas para la preparación de muestras tomadas en la etapa primaria de producción"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Biólogo - Microbiólogo – Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": null,
+      "fecha": "02 de Julio",
+      "hora": "10:00 a 14:00",
+      "ars": 45000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 386,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/386",
+      "code": "CV47",
+      "codeSuffix": "OCT/27",
+      "title": "CV47 - Gestión de medios de cultivo en laboratorios de microbiología",
+      "objetivos": "Brindar conocimientos teóricos y prácticos necesarios para asegurar la adecuada gestión y control del desempeño de los medios de cultivo",
+      "temario": [
+        "Módulo 1 | Métodos para el ensayo de desempeño de medios de cultivo sólidos: Métodos para ensayos cuantitativos - Ensayo de medios de cultivo utilizados para filtración por membrana - Métodos para ensayos cualitativos - Cómo definir la vida útil de un medio de cultivo preparado",
+        "Módulo 2 | Métodos para el ensayo de desempeño de medios de cultivo líquidos - Método cuantitativo en tubo para el ensayo de desempeño de medios líquidos de enriquecimiento - Método cualitativo en tubo para el ensayo de desempeño de medios líquidos selectivos - Método cualitativo de tubo único para el ensayo de desempeño de medios líquidos - Cómo definir la vida útil de un medio de cultivo preparado",
+        "Módulo 3| Métodos para el ensayo de desempeño de diluyentes y medios de transporte: Método cuantitativo para el ensayo de diluyentes (procedimiento e interpretación de resultados)"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Biólogo - Microbiólogo – Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": null,
+      "fecha": "07 de Octubre",
+      "hora": "10:00 a 14:00",
+      "ars": 45000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 385,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/385",
+      "code": "CV55",
+      "codeSuffix": "ABR/27",
+      "title": "CV55 - Contenido e interpretación de certificados de calibración",
+      "objetivos": "Comprender los fundamentos de la metrología y desarrollar criterios para interpretar y evaluar certificados de calibración, considerando los resultados de medición, errores, correcciones, incertidumbre y trazabilidad metrológica, con el fin de seleccionar adecuadamente los servicios de calibración y asegurar la confiabilidad de las mediciones realizadas en el labora-torio",
+      "temario": [
+        "MÓDULO 1 | CONCEPTOS BÁSICOS DE METROLOGÍA: ¿Qué es medir? Magnitudes y unidades de medida - ¿Para qué medimos? Decisiones basadas en mediciones - Valor verdadero, exactitud, precisión y veracidad - ¿Calibrar, verificar o ajustar? - Incertidumbre de medición y CMC - Trazabilidad metrológica.",
+        "MÓDULO 2 | CERTIFICADOS DE CALIBRACIÓN: CONTENIDO E INTERPRETACIÓN: Información mínima que debe contener un certificado de calibración - Interpretación de resultados: errores, correcciones e incertidumbres - Ejemplos de certificados de calibración aptos y no aptos - Criterios para la selección y evaluación de proveedores de calibración - Laboratorios acreditados y reconocidos (OAA y otros organismos) - Análisis de certificados reales y detección de inconsistencias."
+      ],
+      "disertante": [
+        "Raúl Sejzer",
+        "ngeniero electrónico - Especialista en ISO/IEC 17025, ISO/IEC 17020 e ISO 9001, con trayectoria en laboratorios de ensayo y calibración, organismos de inspección y metrología legal. Experto técnico del Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "23 de Abril",
+      "hora": "14:00 a 18:00",
+      "ars": 49000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 384,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/384",
+      "code": "CV41",
+      "codeSuffix": "MAR/27",
+      "title": "CV41 - Gestión de Cepas de Referencia y Trabajo en el Laboratorio Microbiológico",
+      "objetivos": "Comprender los principios de trazabilidad metrológica aplicados a los ensayos microbiológicos y adquirir los conocimientos necesarios para la selección, manejo, conservación y control de cepas de referencia, de acuerdo con los requisitos de la norma ISO/IEC 17025, la norma ISO 11133 y las recomendaciones internacionales aplicables, con el fin de asegurar su viabilidad, estabilidad y uso adecuado en el laboratorio.",
+      "temario": [
+        "Trazabilidad Metrológica en Ensayos de Microbiología: ¿Qué es la trazabilidad metrológica? - Importancia en microbiología - Elementos clave de la trazabilidad - Normativas y estándar ISO/IEC 17025",
+        "Cepas de Referencia: Definición y características - Adquisición y fuentes - Mantenimiento y almacenamiento - Cómo interpretar un certificado de cepa de referencia.",
+        "Manejo de cepas de reserva de referencia, cultivos stock, cepas de trabajo: Según ISO 11133 - Según Eurachem - Accreditation for Microbiological Laboratories."
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Biólogo - Microbiólogo – Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": null,
+      "fecha": "22 de Marzo",
+      "hora": "10:00 a 14:00",
+      "ars": 48000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 383,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/383",
+      "code": "CV53",
+      "codeSuffix": "FEB/27",
+      "title": "CV53 - Equipos de laboratorio: selección de puntos de calibración y aplicación de correcciones.",
+      "objetivos": "Brindar criterios técnicos para seleccionar adecuadamente los puntos de calibración de los equipos de laboratorio, considerando su uso previsto. A la par se brindarán herramientas para interpretar y aplicar las correcciones indicadas en los certificados de calibración, contribuyendo a la confiabilidad de las mediciones y la validez de los resultados.",
+      "temario": [
+        "MODULO 1 | CALIBRACIÓN Y USO DE LOS RESULTADOS: Error, corrección e incertidumbre: diferencias y relación entre conceptos - ¿Qué significa que un equipo esté “apto para el uso”?",
+        "MÓDULO 2 | SELECCIÓN DE LOS PUNTOS DE CALIBRACIÓN: ¿Es necesario calibrar en todo el rango del equipo? - Criterios para definir la cantidad y ubicación de los puntos - Cuando puede ser suficiente un único punto de calibración - Cuando es conveniente utilizar varios puntos - Equipos utilizados en distintos rangos o para diferentes métodos - Ejemplos aplicados: balanzas, termómetros, estufas, pipetas/material volumétrico y otros equipos de uso habitual.",
+        "MÓDULO 3 | CORRECCIONES DERIVADAS DE LA CALIBRACIÓN: Diferencia entre error y corrección - Cómo identificar la corrección a partir del certificado - Criterios para decidir cuándo aplicar una corrección - ¿Qué hacer cuando el equipo se utiliza en valores ubicados entre dos puntos calibrados? - Interpolación: posibilidades y precauciones - Impacto de no aplicar una corrección significativa.",
+        "MÓDULO 4 | CRITERIOS DE ACEPTACIÓN Y DECISIONES SOBRE EL EQUIPO: ¿Qué hacer cuando un punto calibrado no cumple el criterio establecido? - Restricción del rango de uso - Registro de las decisiones tomadas - Casos prácticos."
+      ],
+      "disertante": [
+        "Raúl Sejzer",
+        "Ingeniero electrónico - Especialista en ISO/IEC 17025, ISO/IEC 17020 e ISO 9001, con trayectoria en laboratorios de ensayo y calibración, organismos de inspección y metrología legal. Experto técnico del Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "17 de Febrero",
+      "hora": "14:00 a 17:00",
+      "ars": 45000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 382,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/382",
+      "code": "CV61",
+      "codeSuffix": "OCT/27",
+      "title": "CV61 - Gestión y evaluación de proveedores según ISO/IEC 17025:2017",
+      "objetivos": "Brindar herramientas para establecer e implementar un proceso de selección, evaluación, seguimiento y reevaluación de proveedores de productos y servicios suministrados externamente, aplicando criterios proporcionales a su impacto sobre las actividades del laboratorio y el cumplimiento de los requisitos de ISO/IEC 17025:2017.",
+      "temario": [
+        "MÓDULO 1 | Requisitos de ISO/IEC 17025 aplicables a proveedores",
+        "MÓDULO 2 | Clasificación de proveedores y definición de criterios de selección",
+        "MÓDULO 3 | Evaluación y seguimiento del desempeño de proveedores",
+        "MÓDULO 4 | Control de productos y servicios suministrados externamente"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "25 de Octubre",
+      "hora": "13:00 a 17:00",
+      "ars": 48000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 381,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/381",
+      "code": "CV59",
+      "codeSuffix": "AGO/27",
+      "title": "CV59 - Integridad de datos en el laboratorio: aplicación práctica de ALCOA+ en laboratorios",
+      "objetivos": "Brindar las herramientas para asegurar que los datos generados en el laboratorio sean íntegros, confiables y trazables durante todo su ciclo de vida, independientemente del soporte utilizado.",
+      "temario": [
+        "MÓDULO 1 | Fundamentos de integridad de datos y marco normativo",
+        "MÓDULO 2 | Aplicación práctica de los principios ALCOA: Datos atribuibles, legibles, contemporáneos, originales y exactos.",
+        "MÓDULO 3 | Principios adicionales ALCOA+ y ALCOA++; Datos completos, consistentes, disponibles, trazables y duradero."
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "23 de Agosto",
+      "hora": "14:00 a 17:00",
+      "ars": 45000,
+      "usd": 40,
+      "gratuito": false
+    },
+    {
+      "id": 380,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/380",
+      "code": "CV58",
+      "codeSuffix": "JUL/27",
+      "title": "CV58 - Resultados anómalos en el laboratorio: identificación, evaluación y tratamiento",
+      "objetivos": "Brindar herramientas para identificar, evaluar y tratar resultados anómalos en las actividades del laboratorio, mediante la aplicación de métodos gráficos, pruebas estadísticas y criterios técnicos que permitan investigar posibles causas, interpretar resultados y tomar decisiones fundamentadas, asegurando la confiabilidad y trazabilidad de la información generada.",
+      "temario": [
+        "MÓDULO 1 | Fundamentos e identificación de resultados anómalos",
+        "MÓDULO 2 | Herramientas estadísticas para la detección de outliers",
+        "MÓDULO 3 | Investigación y tratamiento de resultados anómalos",
+        "MÓDULO 4 | Aplicación de outliers en las actividades del laboratorio"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "23 de Julio",
+      "hora": "13:00 a 17:00",
+      "ars": 65000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 379,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/379",
+      "code": "CV56",
+      "codeSuffix": "MAY/27",
+      "title": "CV56 - Gestión, planificación y organización de las actividades del laboratorio",
+      "objetivos": "Brindar herramientas prácticas para organizar, priorizar y planificar las actividades técnicas y de gestión del laboratorio, optimizando el uso del tiempo y los recursos disponibles, la distribución de responsabilidades y el seguimiento de tareas, con el propósito de integrar el Sistema de Gestión de la Calidad al trabajo cotidiano y asegurar su mantenimiento, eficacia y mejora continua.",
+      "temario": [
+        "MÓDULO 1 | Diagnóstico y organización de las actividades del laboratorio",
+        "MÓDULO 2 | Priorización de actividades y distribución de responsabilidades",
+        "MÓDULO 3 | Planificación, integración y mantenimiento del sistema de gestión",
+        "MÓDULO 4 | Seguimiento, control y mejora de la gestión del laboratorio"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "28 de Mayo",
+      "hora": "10:00 a 17:00",
+      "ars": 65000,
+      "usd": 50,
+      "gratuito": false
+    },
+    {
+      "id": 378,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/378",
+      "code": "CV54",
+      "codeSuffix": "MAR/27",
+      "title": "CV54 - Validación y control de planillas de cálculo en el marco de ISO/IEC 170252017",
+      "objetivos": "Brindar a los participantes los conocimientos y herramientas necesarios para evaluar, validar y controlar las planillas de cálculo utilizadas en los laboratorios, considerando su uso previsto, complejidad e impacto sobre los resultados, con el fin de asegurar la confiabilidad de los datos y el cumplimiento de los requisitos aplicables de la norma ISO/IEC 17025:2017.",
+      "temario": [
+        "MÓDULO 1 | Marco normativo y conceptos generales",
+        "MÓDULO 2 | Evaluación de la planilla y definición del enfoque de validación",
+        "MÓDULO 3 | Validación/verificación de la funcionalidad",
+        "MÓDULO 4 | Control de datos, registros e información en planillas de cálculo",
+        "MÓDULO 5 | Gestión del ciclo de vida de la planilla"
+      ],
+      "disertante": [
+        "Maria Laura Borzone",
+        "Farmacéutica con experiencia entre otros campos en Validación de Sistemas Computarizados (CSV), Integridad de Datos y transformación digital en organizaciones."
+      ],
+      "duracion": null,
+      "fecha": "18 de Marzo",
+      "hora": "14:00 a 17:00",
+      "ars": 45000,
+      "usd": 36,
+      "gratuito": false
+    },
+    {
+      "id": 362,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/362",
+      "code": "CV52",
+      "codeSuffix": "OCT/26",
+      "title": "CV52 - Metrología Legal e ISO/IEC 17025: conceptos esenciales para laboratorios de ensayo.",
+      "objetivos": "Comprender los fundamentos de la metrología y el funcionamiento de la metrología legal en Argentina, así como los requisitos y responsabilidades aplicables a los laboratorios de ensayo que intervienen en actividades reglamentadas.",
+      "temario": [
+        "MÓDULO 1 | Fundamentos de la metrología: Conceptos esenciales para comprender las mediciones, sus resultados y las diferencias entre calibración, verificación, ajuste y ensayo.",
+        "MÓDULO 2 | Introducción a la metrología legal: Finalidad, actividades, instrumentos reglamentados y actores que intervienen en el sistema argentino de metrología legal.",
+        "MÓDULO 3 | El nuevo esquema argentino y los laboratorios de ensayo: Participación de los laboratorios acreditados, alcance de sus actuaciones, responsabilidades, informes y aplicación de reglas de decisión.",
+        "MÓDULO 4 | Conceptos esenciales de ISO/IEC 17025: Principales requisitos para demostrar la competencia del laboratorio y asegurar la validez y trazabilidad de los resultados de ensayo.",
+        "MÓDULO 5 | Errores y no conformidades frecuentes: Análisis de fallas habituales relacionadas con el personal, los métodos, los equipos, los registros, los informes y la aplicación de requisitos reglamentarios."
+      ],
+      "disertante": [
+        "Téc. Germán Becker",
+        "Asesor independiente en Metrología y Metrología Legal – Ex INTI - Experto técnico en laboratorios de ensayo y laboratorios de calibración para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "23 de Octubre",
+      "hora": "09:00 a 12:00",
+      "ars": 42000,
+      "usd": 30,
+      "gratuito": false
+    },
+    {
+      "id": 361,
+      "modality": "LIVE",
+      "category": "Cursos online en vivo",
+      "url": "https://elevar.com.ar/formacion/cursos-online-en-vivo/361",
+      "code": "CV51",
+      "codeSuffix": "NOV/26",
+      "title": "CV51 - Formación de auditores internos para sistema de gestión de calidad según ISO/IEC 17025:2017 – basado en directrices ISO 19011:2026",
+      "objetivos": "Desarrollar auditorias internas en sistemas de gestión de calidad donde se aplica la norma ISO/IEC 17025:2017 en función de los conceptos descriptos en ISO 19011:2026",
+      "temario": [
+        "MÓDULO 1 | CONCEPTOS Y CLASIFICACIÓN",
+        "MÓDULO 2 | PROGRAMA DE AUDITORIA",
+        "MÓDULO 3 | REALIZACIÓN DE LA AUDITORIA",
+        "MÓDULO 4 | PERFIL DE AUDITOR",
+        "MÓDULO 5 | LISTAS DE VERIFICACIÓN",
+        "MÓDULO 6 | REDACCIÓN DE NO CONFORMIDADES",
+        "MÓDULO 7 | AUDITORIAS VIRTUALES",
+        "MÓDULO 8 | BONUS TRACK COMUNICACIÓN Y ORIENTACIONES"
+      ],
+      "disertante": [
+        "Lic. Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "03 de Noviembre",
+      "hora": "09:00 a 13:00",
+      "ars": 98000,
+      "usd": 80,
+      "gratuito": false
+    },
+    {
+      "id": 388,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/388",
+      "code": "W70",
+      "codeSuffix": null,
+      "title": "W70 - Revisión técnica de resultados y elaboración de informes de ensayo microbiológicos según ISO/IEC 17025",
+      "objetivos": "Comprender y aplicar los criterios técnicos y normativos para la revisión de resultados y elaboración de informes de ensayos microbiológicos, conforme a los requisitos de la norma ISO/IEC 17025, con el fin de asegurar la confiabilidad, trazabilidad y correcta comunicación de los resultados emitidos por el laboratorio.",
+      "temario": [
+        "Revisión técnica de resultados microbiológicos",
+        "Interpretación y expresión de resultados microbiológicos",
+        "Elaboración de informes de ensayos microbiológicos",
+        "Errores frecuentes y ejemplos prácticos"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Biólogo - Microbiólogo – Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": null,
+      "fecha": "05 de Agosto",
+      "hora": "10:00 a 12:00",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 377,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/377",
+      "code": "W74",
+      "codeSuffix": null,
+      "title": "W74 - Validación de kits comerciales en ensayos químicos",
+      "objetivos": "Brindar herramientas para evaluar la aptitud de los kits comerciales utilizados en ensayos químicos, estableciendo criterios para determinar cuándo corresponde realizar una verificación o validación del método y cómo seleccionar los parámetros y las evidencias necesarias para demostrar su adecuación al uso previsto, conforme a ISO/IEC 17025:2017",
+      "temario": [
+        "Kits comerciales y requisitos normativos",
+        "Evaluación de la información proporcionada por el fabricante",
+        "Diseño de estudios de validación",
+        "Evaluación de resultados y decisiones"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "10 de Diciembre",
+      "hora": "10:00 a 11:00",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 376,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/376",
+      "code": "W73",
+      "codeSuffix": null,
+      "title": "W73 - No conformidades encubiertas en mejoras",
+      "objetivos": "Brindar herramientas para identificar situaciones en las que los incumplimientos de requisitos son gestionados incorrectamente como oportunidades de mejora, estableciendo criterios para diferenciar no conformidades, correcciones y acciones de mejora, conforme a los requisitos de ISO/IEC 17025:2017.",
+      "temario": [
+        "Repaso de conceptos relacionados a no conformidad y mejora",
+        "¿Cuándo una mejora encubre una no conformidad?",
+        "Criterios para diferenciar mejoras y no conformidades",
+        "Casos prácticos en laboratorios"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "12 de Noviembre",
+      "hora": "10:00 a 12:00",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 375,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/375",
+      "code": "W72",
+      "codeSuffix": null,
+      "title": "W72 - Técnicas de entrevista para auditores de laboratorio",
+      "objetivos": "Brindar herramientas para planificar y realizar entrevistas eficaces durante las auditorías de laboratorio, aplicando técnicas de comunicación, formulación de preguntas y escucha activa que permitan obtener información relevante, verificar evidencias y evaluar el cumplimiento de los requisitos de ISO/IEC 17025:2017",
+      "temario": [
+        "La entrevista como herramienta de auditoría",
+        "Preparación y planificación de las entrevistas",
+        "Técnicas para formular preguntas eficaces",
+        "Escucha activa y manejo de situaciones durante la entrevista",
+        "De las respuestas a las evidencias de auditoría"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "22 de Octubre",
+      "hora": "10:00 a 12:00",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 374,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/374",
+      "code": "W71",
+      "codeSuffix": null,
+      "title": "W71 - Cómo seleccionar un servicio de calibración",
+      "objetivos": "Brindar herramientas para seleccionar servicios de calibración adecuados a las necesidades del laboratorio, considerando los requisitos metrológicos de los equipos, la competencia del proveedor, la trazabilidad metrológica y la incertidumbre de medición, conforme a los requisitos aplicables de ISO/IEC 17025:2017",
+      "temario": [
+        "Requisitos para la selección de servicios de calibración",
+        "Definición de las necesidades de calibración",
+        "Evaluación de la capacidad del proveedor",
+        "Selección del servicio y verificación de lo contratado"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "13 de Septiembre",
+      "hora": "10:00 a 11:00",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 373,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/373",
+      "code": "W69",
+      "codeSuffix": null,
+      "title": "W69 - Redondeo, peso constante y cifras significativas",
+      "objetivos": "Brindar herramientas para aplicar correctamente los criterios de redondeo, cifras significativas y peso constante en las actividades de laboratorio, comprendiendo su influencia en los cálculos, el registro de datos, la expresión de resultados y la evaluación del cumplimiento de especificaciones.",
+      "temario": [
+        "Conceptos fundamentales y su importancia en el laboratorio",
+        "Cifras significativas y expresión de resultados",
+        "Reglas y criterios de redondeo",
+        "Peso constante en ensayos gravimétricos",
+        "Aplicación práctica y conclusiones"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "20 de Agosto",
+      "hora": "10:00 a 11:30",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 372,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/372",
+      "code": "W68",
+      "codeSuffix": null,
+      "title": "W68 - Cómo evaluar la eficacia de una acción correctiva",
+      "objetivos": "Brindar herramientas para planificar y realizar la evaluación de la eficacia de las acciones correctivas, estableciendo criterios, plazos y evidencias que permitan determinar si las acciones implementadas eliminaron las causas de las no conformidades y contribuyeron a prevenir su recurrencia, conforme a los requisitos de ISO/IEC 17025:2017.",
+      "temario": [
+        "Conceptos fundamentales y requisitos normativos",
+        "Planificación de la evaluación de eficacia",
+        "Métodos y herramientas para evaluar la eficacia",
+        "Interpretación de resultados y toma de decisiones"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "12 de Julio",
+      "hora": "10:00 a 11:30",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 371,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/371",
+      "code": "W67",
+      "codeSuffix": null,
+      "title": "W67 - Límites de control y de especificación en gráficos de control",
+      "objetivos": "Brindar herramientas para comprender, establecer e interpretar los límites de control y de especificación utilizados en los gráficos de control, identificando sus diferencias y su aplicación en el seguimiento del desempeño de los métodos de ensayo y el aseguramiento de la validez de los resultados.",
+      "temario": [
+        "Conceptos fundamentales",
+        "Establecimiento de los límites",
+        "Establecimiento de las especificaciones",
+        "Interpretación de gráficos de control"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "28 de Junio",
+      "hora": "10:00 a 11:30",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 370,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/370",
+      "code": "W66",
+      "codeSuffix": null,
+      "title": "W66 - Gestión de quejas en el laboratorio",
+      "objetivos": "Brindar herramientas para implementar y mantener un proceso eficaz de gestión de quejas en el laboratorio, desde su recepción hasta su resolución, estableciendo criterios para su evaluación, investigación, tratamiento y seguimiento, conforme a los requisitos de ISO/IEC 17025:2017.",
+      "temario": [
+        "Conceptos fundamentales y requisitos normativos",
+        "Recepción, registro y evaluación de pertinencia de las quejas",
+        "Investigación y tratamiento de quejas",
+        "Comunicación, resolución y cierre de quejas",
+        "Seguimiento y mejora del proceso de gestión de quejas",
+        "Quejas y No Conformidades"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "11 de Junio",
+      "hora": "09:00 a 11:30",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 369,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/369",
+      "code": "W65",
+      "codeSuffix": null,
+      "title": "W65 - Estrategias para desarrollar, evaluar y mantener la competencia del personal.",
+      "objetivos": "Brindar herramientas para gestionar la competencia del personal de laboratorio, desde la definición de los requisitos hasta la evaluación, supervisión, autorización y seguimiento, estableciendo criterios y evidencias que permitan demostrar el cumplimiento de ISO/IEC 17025:2017.",
+      "temario": [
+        "Competencia del personal: conceptos y requisitos normativos",
+        "Determinación de los requisitos de competencia",
+        "Formación y evaluación de la competencia",
+        "Supervisión y autorización del personal",
+        "Seguimiento y mantenimiento de la competencia"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "14 de Mayo",
+      "hora": "10:00 a 12:00",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 368,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/368",
+      "code": "W64",
+      "codeSuffix": null,
+      "title": "W64 - Cómo auditar un laboratorio con poca documentación",
+      "objetivos": "Brindar herramientas para planificar y realizar auditorías internas en laboratorios con sistemas de gestión poco documentados, identificando evidencias de cumplimiento mediante entrevistas, observaciones y revisión de registros, sin exigir documentación que no sea requerida por los criterios de auditoría.",
+      "temario": [
+        "Documentación y requisitos de ISO/IEC 17025",
+        "Cómo auditar cuando existen pocos documentos",
+        "Evaluación del cumplimiento y formulación de hallazgos"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "16 de Abril",
+      "hora": "10:00 a 11:00",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 367,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/367",
+      "code": "W62",
+      "codeSuffix": null,
+      "title": "W62 - Criterios para clasificar no conformidades",
+      "objetivos": "rindar herramientas para evaluar y clasificar no conformidades detectadas durante las auditorías, considerando la naturaleza del incumplimiento, su alcance, recurrencia e impacto sobre el sistema de gestión y la validez de los resultados del laboratorio.",
+      "temario": [
+        "Criterios para evaluar la gravedad de una no conformidad",
+        "Clasificación de las no conformidades",
+        "Aplicación práctica en laboratorios"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "29 de Marzo",
+      "hora": "10:00 a 11:00",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 366,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/366",
+      "code": "W61",
+      "codeSuffix": null,
+      "title": "W61 - ¿Cómo saber si el sistema de gestión realmente funciona?",
+      "objetivos": "Brindar herramientas para evaluar la eficacia del sistema de gestión de un laboratorio, identificando evidencias que permitan determinar si los procesos funcionan según lo previsto, si se alcanzan los objetivos establecidos y si el sistema contribuye a la mejora del desempeño.",
+      "temario": [
+        "Cumplimiento y eficacia: ¿son lo mismo?",
+        "¿Qué evidencias permiten evaluar si el sistema funciona?",
+        "Cómo interpretar la información para evaluar la eficacia",
+        "De la evaluación a la mejora del sistema de gestión"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "19 de Febrero",
+      "hora": "10:00 a 11:00",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 365,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/365",
+      "code": "W60",
+      "codeSuffix": null,
+      "title": "W60 - Prácticas para optimizar la revisión por la dirección",
+      "objetivos": "Brindar herramientas que permitan hacer de la revisión por la dirección una instancia para recopilar información útil y tomar decisiones estratégicas.",
+      "temario": [
+        "Concepto de Revisión por la dirección - Integrantes - Objetivo - Optimización de las entradas de la revisión por la dirección - Optimización de las salidas de la revisión por la dirección"
+      ],
+      "disertante": [
+        "Laura Delissi",
+        "Lic. en Bromatología - Directora ELEVAR – Asesora en Calidad de laboratorios e implementación ISO/IEC 17025 – Experta técnica para el Organismo Argentino de Acreditación (OAA)"
+      ],
+      "duracion": null,
+      "fecha": "18 de Diciembre",
+      "hora": "10:00 a 12:00",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 364,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/364",
+      "code": "W59",
+      "codeSuffix": null,
+      "title": "W59 - ISO/IEC 17020:2026. Principales cambios y estrategias para su implementación",
+      "objetivos": "Compartir los principales cambios de la norma ISO/IEC 17020:2026 y definir su interpretación.",
+      "temario": [
+        "Cambios en la estructura del documento",
+        "Cambios de terminología y definiciones",
+        "Categorización de la independencia: Tipo A y Tipo no-A",
+        "Cambios relevantes en los requisitos: Control de datos e información - Riesgos y oportunidades - Organización - Recursos - Procesos de inspección - Sistema de gestión"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Biólogo - Microbiólogo – Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": null,
+      "fecha": "20 de Noviembre",
+      "hora": "15:00 a 17:00",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    },
+    {
+      "id": 363,
+      "modality": "WEBINAR",
+      "category": "Webinars gratuitos",
+      "url": "https://elevar.com.ar/formacion/webinars/363",
+      "code": "W58",
+      "codeSuffix": null,
+      "title": "W58 - Cálculo y expresión de resultados en laboratorios de microbiología",
+      "objetivos": "Difundir criterios técnicos para el cálculo e interpretación de resultados microbiológicos por recuento en placa y por Número Más Probable — NMP, considerando las reglas generales de ISO 7218 para el tratamiento de resultados microbiológicos, el uso de calculadoras o herramientas de cálculo basadas en dichos criterios.",
+      "temario": [
+        "Contexto técnico basado en guías de microbiología y el estándar ISO/IEC 17025",
+        "Preparación de muestra, suspensión inicial y diluciones",
+        "Selección de datos válidos para el cálculo: placas y tubos.",
+        "Uso de calculadoras basadas en ISO 7218 para UFC y NMP",
+        "Expresión, redondeo e interpretación del resultado final"
+      ],
+      "disertante": [
+        "Diego Uribe",
+        "Biólogo - Microbiólogo – Especialista en Sistemas de gestión ISO/IEC 17025"
+      ],
+      "duracion": null,
+      "fecha": "06 de Noviembre",
+      "hora": "11:00 a 13:00",
+      "ars": null,
+      "usd": null,
+      "gratuito": true
+    }
+  ]
+}

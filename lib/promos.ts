@@ -8,92 +8,27 @@ import type {
 import { COURSES } from "@/lib/mock-catalog";
 
 /**
- * Promociones semilla del mockup. En producción vienen del backend y se editan
- * desde el panel (/admin/promociones); acá viven en localStorage.
+ * Promociones semilla. Son las reales de ELEVAR, publicadas en cada curso de
+ * elevar.com.ar (relevadas el 2026-10-19; Mateo: "sí" a usarlas en el carrito).
+ * En producción vienen del backend y se editan desde el panel (/admin/promociones).
+ *
+ * La segunda promoción real ("Descuentos medios de pago: realizando el pago desde el
+ * exterior mediante Western Union se aplica descuento del 20%") no va acá: ese pago
+ * se coordina por fuera de la web, así que no puede descontarse en el carrito. Se
+ * muestra como texto en la ficha y en el PDF (lib/formacion-templates.ts).
  */
 export const PROMOS_SEED: Promo[] = [
   {
-    id: "promo-equipo",
-    code: "EQUIPO",
-    title: "Descuento por equipo de trabajo",
-    description:
-      "Inscribí 3 o más personas en la misma compra y el 15% se descuenta solo en el carrito.",
-    kind: "PERCENT",
-    value: 15,
-    trigger: "AUTO",
-    scope: "ALL",
-    minQuantity: 3,
-    minAmount: null,
-    startsAt: null,
-    endsAt: null,
-    active: true,
-    featured: true,
-  },
-  {
-    id: "promo-combo",
-    code: "COMBO2",
-    title: "Combiná dos capacitaciones",
-    description:
-      "Llevando dos cursos distintos en la misma compra, el segundo tiene 10% de descuento.",
+    id: "promo-grupo",
+    code: "GRUPO",
+    title: "Promoción grupo de alumnos",
+    description: "Brindamos descuento de 10% para grupos a partir de 2 personas.",
     kind: "PERCENT",
     value: 10,
     trigger: "AUTO",
     scope: "ALL",
     minQuantity: 2,
     minAmount: null,
-    startsAt: null,
-    endsAt: null,
-    active: true,
-    featured: true,
-  },
-  {
-    id: "promo-async20",
-    code: "ASINCRONICO20",
-    title: "20% en cursos asincrónicos",
-    description:
-      "Cupón de temporada para cursos asincrónicos: cargalo en el carrito antes de pagar.",
-    kind: "PERCENT",
-    value: 20,
-    trigger: "COUPON",
-    scope: "MODALITY",
-    modality: "ASYNC",
-    minQuantity: null,
-    minAmount: null,
-    startsAt: null,
-    endsAt: null,
-    active: true,
-    featured: true,
-  },
-  {
-    id: "promo-micro",
-    code: "MICRO10",
-    title: "10% en microbiología",
-    description:
-      "Descuento sobre toda la línea de cursos del laboratorio de microbiología.",
-    kind: "PERCENT",
-    value: 10,
-    trigger: "COUPON",
-    scope: "CATEGORY",
-    categorySlug: "microbiologia",
-    minQuantity: null,
-    minAmount: null,
-    startsAt: null,
-    endsAt: null,
-    active: true,
-    featured: false,
-  },
-  {
-    id: "promo-bienvenida",
-    code: "BIENVENIDA",
-    title: "$10.000 en tu primera compra",
-    description:
-      "Para quienes se capacitan por primera vez con Elevar, en compras desde $60.000.",
-    kind: "AMOUNT",
-    value: 10000,
-    trigger: "COUPON",
-    scope: "ALL",
-    minQuantity: null,
-    minAmount: 60000,
     startsAt: null,
     endsAt: null,
     active: true,

@@ -29,7 +29,22 @@ const COURSES_SEED: Course[] = COURSES.map((c) => ({ ...c, is_published: true })
 
 // ── Cursos ────────────────────────────────────────────────────────────────────
 
+// Cambia cuando cambia el catálogo base: los navegadores que guardaron el anterior
+// (los 20 cursos de muestra) se vuelven a sembrar con los 78 reales.
+const COURSES_SEED_VERSION = "2026-10-19-cursos-reales";
+const SEED_VERSION_KEY = "elevar_db_courses_seed";
+
 export function listCourses(): Course[] {
+  if (typeof window !== "undefined") {
+    try {
+      if (localStorage.getItem(SEED_VERSION_KEY) !== COURSES_SEED_VERSION) {
+        writeCollection("courses", COURSES_SEED);
+        localStorage.setItem(SEED_VERSION_KEY, COURSES_SEED_VERSION);
+      }
+    } catch {
+      /* sin localStorage: se usa la semilla */
+    }
+  }
   return readCollection<Course>("courses", COURSES_SEED);
 }
 
@@ -120,7 +135,22 @@ export function emptyPost(): FullPost {
 
 // ── Promociones ───────────────────────────────────────────────────────────────
 
+// Igual que los cursos: los navegadores con las promociones de muestra guardadas
+// (15 % equipo, 10 % combo, cupones) se vuelven a sembrar con la real.
+const PROMOS_SEED_VERSION = "2026-10-19-promos-reales";
+const PROMOS_VERSION_KEY = "elevar_db_promos_seed";
+
 export function listPromos(): Promo[] {
+  if (typeof window !== "undefined") {
+    try {
+      if (localStorage.getItem(PROMOS_VERSION_KEY) !== PROMOS_SEED_VERSION) {
+        writeCollection("promos", PROMOS_SEED);
+        localStorage.setItem(PROMOS_VERSION_KEY, PROMOS_SEED_VERSION);
+      }
+    } catch {
+      /* sin localStorage: se usa la semilla */
+    }
+  }
   return readCollection<Promo>("promos", PROMOS_SEED);
 }
 
