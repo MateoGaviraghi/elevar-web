@@ -1,4 +1,6 @@
 import { CONTACT } from "@/lib/contact";
+import { MODALITIES } from "@/lib/formacion-modalities";
+import { SERVICIOS_DATA } from "@/lib/servicios";
 
 // Cada servicio tiene su propia página de detalle.
 export const SERVICIOS = [
@@ -17,6 +19,30 @@ export const FORMACION = [
   { label: "Talleres", href: "/formacion/talleres" },
   { label: "Promociones", href: "/promociones" },
 ];
+
+/** Tarjeta del menú desplegable: pictograma + título corto + bajada de Laura. */
+export interface NavCard {
+  label: string;
+  href: string;
+  pictogram: string;
+  desc: string;
+}
+
+const serviceById = new Map(SERVICIOS_DATA.map((s) => [s.id, s]));
+
+/** "Formación" en el menú: las 4 modalidades (títulos y bajadas de `formacion-modalities`). */
+export const NAV_FORMACION_CARDS: NavCard[] = MODALITIES.map((m) => ({
+  label: m.title,
+  href: `/formacion/${m.slug}`,
+  pictogram: m.img,
+  desc: m.desc,
+}));
+
+/** "Servicios" en el menú: los títulos cortos de `SERVICIOS` con el pictograma y la bajada de cada página. */
+export const NAV_SERVICIOS_CARDS: NavCard[] = SERVICIOS.map((s) => {
+  const data = serviceById.get(s.href.replace("/servicios/", ""));
+  return { ...s, pictogram: data?.pictogram ?? "", desc: data?.desc ?? "" };
+});
 
 export const PLATAFORMA_URL = "https://aulavirtual.elevar.com.ar";
 
