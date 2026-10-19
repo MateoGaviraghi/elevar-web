@@ -11,7 +11,9 @@ const STATS = [
 /** Banda de presentación con espacio para video (mockup) — refuerza lo visual del home. */
 export function ShowcaseSection() {
   return (
-    <section className="bg-ink-900 py-14 text-neutral-0 sm:py-20 md:py-28">
+    // overflow-x-clip: el video entra desde la derecha (Reveal "right", +24 px) y,
+    // antes de revelarse, ensanchaba la página en el celular (scroll de costado).
+    <section className="overflow-x-clip bg-ink-900 py-14 text-neutral-0 sm:py-20 md:py-28">
       <Container>
         <div className="grid items-center gap-10 sm:gap-12 lg:grid-cols-2 lg:gap-16">
           <Reveal as="div" variant="left">
