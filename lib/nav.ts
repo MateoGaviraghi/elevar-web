@@ -28,4 +28,4 @@ export const WHATSAPP_URL = CONTACT.whatsappUrl;
  * Elevar; se configura con NEXT_PUBLIC_WHATSAPP_COMUNIDAD_URL.
  */
 export const COMUNIDAD_WHATSAPP_URL =
-  process.env.NEXT_PUBLIC_WHATSAPP_COMUNIDAD_URL ?? "https://chat.whatsapp.com/elevar-comunidad";
+  process.env.NEXT_PUBLIC_WHATSAPP_COMUNIDAD_URL ?? "https://chat.whatsapp.com/DvRcHiEneWF6y8UbiQ9W3H";
