@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { CartItem, Course, CourseSession, Promo } from "@/types";
-import { addItem, openCartDrawer } from "@/lib/cart";
+import { addItem } from "@/lib/cart";
+import { flyToCart } from "@/components/cart/fly-to-cart";
 import { getPromos } from "@/lib/api";
 import { promoBadge } from "@/lib/promos";
 import { buttonClasses } from "@/components/ui/button";
@@ -65,7 +66,8 @@ export function AddToCartPanel({ course }: { course: Course }) {
 
   const lineTotal = parseFloat(course.price) * quantity;
 
-  function handleAdd() {
+  function handleAdd(e: React.MouseEvent<HTMLButtonElement>) {
+    const from = e.currentTarget;
     if (!canAdd || status !== "idle") return;
     const item: CartItem = {
       courseId: course.id,
@@ -83,16 +85,18 @@ export function AddToCartPanel({ course }: { course: Course }) {
           ? Array.from({ length: quantity }, () => ({ name: "", email: "" }))
           : undefined,
     };
-    const reduce = prefersReducedMotion();
+    // Vuela desde el botón a la bolsa del header y se agrega al llegar; el carrito queda cerrado.
     setStatus("adding");
-    timers.current.push(
-      window.setTimeout(() => {
+    flyToCart({
+      from,
+      code: course.code,
+      modality: course.modality,
+      onLand: () => {
         addItem(item);
         setStatus("added");
-        openCartDrawer();
-      }, reduce ? 0 : 450),
-      window.setTimeout(() => setStatus("idle"), reduce ? 2000 : 2800)
-    );
+        timers.current.push(window.setTimeout(() => setStatus("idle"), 2400));
+      },
+    });
   }
 
   // El tilde se dibuja al confirmar.

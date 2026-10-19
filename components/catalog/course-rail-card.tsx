@@ -41,7 +41,7 @@ export const CourseRailCard = forwardRef<
         className="flex flex-1 flex-col text-left focus-visible:outline-none"
         aria-label={`Ver detalle: ${course.title}`}
       >
-        <div className={`relative basis-1/2 shrink-0 overflow-hidden bg-gradient-to-br ${RAIL_GRADIENTS[course.modality]}`}>
+        <div className={`rail-cover relative basis-1/2 shrink-0 overflow-hidden bg-gradient-to-br ${RAIL_GRADIENTS[course.modality]}`}>
           <svg
             className="absolute -right-10 -top-10 h-56 w-56 text-neutral-0/12 transition-transform duration-700 ease-out group-hover:scale-110"
             viewBox="0 0 200 200"
@@ -71,7 +71,10 @@ export const CourseRailCard = forwardRef<
       {addable && (
         <button
           type="button"
-          onClick={() => quickAddCourse(course)}
+          onClick={(e) => {
+            const card = e.currentTarget.closest("article");
+            quickAddCourse(course, card?.querySelector<HTMLElement>(".rail-cover") ?? null, card);
+          }}
           aria-label={`Agregar al carrito: ${course.title}`}
           className="absolute bottom-6 right-6 grid h-10 w-10 place-items-center border border-ink-900 bg-neutral-0 text-ink-900 transition-colors duration-300 hover:bg-ink-900 hover:text-neutral-0"
         >

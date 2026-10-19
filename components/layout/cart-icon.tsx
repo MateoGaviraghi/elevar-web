@@ -36,11 +36,13 @@ export function CartIcon() {
     const grew = count > prev.current;
     prev.current = count;
     if (!grew || prefersReducedMotion()) return;
+    // Llega el curso volando (components/cart/fly-to-cart.ts): la bolsa se hunde
+    // y rebota, y el número salta con un rebote elástico (0,8 s, como la referencia).
     if (badge.current) {
-      gsap.fromTo(badge.current, { scale: 1.5 }, { scale: 1, duration: 0.5, ease: "power3.out" });
+      gsap.fromTo(badge.current, { scale: 0.2 }, { scale: 1, duration: 0.8, ease: "elastic.out(1.3, 0.9)" });
     }
     if (bag.current) {
-      gsap.fromTo(bag.current, { y: -3 }, { y: 0, duration: 0.5, ease: "power3.out" });
+      gsap.fromTo(bag.current, { y: 3, scale: 0.88 }, { y: 0, scale: 1, duration: 0.8, ease: "elastic.out(1.2, 0.6)" });
     }
   }, [count]);
 
@@ -53,6 +55,7 @@ export function CartIcon() {
       }}
       aria-label={`Carrito${count > 0 ? ` — ${count} item${count !== 1 ? "s" : ""}` : ""}`}
       aria-haspopup="dialog"
+      data-cart-target
       className="relative inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-ink-800 hover:text-brand-500 transition-colors"
     >
       <svg

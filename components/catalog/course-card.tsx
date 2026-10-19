@@ -154,7 +154,7 @@ export function CourseCard({ course, index }: CourseCardProps) {
         <div className="cr-more pointer-events-auto relative z-10 mt-5 flex items-center justify-between gap-4 border-t border-neutral-200 pt-4">
           <span className="font-display text-xl font-semibold text-ink-900">{free ? "Gratis" : formatARS(course.price)}</span>
           {canQuickAdd(course) ? (
-            <button type="button" onClick={() => quickAddCourse(course)} className={btn}>
+            <button type="button" onClick={() => quickAddCourse(course, root.current?.querySelector<HTMLElement>(".cr-block") ?? null, root.current)} className={btn}>
               <span aria-hidden className="text-lg leading-none">+</span>
               Agregar al carrito
             </button>

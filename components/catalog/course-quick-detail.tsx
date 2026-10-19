@@ -72,9 +72,10 @@ export function CourseQuickDetail({ course, promos, onClose }: { course: Course;
         {canQuickAdd(course) ? (
           <button
             type="button"
-            onClick={() => {
+            onClick={(e) => {
+              const from = e.currentTarget;
+              quickAddCourse(course, from);
               onClose();
-              quickAddCourse(course);
             }}
             className={buttonClasses({ variant: "primary", size: "md", className: "flex-1 whitespace-nowrap !px-4" })}
           >

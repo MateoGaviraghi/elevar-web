@@ -46,6 +46,7 @@ export function CartDrawer() {
   const root = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   const overlay = useRef<HTMLDivElement>(null);
+  const layer = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
@@ -107,6 +108,10 @@ export function CartDrawer() {
     { scope: root }
   );
 
+  // Entrada con dos capas (referencia: Codrops · Shopping Cart Animation, elegida
+  // por Mateo, 2026-10-19): primero una franja naranja y 0,1 s después el panel
+  // blanco, 1,4 s expo.inOut; los cursos llegan de a uno (cada 0,1 s, 1 s) y el
+  // total crece de 0,9 a 1. Al cerrar, panel y franja salen en 1,0 s.
   const animateOpen = contextSafe(() => {
     const reduce = prefersReducedMotion();
     const desktop = window.matchMedia(DESKTOP).matches;
@@ -121,28 +126,39 @@ export function CartDrawer() {
       .timeline()
       .set(root.current, { autoAlpha: 1 })
       .set(panel.current, { ...from, y: 0 })
-      .fromTo(overlay.current, { opacity: 0 }, { opacity: 1, duration: reduce ? 0.2 : 0.6, ease: "power2.out" }, 0)
-      .to(panel.current, { xPercent: 0, yPercent: 0, duration: reduce ? 0.01 : 0.9, ease: "expo.out" }, 0)
+      // En el teléfono la franja toma la altura real del panel (que crece con el contenido).
+      .set(layer.current, { ...from, y: 0, autoAlpha: reduce ? 0 : 1, height: desktop ? "" : panel.current?.offsetHeight })
+      .fromTo(overlay.current, { opacity: 0 }, { opacity: 1, duration: reduce ? 0.2 : 0.8, ease: "power2.out" }, 0)
+      .to(layer.current, { xPercent: 0, yPercent: 0, duration: reduce ? 0.01 : 1.4, ease: "expo.inOut" }, 0)
+      .to(panel.current, { xPercent: 0, yPercent: 0, duration: reduce ? 0.01 : 1.4, ease: "expo.inOut" }, reduce ? 0 : 0.1)
+      // La franja queda tapada: se apaga para que no asome al arrastrar el panel.
+      .set(layer.current, { autoAlpha: 0 })
       .fromTo(
         ".cd-row",
-        { opacity: 0, y: reduce ? 0 : 16 },
-        { opacity: 1, y: 0, duration: reduce ? 0.2 : 0.7, ease: "power3.out", stagger: reduce ? 0 : 0.07 },
-        reduce ? 0 : 0.25
+        desktop ? { opacity: 0, x: reduce ? 0 : 30, y: 0 } : { opacity: 0, x: 0, y: reduce ? 0 : 16 },
+        { opacity: 1, x: 0, y: 0, duration: reduce ? 0.2 : 1, ease: "power2.out", stagger: reduce ? 0 : 0.1 },
+        reduce ? 0 : 0.75
+      )
+      .fromTo(
+        ".cd-total",
+        { opacity: 0, scale: reduce ? 1 : 0.9 },
+        { opacity: 1, scale: 1, duration: reduce ? 0.2 : 1, ease: "power2.out" },
+        reduce ? 0 : 0.95
       );
   });
 
   const animateClose = contextSafe(() => {
     const reduce = prefersReducedMotion();
     const desktop = window.matchMedia(DESKTOP).matches;
+    const out = desktop ? { xPercent: 100 } : { yPercent: 100 };
     tl.current?.kill();
     tl.current = gsap
       .timeline()
-      .to(panel.current, {
-        ...(desktop ? { xPercent: 100 } : { yPercent: 100, y: 0 }),
-        duration: reduce ? 0.01 : 0.6,
-        ease: "power3.inOut",
-      }, reduce ? 0.2 : 0)
-      .to(overlay.current, { opacity: 0, duration: reduce ? 0.2 : 0.5, ease: "power2.inOut" }, reduce ? 0 : 0.1)
+      // Si el panel se cerró arrastrándolo, la franja arranca a la misma altura.
+      .set(layer.current, { xPercent: 0, yPercent: 0, y: Number(gsap.getProperty(panel.current, "y")) || 0, autoAlpha: reduce ? 0 : 1, height: desktop ? "" : panel.current?.offsetHeight })
+      .to(panel.current, { ...out, y: 0, duration: reduce ? 0.01 : 1.0, ease: "expo.inOut" }, reduce ? 0.2 : 0)
+      .to(layer.current, { ...out, y: 0, duration: reduce ? 0.01 : 1.0, ease: "expo.inOut" }, reduce ? 0.2 : 0.1)
+      .to(overlay.current, { opacity: 0, duration: reduce ? 0.2 : 0.7, ease: "power2.inOut" }, reduce ? 0 : 0.35)
       .set(root.current, { autoAlpha: 0 });
   });
 
@@ -243,6 +259,13 @@ export function CartDrawer() {
         onClick={() => setOpen(false)}
         className="absolute inset-0 bg-ink-900/50"
         aria-hidden
+      />
+
+      {/* Franja naranja que entra antes que el panel (misma forma y lugar). */}
+      <div
+        ref={layer}
+        aria-hidden
+        className="invisible absolute inset-x-0 bottom-0 h-[88dvh] bg-brand-500 sm:inset-y-0 sm:left-auto sm:right-0 sm:h-auto sm:w-[440px]"
       />
 
       <div
@@ -355,7 +378,7 @@ export function CartDrawer() {
             </ul>
 
             {/* Totales */}
-            <div className="cd-row shrink-0 border-t border-neutral-200 px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-5">
+            <div className="cd-total shrink-0 border-t border-neutral-200 px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-5">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-neutral-500">Subtotal</span>
                 <span className="font-medium text-ink-900">{pricing ? formatARS(pricing.subtotal) : "…"}</span>

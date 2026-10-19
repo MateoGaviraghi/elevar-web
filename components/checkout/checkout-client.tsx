@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import type {
   Attendee,
   CartItem,
@@ -15,6 +14,7 @@ import { validateCart, checkout, simulatePayment, ApiError } from "@/lib/api";
 import { arsToUsd, formatARS, formatUSD, USD_RATE } from "@/lib/formatters";
 import { CONTACT } from "@/lib/contact";
 import { ModalityThumb } from "@/components/catalog/modality-thumb";
+import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
 import { MercadoPagoLogo, CardBrands, MP_BLUE, MP_BLUE_DARK } from "./mercado-pago";
 import { PayPalLogo, PAYPAL_BLUE, PAYPAL_YELLOW, PAYPAL_YELLOW_DARK } from "./paypal";
 
@@ -49,6 +49,9 @@ export function CheckoutClient() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [processing, setProcessing] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const page = useRef<HTMLDivElement>(null);
+  const summaryWrap = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const cart = getCart();
@@ -85,6 +88,28 @@ export function CheckoutClient() {
   const isFreeOrder = total != null && parseFloat(total) === 0;
   const totalUsd = total != null ? arsToUsd(total) : null;
   const multiLines = items.filter((i) => i.quantity > 1);
+  const payStep = multiLines.length > 0 ? 4 : 3;
+
+  // Entrada (referencia: checkout de Glossier/Shopify, elegida por Mateo, 2026-10-19):
+  // los pasos numerados suben escalonados (0,7 s cada 0,08 s) y el resumen detrás.
+  useGSAP(
+    () => {
+      if (!hydrated || items.length === 0 || prefersReducedMotion()) return;
+      gsap.from(".co-sec", { autoAlpha: 0, y: 16, duration: 0.7, ease: "expo.out", stagger: 0.08 });
+      gsap.from(".co-summary", { autoAlpha: 0, y: 16, duration: 0.8, ease: "expo.out", delay: 0.15 });
+    },
+    { scope: page, dependencies: [hydrated] }
+  );
+
+  // Resumen plegable del teléfono (0,5 s).
+  useEffect(() => {
+    if (!summaryWrap.current) return;
+    gsap.to(summaryWrap.current, {
+      height: summaryOpen ? "auto" : 0,
+      duration: prefersReducedMotion() ? 0 : 0.5,
+      ease: "expo.out",
+    });
+  }, [summaryOpen]);
 
   function set<K extends keyof typeof buyer>(k: K, v: string) {
     setBuyer((b) => ({ ...b, [k]: v }));
@@ -163,6 +188,15 @@ export function CheckoutClient() {
     }
   }
 
+  // ── Cargando: cajas grises en lugar de una página vacía ──────────────────────
+  if (!hydrated) {
+    return (
+      <CheckoutShell>
+        <CheckoutSkeleton />
+      </CheckoutShell>
+    );
+  }
+
   // ── Carrito vacío ───────────────────────────────────────────────────────────
   if (hydrated && items.length === 0) {
     return (
@@ -180,19 +214,139 @@ export function CheckoutClient() {
     );
   }
 
+  const totalLabel = total == null ? <Skel className="h-6 w-24" /> : isFreeOrder ? "Gratis" : formatARS(total);
+
+  const summaryCard = (
+    <div className="overflow-hidden border border-neutral-200 bg-neutral-0">
+      <div className="flex items-center gap-3 bg-ink-900 px-6 py-4">
+        <span className="h-px w-6 bg-brand-500" aria-hidden />
+        <h2 className="font-display text-sm font-semibold uppercase tracking-widest text-neutral-0">
+          Tu orden
+        </h2>
+      </div>
+
+      <ul className="divide-y divide-neutral-200 px-6">
+        {items.map((item) => {
+          const v = validByKey.get(lineKey(item.courseId, item.sessionId));
+          const price = v?.unit_price ?? item.unitPrice;
+          const free = parseFloat(price) === 0;
+          const lineTotal = parseFloat(price) * item.quantity;
+          return (
+            <li key={lineKey(item.courseId, item.sessionId)} className="flex items-start gap-3 py-4">
+              <div className="relative shrink-0">
+                <ModalityThumb modality={item.modality} code={item.code} className="h-14 w-14 rounded-md" />
+                {item.quantity > 1 && (
+                  <span className="absolute -right-2 -top-2 grid h-5 min-w-[20px] place-items-center rounded-full bg-ink-900 px-1 text-[10px] font-bold text-neutral-0">
+                    {item.quantity}
+                  </span>
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="line-clamp-2 text-sm font-medium leading-snug text-ink-900">{item.titleSnapshot}</p>
+                {item.sessionLabel && <p className="mt-0.5 text-xs text-neutral-500">{item.sessionLabel}</p>}
+                {item.quantity > 1 && (
+                  <p className="mt-0.5 text-xs text-neutral-400">
+                    {item.quantity} × {formatARS(price)}
+                  </p>
+                )}
+              </div>
+              <span className={`shrink-0 text-sm font-semibold ${free ? "text-brand-600" : "text-ink-900"}`}>
+                {free ? "Gratis" : formatARS(lineTotal)}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+
+      <div className="space-y-3 border-t border-neutral-200 px-6 py-5">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-neutral-500">Subtotal</span>
+          <span className="font-medium text-ink-900">{subtotal == null ? <Skel className="h-4 w-20" /> : formatARS(subtotal)}</span>
+        </div>
+
+        {discounts.map((d) => (
+          <div key={d.promoId} className="flex items-start justify-between gap-3 text-sm">
+            <span className="min-w-0 text-emerald-700">
+              {d.label}
+              <span className="ml-1 font-mono text-xs text-emerald-600">({d.code})</span>
+            </span>
+            <span className="shrink-0 font-medium text-emerald-700">−{formatARS(d.amount)}</span>
+          </div>
+        ))}
+
+        {parseFloat(discountTotal) > 0 && (
+          <div className="flex items-center justify-between border-t border-dashed border-neutral-200 pt-3 text-sm">
+            <span className="text-neutral-500">Descuentos</span>
+            <span className="font-medium text-emerald-700">−{formatARS(discountTotal)}</span>
+          </div>
+        )}
+
+        <div className="flex items-baseline justify-between border-t border-neutral-200 pt-3">
+          <span className="font-semibold text-ink-900">Total</span>
+          <span className={`font-display text-2xl font-semibold ${isFreeOrder ? "text-brand-600" : "text-ink-900"}`}>
+            {totalLabel}
+          </span>
+        </div>
+
+        {!isFreeOrder && method === "PAYPAL" && totalUsd != null && (
+          <p className="text-right text-xs text-neutral-500">
+            Se cobra como <span className="font-semibold text-ink-900">{formatUSD(totalUsd)}</span> en PayPal
+          </p>
+        )}
+      </div>
+
+      <ul className="space-y-2 border-t border-neutral-200 bg-neutral-50 px-6 py-5 text-xs text-neutral-500">
+        <li className="flex items-center gap-2"><Dot /> Acceso inmediato tras la confirmación</li>
+        <li className="flex items-center gap-2"><Dot /> Certificado de participación</li>
+        <li className="flex items-center gap-2"><Dot /> Comprobante y confirmación por correo</li>
+      </ul>
+    </div>
+  );
+
   return (
     <CheckoutShell>
       <Steps />
 
-      <div className="mx-auto mt-8 grid max-w-5xl grid-cols-1 gap-x-16 gap-y-10 lg:grid-cols-[1fr_400px]">
+      <div ref={page} className="mx-auto mt-8 grid max-w-5xl grid-cols-1 gap-x-16 gap-y-8 lg:grid-cols-[1fr_400px]">
+        {/* ── Resumen plegable (teléfono y tablet) ── */}
+        <div className="co-sec lg:hidden">
+          <button
+            type="button"
+            onClick={() => setSummaryOpen((v) => !v)}
+            aria-expanded={summaryOpen}
+            aria-controls="co-summary-movil"
+            className="flex w-full items-center justify-between gap-4 border border-neutral-200 bg-neutral-0 px-5 py-4 text-left"
+          >
+            <span className="flex items-center gap-2 text-sm font-medium text-ink-900">
+              {summaryOpen ? "Ocultar resumen" : "Ver resumen"}
+              <svg
+                className={`transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${summaryOpen ? "rotate-180" : ""}`}
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </span>
+            <span className={`font-display text-lg font-semibold ${isFreeOrder ? "text-brand-600" : "text-ink-900"}`}>
+              {totalLabel}
+            </span>
+          </button>
+          <div id="co-summary-movil" ref={summaryWrap} className="h-0 overflow-hidden">
+            <div className="pt-3">{summaryCard}</div>
+          </div>
+        </div>
+
         {/* ── Columna formularios ── */}
         <div className="min-w-0 lg:pb-24">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <Section title="Contacto">
+          <div>
+            <Section n={1} title="Contacto">
               <Field
                 label="Correo electrónico"
                 type="email"
@@ -207,7 +361,7 @@ export function CheckoutClient() {
               </p>
             </Section>
 
-            <Section title="Datos del comprador">
+            <Section n={2} title="Datos del comprador">
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Nombre" autoComplete="given-name" value={buyer.firstName} onChange={(v) => set("firstName", v)} error={errors.firstName} />
                 <Field label="Apellido" autoComplete="family-name" value={buyer.lastName} onChange={(v) => set("lastName", v)} error={errors.lastName} />
@@ -237,7 +391,7 @@ export function CheckoutClient() {
 
             {/* Participantes por curso con más de una unidad */}
             {multiLines.length > 0 && (
-              <Section title="Participantes">
+              <Section n={3} title="Participantes">
                 <p className="-mt-1 text-xs leading-relaxed text-neutral-500">
                   Compraste más de una inscripción: indicá a quién corresponde cada una. A esos
                   correos llega el acceso y el certificado.
@@ -291,7 +445,7 @@ export function CheckoutClient() {
             )}
 
             {!isFreeOrder && (
-              <Section title="Medio de pago">
+              <Section n={payStep} title="Medio de pago">
                 <PaymentOption
                   selected={method === "MERCADOPAGO"}
                   onSelect={() => setMethod("MERCADOPAGO")}
@@ -344,7 +498,7 @@ export function CheckoutClient() {
             )}
 
             {isFreeOrder && (
-              <Section title="Confirmar inscripción">
+              <Section n={payStep} title="Confirmar inscripción">
                 <p className="text-sm leading-relaxed text-ink-600">
                   Esta orden no tiene costo. Confirmá para completar tu inscripción y recibir el
                   acceso por email.
@@ -415,95 +569,12 @@ export function CheckoutClient() {
             <p className="mt-6 flex items-center justify-center gap-2 text-xs text-neutral-400 sm:justify-end">
               <Lock /> Pago protegido · entorno de prueba (no ingreses datos reales)
             </p>
-          </motion.div>
+          </div>
         </div>
 
         {/* ── Resumen ── */}
-        <aside className="lg:sticky lg:top-8 lg:self-start">
-          <div className="overflow-hidden border border-neutral-200 bg-neutral-0">
-            <div className="flex items-center gap-3 bg-ink-900 px-6 py-4">
-              <span className="h-px w-6 bg-brand-500" aria-hidden />
-              <h2 className="font-display text-sm font-semibold uppercase tracking-widest text-neutral-0">
-                Tu orden
-              </h2>
-            </div>
-
-            <ul className="divide-y divide-neutral-200 px-6">
-              {items.map((item) => {
-                const v = validByKey.get(lineKey(item.courseId, item.sessionId));
-                const price = v?.unit_price ?? item.unitPrice;
-                const free = parseFloat(price) === 0;
-                const lineTotal = parseFloat(price) * item.quantity;
-                return (
-                  <li key={lineKey(item.courseId, item.sessionId)} className="flex items-start gap-3 py-4">
-                    <div className="relative shrink-0">
-                      <ModalityThumb modality={item.modality} code={item.code} className="h-14 w-14 rounded-md" />
-                      {item.quantity > 1 && (
-                        <span className="absolute -right-2 -top-2 grid h-5 min-w-[20px] place-items-center rounded-full bg-ink-900 px-1 text-[10px] font-bold text-neutral-0">
-                          {item.quantity}
-                        </span>
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="line-clamp-2 text-sm font-medium leading-snug text-ink-900">{item.titleSnapshot}</p>
-                      {item.sessionLabel && <p className="mt-0.5 text-xs text-neutral-500">{item.sessionLabel}</p>}
-                      {item.quantity > 1 && (
-                        <p className="mt-0.5 text-xs text-neutral-400">
-                          {item.quantity} × {formatARS(price)}
-                        </p>
-                      )}
-                    </div>
-                    <span className={`shrink-0 text-sm font-semibold ${free ? "text-brand-600" : "text-ink-900"}`}>
-                      {free ? "Gratis" : formatARS(lineTotal)}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-
-            <div className="space-y-3 border-t border-neutral-200 px-6 py-5">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-500">Subtotal</span>
-                <span className="font-medium text-ink-900">{subtotal == null ? "…" : formatARS(subtotal)}</span>
-              </div>
-
-              {discounts.map((d) => (
-                <div key={d.promoId} className="flex items-start justify-between gap-3 text-sm">
-                  <span className="min-w-0 text-emerald-700">
-                    {d.label}
-                    <span className="ml-1 font-mono text-xs text-emerald-600">({d.code})</span>
-                  </span>
-                  <span className="shrink-0 font-medium text-emerald-700">−{formatARS(d.amount)}</span>
-                </div>
-              ))}
-
-              {parseFloat(discountTotal) > 0 && (
-                <div className="flex items-center justify-between border-t border-dashed border-neutral-200 pt-3 text-sm">
-                  <span className="text-neutral-500">Descuentos</span>
-                  <span className="font-medium text-emerald-700">−{formatARS(discountTotal)}</span>
-                </div>
-              )}
-
-              <div className="flex items-baseline justify-between border-t border-neutral-200 pt-3">
-                <span className="font-semibold text-ink-900">Total</span>
-                <span className={`font-display text-2xl font-semibold ${isFreeOrder ? "text-brand-600" : "text-ink-900"}`}>
-                  {total == null ? "…" : isFreeOrder ? "Gratis" : formatARS(total)}
-                </span>
-              </div>
-
-              {!isFreeOrder && method === "PAYPAL" && totalUsd != null && (
-                <p className="text-right text-xs text-neutral-500">
-                  Se cobra como <span className="font-semibold text-ink-900">{formatUSD(totalUsd)}</span> en PayPal
-                </p>
-              )}
-            </div>
-
-            <ul className="space-y-2 border-t border-neutral-200 bg-neutral-50 px-6 py-5 text-xs text-neutral-500">
-              <li className="flex items-center gap-2"><Dot /> Acceso inmediato tras la confirmación</li>
-              <li className="flex items-center gap-2"><Dot /> Certificado de participación</li>
-              <li className="flex items-center gap-2"><Dot /> Comprobante y confirmación por correo</li>
-            </ul>
-          </div>
+        <aside className="co-summary hidden lg:sticky lg:top-8 lg:block lg:self-start">
+          {summaryCard}
         </aside>
       </div>
     </CheckoutShell>
@@ -631,10 +702,16 @@ function Steps() {
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+/** Paso numerado del checkout: todo en una página, en orden. */
+function Section({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
   return (
-    <section className="mb-8">
-      <h2 className="mb-4 font-display text-lg font-semibold tracking-tight text-ink-900">{title}</h2>
+    <section className="co-sec mb-10">
+      <h2 className="mb-5 flex items-center gap-3 font-display text-lg font-semibold tracking-tight text-ink-900">
+        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-ink-900 font-sans text-xs font-semibold text-neutral-0" aria-hidden>
+          {n}
+        </span>
+        {title}
+      </h2>
       <div className="space-y-4">{children}</div>
     </section>
   );
@@ -695,3 +772,34 @@ const Spinner = () => (
     <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
   </svg>
 );
+
+/** Caja gris de carga. */
+function Skel({ className = "" }: { className?: string }) {
+  return <span className={`inline-block animate-pulse bg-neutral-200 align-middle ${className}`} aria-hidden />;
+}
+
+/** Lo que se ve mientras carga el carrito: la forma de la página, en gris. */
+function CheckoutSkeleton() {
+  return (
+    <div className="mt-8 grid grid-cols-1 gap-x-16 gap-y-8 lg:grid-cols-[1fr_400px]" aria-busy="true" aria-label="Cargando el checkout">
+      <div className="space-y-10">
+        {[2, 4, 2].map((fields, i) => (
+          <div key={i} className="space-y-4">
+            <Skel className="h-7 w-48" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              {Array.from({ length: fields }, (_, j) => (
+                <Skel key={j} className="h-12 w-full" />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="hidden space-y-4 border border-neutral-200 bg-neutral-0 p-6 lg:block">
+        <Skel className="h-5 w-32" />
+        <Skel className="h-14 w-full" />
+        <Skel className="h-14 w-full" />
+        <Skel className="h-8 w-full" />
+      </div>
+    </div>
+  );
+}
