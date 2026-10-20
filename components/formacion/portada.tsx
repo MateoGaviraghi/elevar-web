@@ -347,7 +347,8 @@ function Teach() {
 
 // ── 5. Cierre ────────────────────────────────────────────────────────────────
 
-function Closing() {
+/** Cierre naranja; también lo usa /promociones. */
+export function Closing() {
   const ref = useMotion<HTMLElement>((root) => {
     const st = { trigger: root, start: "top 80%", once: true };
     gsap.from(root.querySelectorAll(".pc-title"), { yPercent: 110, duration: 1.2, ease: "expo.out", scrollTrigger: st });
