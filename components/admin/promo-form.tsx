@@ -37,6 +37,7 @@ const MODALITIES: { value: Modality; label: string }[] = [
   { value: "LIVE", label: "Cursos online en vivo" },
   { value: "WEBINAR", label: "Webinars" },
   { value: "WORKSHOP", label: "Talleres" },
+  { value: "EBOOK", label: "E-Books" },
 ];
 
 const toDateInput = (iso: string | null) => (iso ? iso.slice(0, 10) : "");

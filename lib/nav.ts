@@ -17,6 +17,7 @@ export const FORMACION = [
   { label: "Asincrónicos", href: "/formacion/cursos-asincronicos" },
   { label: "Webinars gratuitos", href: "/formacion/webinars-gratuitos" },
   { label: "Talleres", href: "/formacion/talleres" },
+  { label: "E-Books", href: "/formacion/e-books" },
   { label: "Promociones", href: "/promociones" },
 ];
 

@@ -18,6 +18,7 @@ const MODALITY_LABEL: Record<Course["modality"], string> = {
   LIVE: "Curso online en vivo",
   WEBINAR: "Webinar gratuito",
   WORKSHOP: "Taller",
+  EBOOK: "E-Book",
 };
 
 // Al imprimir solo queda la hoja: el header, el pie y los botones flotantes del sitio no salen.

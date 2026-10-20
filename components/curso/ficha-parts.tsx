@@ -35,6 +35,7 @@ const LISTING_LABEL: Record<Course["modality"], string> = {
   LIVE: "Cursos online en vivo",
   WEBINAR: "Webinars gratuitos",
   WORKSHOP: "Talleres",
+  EBOOK: "E-Books",
 };
 
 /** Fotos que existen en /public: el resto de los disertantes va con iniciales. */

@@ -1,4 +1,4 @@
-export type Modality = "ASYNC" | "LIVE" | "WEBINAR" | "WORKSHOP";
+export type Modality = "ASYNC" | "LIVE" | "WEBINAR" | "WORKSHOP" | "EBOOK";
 
 export type SessionStatus = "SCHEDULED" | "CANCELLED" | "FINISHED";
 

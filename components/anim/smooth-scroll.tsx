@@ -19,6 +19,19 @@ import { ScrollTrigger, prefersReducedMotion } from "@/lib/gsap";
 
 // Compartida para poder resetear el scroll al navegar.
 let lenisRef: Lenis | null = null;
+// La lista de cursos cambia la dirección sin cambiar de página: ahí no se sube.
+let keepNext = false;
+
+/** El próximo cambio de dirección no lleva la página arriba. */
+export function keepScrollOnNextPath(): void {
+  keepNext = true;
+}
+
+/** Desplaza la página con el mismo scroll suave del sitio (o el nativo sin Lenis). */
+export function scrollPageTo(y: number, duration = 0.9): void {
+  if (lenisRef) lenisRef.scrollTo(y, { duration, easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2) });
+  else window.scrollTo({ top: y, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+}
 
 /** Congela el scroll de la página mientras hay un panel encima (carrito). */
 export function setScrollLocked(locked: boolean): void {
@@ -41,7 +54,9 @@ export function SmoothScroll() {
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
     const lenis = new Lenis({
-      lerp: 0.075, // "cinemático" (el elegido en Sanalys): una muesca se asienta en ~1 s
+      // Mateo, 2026-10-20: "el scroll está súper lento". Con 0.075 una muesca hacía el
+      // 90 % en 0,51 s y frenaba en 1 s; con 0.14, 0,25 s y 0,5 s (como lenis.dev).
+      lerp: 0.14,
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 1.6,
@@ -69,6 +84,10 @@ export function SmoothScroll() {
 
   // Al navegar entre páginas, arrancar arriba sin animación.
   useEffect(() => {
+    if (keepNext) {
+      keepNext = false;
+      return;
+    }
     if (lenisRef) lenisRef.scrollTo(0, { immediate: true });
     else if (typeof window !== "undefined") window.scrollTo(0, 0);
   }, [pathname]);

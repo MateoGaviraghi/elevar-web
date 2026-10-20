@@ -56,6 +56,18 @@ const PROMOS: ModalityTemplate["promos"] = [
 
 const EMPTY: ModalityTemplate = { includes: [], howItWorks: [], certificate: null, payment: [], promos: [] };
 
+/**
+ * E-Books (Mateo, 2026-10-19: la ficha se diseña con E-Books). Son una modalidad más
+ * desde la página de la lista; ELEVAR todavía no confirmó si existen.
+ */
+export const EBOOK_TEMPLATE: ModalityTemplate = {
+  includes: ["{{CONFIRMAR}} Qué incluye el e-book (formato, páginas)."],
+  howItWorks: ["{{CONFIRMAR}} Cómo se recibe el e-book después del pago."],
+  certificate: null,
+  payment: PAGO,
+  promos: [],
+};
+
 export const MODALITY_TEMPLATES: Record<Modality, ModalityTemplate> = {
   ASYNC: {
     includes: INCLUYE,
@@ -86,16 +98,5 @@ export const MODALITY_TEMPLATES: Record<Modality, ModalityTemplate> = {
   WEBINAR: EMPTY,
   // El sitio actual no tiene talleres publicados.
   WORKSHOP: EMPTY,
-};
-
-/**
- * E-Books (Mateo, 2026-10-19: la ficha se diseña con E-Books). Todavía no son una
- * modalidad del catálogo: se suman como tal con la página de la lista.
- */
-export const EBOOK_TEMPLATE: ModalityTemplate = {
-  includes: ["{{CONFIRMAR}} Qué incluye el e-book (formato, páginas)."],
-  howItWorks: ["{{CONFIRMAR}} Cómo se recibe el e-book después del pago."],
-  certificate: null,
-  payment: PAGO,
-  promos: [],
+  EBOOK: EBOOK_TEMPLATE,
 };

@@ -29,6 +29,13 @@ const MODALITIES = [
     desc: "Un espacio para compartir análisis, conocimientos teóricos, experiencias y formas de trabajo.",
     href: "/formacion/talleres",
   },
+  {
+    // Provisorio: ELEVAR todavía no confirmó si hay E-Books (y no hay pictograma propio).
+    img: "/assets/formacion/pictograma2.2_asincronico.png",
+    title: "E-Books",
+    desc: "Material de estudio descargable sobre temas puntuales de la norma, para leer y consultar cuando lo necesites.",
+    href: "/formacion/e-books",
+  },
 ];
 
 export function ModalitiesSection() {
@@ -38,7 +45,7 @@ export function ModalitiesSection() {
         <Reveal>
           <SectionHeader
             eyebrow="Formación"
-            title="Cuatro formas de capacitarte"
+            title="Cinco formas de capacitarte"
             lead="Elegí la modalidad que mejor se adapta a tu equipo y tus tiempos."
             action={{ label: "Ver todos los cursos", href: "/formacion" }}
           />
@@ -46,7 +53,7 @@ export function ModalitiesSection() {
 
         <Reveal
           as="div"
-          className="mt-10 grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
+          className="mt-10 grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 sm:gap-6 lg:grid-cols-5"
           stagger={0.08}
         >
           {MODALITIES.map((mod, i) => (

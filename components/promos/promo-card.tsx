@@ -14,6 +14,7 @@ function promoHref(promo: Promo): string {
       LIVE: "/formacion/cursos-online-en-vivo",
       WEBINAR: "/formacion/webinars-gratuitos",
       WORKSHOP: "/formacion/talleres",
+      EBOOK: "/formacion/e-books",
     };
     return map[promo.modality ?? "ASYNC"] ?? "/formacion";
   }

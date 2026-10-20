@@ -5,4 +5,5 @@ export const MODALITY_LABEL: Record<Modality, string> = {
   LIVE: "En vivo",
   WEBINAR: "Webinar",
   WORKSHOP: "Taller",
+  EBOOK: "E-Book",
 };

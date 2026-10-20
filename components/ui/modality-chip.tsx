@@ -11,6 +11,7 @@ const MODALITY_MAP: Record<Modality, { label: string; tone: BadgeTone }> = {
   LIVE: { label: "En vivo", tone: "success" },
   WEBINAR: { label: "Webinar", tone: "info" },
   WORKSHOP: { label: "Taller", tone: "warning" },
+  EBOOK: { label: "E-Book", tone: "info" },
 };
 
 export function ModalityChip({ modality, className }: ModalityChipProps) {

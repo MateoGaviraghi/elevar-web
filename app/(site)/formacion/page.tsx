@@ -14,7 +14,7 @@ import { Pictogram } from "@/components/ui/pictogram";
 export const metadata: Metadata = {
   title: "Formación — Elevar",
   description:
-    "Capacitación en calidad de laboratorio bajo la norma ISO/IEC 17025. Cursos en vivo, asincrónicos, webinars gratuitos y talleres.",
+    "Capacitación en calidad de laboratorio bajo la norma ISO/IEC 17025. Cursos en vivo, asincrónicos, webinars gratuitos, talleres y e-books.",
 };
 
 export default async function FormacionPage() {
@@ -28,7 +28,7 @@ export default async function FormacionPage() {
         eyebrow="Formación"
         size="lg"
         title="Capacitación en calidad de laboratorio"
-        subtitle="Formá a tu equipo bajo la norma ISO/IEC 17025: cursos en vivo, asincrónicos, webinars gratuitos y talleres."
+        subtitle="Formá a tu equipo bajo la norma ISO/IEC 17025: cursos en vivo, asincrónicos, webinars gratuitos, talleres y e-books."
       />
 
       <PromoStrip />
@@ -82,7 +82,7 @@ export default async function FormacionPage() {
 
           <Reveal
             as="div"
-            className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6"
             stagger={0.08}
           >
             {MODALITIES.map((m, i) => (

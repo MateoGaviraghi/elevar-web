@@ -288,4 +288,5 @@ const MODALITY_LABEL: Record<string, string> = {
   LIVE: "Cursos online en vivo",
   WEBINAR: "Webinars",
   WORKSHOP: "Talleres",
+  EBOOK: "E-Books",
 };

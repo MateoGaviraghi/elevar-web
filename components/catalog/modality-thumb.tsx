@@ -5,6 +5,7 @@ const GRADIENTS: Record<Modality, string> = {
   LIVE: "from-emerald-600 to-emerald-800",
   WEBINAR: "from-brand-500 to-brand-700",
   WORKSHOP: "from-amber-500 to-amber-700",
+  EBOOK: "from-sky-600 to-ink-800",
 };
 
 /** Miniatura branded por modalidad con el código del curso (sin imágenes reales). */

@@ -22,7 +22,7 @@ export function CourseQuickDetail({ course, promos, onClose }: { course: Course;
   );
   const free = parseFloat(course.price) === 0;
   const meta: [string, string][] = [
-    ["Modalidad", { ASYNC: "Asincrónico", LIVE: "En vivo", WEBINAR: "Webinar", WORKSHOP: "Taller" }[course.modality]],
+    ["Modalidad", { ASYNC: "Asincrónico", LIVE: "En vivo", WEBINAR: "Webinar", WORKSHOP: "Taller", EBOOK: "E-Book" }[course.modality]],
     ["Fecha", courseWhen(course).replace("Próxima fecha: ", "")],
     ...(course.duration_hours ? ([["Duración", `${course.duration_hours} h`]] as [string, string][]) : []),
     ...(course.instructor_names ? ([["Disertante", course.instructor_names]] as [string, string][]) : []),

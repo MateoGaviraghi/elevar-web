@@ -16,6 +16,7 @@ const MODALITY_PATH: Record<Course["modality"], { slug: string; label: string }>
   LIVE: { slug: "cursos-online-en-vivo", label: "Curso online en vivo" },
   WEBINAR: { slug: "webinars-gratuitos", label: "Webinar gratuito" },
   WORKSHOP: { slug: "talleres", label: "Taller" },
+  EBOOK: { slug: "e-books", label: "E-Book" },
 };
 
 async function fetchCourse(slug: string): Promise<Course | null> {

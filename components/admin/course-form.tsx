@@ -20,6 +20,7 @@ const MODALITIES: { value: Modality; label: string }[] = [
   { value: "LIVE", label: "Curso online en vivo" },
   { value: "WEBINAR", label: "Webinar gratuito" },
   { value: "WORKSHOP", label: "Taller" },
+  { value: "EBOOK", label: "E-Book" },
 ];
 
 const LEVELS = ["Introductorio", "Intermedio", "Avanzado"].map((l) => ({ value: l, label: l }));
