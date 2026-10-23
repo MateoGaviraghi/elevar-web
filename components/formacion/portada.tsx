@@ -64,22 +64,24 @@ function Hero({ courses }: { courses: Course[] }) {
     ...(paid.length ? [`Desde ${formatARS(String(Math.min(...paid)))}`] : []),
   ];
   // Cada línea sube de su máscara (1,2 s, 0,12 s entre líneas); lo demás la sigue.
+  // Pantallas bajas (1366 × 650, Mateo 2026-10-23 "ajustar encabezado"): el título también
+  // se limita por el alto (13svh) y hay menos aire, para que botones y datos entren.
   const ref = useMotion<HTMLDivElement>((root) => {
     gsap.from(root.querySelectorAll(".ph-line"), { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.12, delay: 0.15 });
     gsap.from(root.querySelectorAll(".ph-in"), { y: 18, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.08, delay: 0.6 });
   });
   return (
-    <section data-tone="dark" className="bg-ink-900 pb-20 pt-14 text-neutral-0 md:pb-28 md:pt-20">
+    <section data-tone="dark" className="bg-ink-900 pb-20 pt-14 text-neutral-0 md:pb-28 md:pt-20 [@media(min-width:768px)_and_(max-height:800px)]:pb-14 [@media(min-width:768px)_and_(max-height:800px)]:pt-10">
       <Container>
         <div ref={ref}>
-          <h1 className="font-display text-[clamp(2.5rem,7vw,7.5rem)] font-semibold uppercase leading-[0.95] tracking-[-0.02em]">
+          <h1 className="font-display text-[clamp(2.5rem,min(7vw,13svh),7.5rem)] font-semibold uppercase leading-[0.95] tracking-[-0.02em]">
             {HERO_LINES.map((l) => (
               <span key={l.text} className="block overflow-hidden pt-[0.08em]">
                 <span className={`ph-line block ${l.accent ? "text-brand-500" : ""}`}>{l.text}</span>
               </span>
             ))}
           </h1>
-          <div className="mt-10 grid gap-8 border-t border-neutral-0/15 pt-8 md:mt-14 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-12">
+          <div className="mt-10 grid gap-8 border-t border-neutral-0/15 pt-8 md:mt-14 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-12 [@media(min-width:768px)_and_(max-height:800px)]:mt-8 [@media(min-width:768px)_and_(max-height:800px)]:pt-6">
             <div className="max-w-2xl">
               <p className="ph-in text-lg leading-relaxed text-neutral-300">
                 Formá a tu equipo bajo la norma ISO/IEC 17025: cursos en vivo, asincrónicos, webinars gratuitos, talleres y e-books.
