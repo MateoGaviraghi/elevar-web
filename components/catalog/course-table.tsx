@@ -545,6 +545,7 @@ export function CourseCatalog({ courses, initial, workshop }: { courses: Course[
   const [shown, setShown] = useState(initial);
   const [swap, setSwap] = useState(0);
   const target = useRef(initial);
+  const waitToken = useRef(0);
   const leaving = useRef(false);
   const list = useRef<HTMLDivElement>(null);
   const preview = useRef<PreviewApi | null>(null);
@@ -580,15 +581,16 @@ export function CourseCatalog({ courses, initial, workshop }: { courses: Course[
     return () => io.disconnect();
   }, []);
 
-  // Atrás / adelante del navegador.
+  // Atrás / adelante del navegador: lo mismo que tocar la píldora (sube suave y las filas
+  // salen y entran), sin volver a escribir la dirección. keepScrollOnNextPath evita que el
+  // cambio de dirección suba la página de golpe (Mateo veía el salto al ir "atrás").
+  const pickRef = useRef<(slug: string, push?: boolean) => void>(() => {});
   useEffect(() => {
     const onPop = () => {
       const slug = window.location.pathname.split("/").pop() ?? "";
       if (!MODALITIES.some((m) => m.slug === slug)) return;
-      target.current = slug;
-      setActive(slug);
-      setShown(slug);
-      setSwap((n) => n + 1);
+      keepScrollOnNextPath();
+      pickRef.current(slug, false);
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -601,19 +603,28 @@ export function CourseCatalog({ courses, initial, workshop }: { courses: Course[
 
   // Cambio de modalidad. Nunca se bloquea: si se toca otra píldora mientras las filas
   // salen, la salida en curso termina en la última tocada; si entraban, se cortan y salen.
-  const pick = (slug: string) => {
+  const pick = (slug: string, push = true) => {
     if (slug === target.current) return;
     target.current = slug;
     setActive(slug);
     preview.current?.set(null);
     const m = MODALITIES.find((x) => x.slug === slug)!;
-    keepScrollOnNextPath();
-    window.history.pushState(null, "", `/formacion/${slug}`);
+    if (push) {
+      keepScrollOnNextPath();
+      window.history.pushState(null, "", `/formacion/${slug}`);
+    }
     document.title = `${m.title} — Elevar Formación`;
     // Mateo, 2026-10-20: cambiar de modalidad lleva arriba, al encabezado, para ver el
     // cambio y arrancar la lista desde el principio (si no, una lista más corta te dejaba
     // en el footer). 1,4 s, lento al arrancar y al llegar.
-    if (window.scrollY > 0) scrollPageTo(0, 1.4);
+    // Si el menú del celular todavía tiene la página trabada, se espera a que la suelte.
+    const t0 = performance.now();
+    const goTop = () => {
+      if (document.documentElement.style.overflow !== "hidden") {
+        if (window.scrollY > 0) scrollPageTo(0, 1.4);
+      } else if (performance.now() - t0 < 2000) requestAnimationFrame(goTop);
+    };
+    goTop();
     const root = list.current;
     const land = () => { setShown(target.current); setSwap((n) => n + 1); };
     if (!root || prefersReducedMotion()) { land(); return; }
@@ -624,8 +635,23 @@ export function CourseCatalog({ courses, initial, workshop }: { courses: Course[
     gsap.killTweensOf(root.querySelectorAll(".ct-rule"));
     gsap.set(root, { clearProps: "height" });
     fromH.current = root.offsetHeight;
-    // Sin filas a la vista (talleres, e-books vacío): se cambia directo.
-    if (!ins.length || root.offsetParent === null) { land(); return; }
+    // Sin filas a la vista (talleres, e-books vacío): se cambia directo. Pero si la página
+    // está bajada, cambiar ya achica la página mientras sube y asoma el pie: primero se
+    // apaga el contenido de talleres y se cambia cuando la página llegó arriba (o a 1,6 s).
+    if (!ins.length || root.offsetParent === null) {
+      if (window.scrollY <= 40) { land(); return; }
+      const token = ++waitToken.current;
+      const wk = document.querySelector("[data-workshop]");
+      if (wk) gsap.to(wk, { autoAlpha: 0, duration: 0.5, ease: "power2.out" });
+      const t0 = performance.now();
+      const wait = () => {
+        if (token !== waitToken.current) return;
+        if (window.scrollY <= 40 || performance.now() - t0 > 1600) land();
+        else requestAnimationFrame(wait);
+      };
+      requestAnimationFrame(wait);
+      return;
+    }
     leaving.current = true;
     gsap.to(root.querySelectorAll(".ct-rule"), { scaleX: 0, transformOrigin: "right", duration: 0.6, ease: "power2.inOut", stagger: { amount: 0.15 } });
     gsap.to(ins, {
@@ -633,6 +659,35 @@ export function CourseCatalog({ courses, initial, workshop }: { courses: Course[
       onComplete: () => { leaving.current = false; land(); },
     });
   };
+  pickRef.current = pick;
+
+  // La dirección cambió por otro camino (menú de arriba, menú del celular, pie de página):
+  // Next reusa esta misma página con otra modalidad, así que se cambia igual que con las
+  // píldoras. Sin esto quedaba la modalidad vieja (Mateo, 2026-10-23: "hace como una
+  // pequeña recarga donde parece que se buguea").
+  useEffect(() => {
+    if (initial !== target.current) pickRef.current(initial, false);
+  }, [initial]);
+
+  // Estando en la lista, cualquier link a otra modalidad (menú de arriba, menú del celular,
+  // pie de página) hace lo mismo que la píldora: sin cambio de página de Next, que subía
+  // la página de golpe. Se escucha en captura para adelantarse al Link (que respeta
+  // `defaultPrevented`); el onClick del menú igual corre y lo cierra.
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!a || a.target === "_blank") return;
+      const url = new URL(a.href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+      const slug = url.pathname.match(/^\/formacion\/([^/]+)$/)?.[1];
+      if (!slug || !MODALITIES.some((m) => m.slug === slug)) return;
+      e.preventDefault();
+      pickRef.current(slug);
+    };
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
+  }, []);
 
   useLayoutEffect(() => {
     const root = list.current;
@@ -654,7 +709,7 @@ export function CourseCatalog({ courses, initial, workshop }: { courses: Course[
       <Pills active={active} counts={counts} onPick={pick} />
 
       {/* Talleres no tiene cursos cargados: muestra su contenido propio. */}
-      {isWorkshop && <div data-tone="light" className="pt-8">{workshop}</div>}
+      {isWorkshop && <div data-workshop data-tone="light" className="pt-8">{workshop}</div>}
 
       {/* Tabla (blanco). */}
       <section data-tone="light" className={`bg-neutral-0 pt-16 md:pt-20 ${isWorkshop ? "hidden" : "pb-24 md:pb-32"}`}>

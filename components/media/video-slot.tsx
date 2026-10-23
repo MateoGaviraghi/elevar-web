@@ -29,8 +29,10 @@ export function VideoSlot({
   useGSAP(
     () => {
       if (prefersReducedMotion() || !imgRef.current) return;
-      gsap.to(imgRef.current, {
-        yPercent: 10,
+      // ±6 % de la foto (116 % del marco) = ±7 % del marco: no pasa el 8 % que sobra de cada
+      // lado, así nunca asoma el fondo arriba ni abajo (antes iba 0 → +10 % y asomaba).
+      gsap.fromTo(imgRef.current, { yPercent: -6 }, {
+        yPercent: 6,
         ease: "none",
         scrollTrigger: { trigger: ref.current, start: "top bottom", end: "bottom top", scrub: true },
       });
@@ -44,13 +46,15 @@ export function VideoSlot({
       className={`group relative overflow-hidden border border-neutral-200 bg-ink-900 ${className}`}
       style={{ aspectRatio: aspect }}
     >
+      {/* max-w-none: la regla base de Tailwind (img max-width: 100%) la dejaba 16 % más
+          angosta y se veía el fondo oscuro a la derecha. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={imgRef}
         src={poster}
         alt=""
         aria-hidden
-        className="absolute -inset-[8%] h-[116%] w-[116%] object-cover opacity-90"
+        className="absolute -inset-[8%] h-[116%] w-[116%] max-w-none object-cover opacity-90"
       />
       <div className="absolute inset-0 bg-ink-900/45 transition-colors duration-500 group-hover:bg-ink-900/35" />
 

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Lenis from "lenis";
-import { ScrollTrigger, prefersReducedMotion } from "@/lib/gsap";
+import { ScrollTrigger, gsap, prefersReducedMotion } from "@/lib/gsap";
+import { MODALITIES } from "@/lib/formacion-modalities";
 
 /**
  * Smooth scroll con inercia (Lenis) sincronizado con GSAP ScrollTrigger.
@@ -30,7 +31,27 @@ export function keepScrollOnNextPath(): void {
 /** Desplaza la página con el mismo scroll suave del sitio (o el nativo sin Lenis). */
 export function scrollPageTo(y: number, duration = 0.9): void {
   if (lenisRef) lenisRef.scrollTo(y, { duration, easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2) });
-  else window.scrollTo({ top: y, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+  else if (prefersReducedMotion()) window.scrollTo(0, y);
+  else {
+    // Sin Lenis (celular): el scroll "smooth" nativo se cortaba cuando ScrollTrigger
+    // recalculaba (lleva la página a 0 para medir y la devuelve), así que el cambio de
+    // modalidad no subía. Se mueve cuadro por cuadro; un toque o la rueda lo cortan.
+    const o = { y: window.scrollY };
+    const stop = () => tween.kill();
+    const tween = gsap.to(o, {
+      y,
+      duration,
+      ease: "power3.inOut",
+      overwrite: true,
+      onUpdate: () => window.scrollTo(0, o.y),
+      onComplete: () => {
+        window.removeEventListener("touchstart", stop);
+        window.removeEventListener("wheel", stop);
+      },
+    });
+    window.addEventListener("touchstart", stop, { once: true, passive: true });
+    window.addEventListener("wheel", stop, { once: true, passive: true });
+  }
 }
 
 /** Congela el scroll de la página mientras hay un panel encima (carrito). */
@@ -42,8 +63,15 @@ export function setScrollLocked(locked: boolean): void {
   document.documentElement.style.overflow = locked ? "hidden" : "";
 }
 
+/** Lista de cursos de una modalidad (/formacion/<modalidad>). */
+const isModalityList = (path: string) => {
+  const m = path.match(/^\/formacion\/([^/]+)$/);
+  return !!m && MODALITIES.some((x) => x.slug === m[1]);
+};
+
 export function SmoothScroll() {
   const pathname = usePathname();
+  const prevPath = useRef(pathname);
 
   useEffect(() => {
     if (prefersReducedMotion()) return;
@@ -84,10 +112,15 @@ export function SmoothScroll() {
 
   // Al navegar entre páginas, arrancar arriba sin animación.
   useEffect(() => {
+    const from = prevPath.current;
+    prevPath.current = pathname;
     if (keepNext) {
       keepNext = false;
       return;
     }
+    // Entre dos listas de modalidad la subida la hace la lista, suave (1,4 s), como con
+    // las píldoras; acá no se salta arriba de golpe.
+    if (from !== pathname && isModalityList(from) && isModalityList(pathname)) return;
     if (lenisRef) lenisRef.scrollTo(0, { immediate: true });
     else if (typeof window !== "undefined") window.scrollTo(0, 0);
   }, [pathname]);
