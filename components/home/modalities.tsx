@@ -1,101 +1,86 @@
 import Link from "next/link";
+import type { Course } from "@/types";
+import { getCourses } from "@/lib/api";
+import { MODALITIES } from "@/lib/formacion-modalities";
+import { formatARS } from "@/lib/formatters";
 import { Container } from "@/components/ui/container";
-import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/anim/reveal";
-import { Pictogram } from "@/components/ui/pictogram";
+import { ModalityPanels, type PanelItem } from "@/components/home/modality-panels";
 
-const MODALITIES = [
-  {
-    img: "/assets/formacion/pictograma2.1_envivo.png",
-    title: "Cursos online en vivo",
-    desc: "Con días y horarios preestablecidos, tienen lugar capacitaciones en tiempo real.",
-    href: "/formacion/cursos-online-en-vivo",
-  },
-  {
-    img: "/assets/formacion/pictograma2.2_asincronico.png",
-    title: "Cursos asincrónicos",
-    desc: "La posibilidad de estudiar al tiempo y ritmo de cada persona, desde una plataforma amigable.",
-    href: "/formacion/cursos-asincronicos",
-  },
-  {
-    img: "/assets/formacion/pictograma2.3_webinar.png",
-    title: "Webinars gratuitos",
-    desc: "Temas puntuales, en encuentros cortos, como alternativa para mantener la actualización técnica.",
-    href: "/formacion/webinars-gratuitos",
-  },
-  {
-    img: "/assets/formacion/pictograma2.4_workshop.png",
-    title: "Talleres en vivo",
-    desc: "Un espacio para compartir análisis, conocimientos teóricos, experiencias y formas de trabajo.",
-    href: "/formacion/talleres",
-  },
-  {
-    // Provisorio: ELEVAR todavía no confirmó si hay E-Books (y no hay pictograma propio).
-    img: "/assets/formacion/pictograma2.2_asincronico.png",
-    title: "E-Books",
-    desc: "Material de estudio descargable sobre temas puntuales de la norma, para leer y consultar cuando lo necesites.",
-    href: "/formacion/e-books",
-  },
-];
+/* "Cinco formas de capacitarte" (inicio). Rediseño de Mateo, 2026-10-23 ("banda inicio",
+ * referencia CodeFronts · Color Block, "tu elección" + "GO-AHEAD"): reemplaza la grilla
+ * de 5 tarjetas iguales por paneles de color, una modalidad abierta a la vez. Textos de
+ * lib/formacion-modalities.ts (los mismos de Formación) y cursos reales. */
 
-export function ModalitiesSection() {
+const TZ = "America/Argentina/Buenos_Aires";
+const dated = (c: Course) => c.modality === "LIVE" || c.modality === "WEBINAR";
+const startsAt = (c: Course) => (c.sessions[0] ? new Date(c.sessions[0].starts_at).getTime() : 0);
+const upcoming = (c: Course) => !!c.sessions[0] && c.sessions[0].status !== "FINISHED";
+
+/** Tres cursos: los próximos por fecha en las modalidades con fecha; si no, los primeros. */
+function picksOf(list: Course[]): Course[] {
+  if (list.some(dated)) return list.filter(upcoming).sort((a, b) => startsAt(a) - startsAt(b)).slice(0, 3);
+  return list.slice(0, 3);
+}
+
+function metaOf(c: Course): string {
+  if (dated(c) && c.sessions[0]) {
+    const d = new Date(c.sessions[0].starts_at);
+    const day = d.toLocaleDateString("es-AR", { timeZone: TZ, day: "numeric" });
+    const month = d.toLocaleDateString("es-AR", { timeZone: TZ, month: "short" }).replace(".", "").toUpperCase();
+    return `${day} ${month}`;
+  }
+  return parseFloat(c.price) === 0 ? "Gratis" : formatARS(c.price);
+}
+
+const EMPTY_NOTE: Record<string, string> = {
+  WORKSHOP: "Talleres a medida para tu equipo, en tu laboratorio o por videollamada.",
+  EBOOK: "Estamos preparando los primeros e-books.",
+};
+
+export async function ModalitiesSection() {
+  const data = await getCourses().catch(() => null);
+  const courses = data?.results ?? [];
+  const items: PanelItem[] = MODALITIES.map((m) => {
+    const list = courses.filter((c) => c.modality === m.modality);
+    return {
+      slug: m.slug,
+      modality: m.modality,
+      title: m.title,
+      short: m.short,
+      desc: m.desc,
+      img: m.img,
+      count: list.length,
+      picks: picksOf(list).map((c) => ({ code: c.code, title: c.title, slug: c.slug, meta: metaOf(c) })),
+      note: EMPTY_NOTE[m.modality] ?? null,
+    };
+  });
+
   return (
-    <section className="bg-neutral-50 py-14 sm:py-20 md:py-28">
+    <section className="bg-neutral-50 py-10 sm:py-16 [@media(min-width:1024px)_and_(max-height:800px)]:py-10">
       <Container>
         <Reveal>
-          <SectionHeader
-            eyebrow="Formación"
-            title="Cinco formas de capacitarte"
-            lead="Elegí la modalidad que mejor se adapta a tu equipo y tus tiempos."
-            action={{ label: "Ver todos los cursos", href: "/formacion" }}
-          />
-        </Reveal>
-
-        <Reveal
-          as="div"
-          className="mt-10 grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 sm:gap-6 lg:grid-cols-5"
-          stagger={0.08}
-        >
-          {MODALITIES.map((mod, i) => (
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between md:mb-8">
+            <div>
+              <h2 className="font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-[2.5rem]">
+                Cinco formas de capacitarte
+              </h2>
+              <p className="mt-2 hidden text-base text-ink-700 sm:block md:text-lg">
+                Elegí la modalidad que mejor se adapta a tu equipo y tus tiempos.
+              </p>
+            </div>
             <Link
-              key={mod.href}
-              href={mod.href}
-              className="group bg-neutral-0 border border-neutral-200 p-7 transition-colors hover:border-ink-900 flex flex-col"
+              href="/formacion"
+              className="group inline-flex shrink-0 items-center gap-2 whitespace-nowrap text-sm font-semibold text-ink-900 transition-colors hover:text-brand-600"
             >
-              <Pictogram src={mod.img} index={i} className="mb-6 h-16 w-16" />
-
-              <h3 className="font-display text-lg font-semibold text-ink-900">
-                {mod.title}
-              </h3>
-
-              <p className="text-sm text-neutral-700 mt-2 flex-1">{mod.desc}</p>
-
-              <div className="mt-6">
-                <span className="group/link inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-ink-900 transition-colors hover:text-brand-500 pointer-events-none">
-                  <span className="relative">
-                    Ver más
-                    <span className="pointer-events-none absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-current transition-transform duration-300 ease-out group-hover:scale-x-100" />
-                  </span>
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="transition-transform duration-300 ease-out group-hover:translate-x-1"
-                    aria-hidden="true"
-                  >
-                    <line x1="4" y1="12" x2="19" y2="12" />
-                    <polyline points="13 6 19 12 13 18" />
-                  </svg>
-                </span>
-              </div>
+              Ver todos los cursos
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1">
+                <path d="M4 12h15M13 6l6 6-6 6" />
+              </svg>
             </Link>
-          ))}
+          </div>
         </Reveal>
+        <ModalityPanels items={items} />
       </Container>
     </section>
   );
