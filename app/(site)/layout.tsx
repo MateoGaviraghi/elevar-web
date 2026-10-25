@@ -4,6 +4,7 @@ import { ScrollManager } from "@/components/anim/scroll-manager";
 import { WhatsAppFab } from "@/components/common/whatsapp";
 import { SmoothScroll } from "@/components/anim/smooth-scroll";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { PageCurtain } from "@/components/anim/page-curtain";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <Footer />
       <WhatsAppFab />
       <CartDrawer />
+      <PageCurtain />
     </>
   );
 }
