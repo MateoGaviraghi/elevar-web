@@ -48,8 +48,8 @@ function Arrow({ className = "" }: { className?: string }) {
   );
 }
 
-/** Lo que muestra el panel abierto (igual en escritorio y celular). */
-/** Lo que muestra el panel abierto. En el celular (`compact`) el nombre ya está en la fila.
+/** Lo que muestra el panel abierto. En el celular (`compact`) el nombre ya está en la fila y el
+ * texto va chico siempre, así la banda con un panel abierto entra bajo el header en 375 × 812.
  * Las clases `[@media(max-height:800px)]` achican aire en pantallas bajas (1366 × 650); van
  * escritas enteras, sin armar con variables, para que Tailwind las encuentre. */
 function PanelBody({ item, compact = false }: { item: PanelItem; compact?: boolean }) {
@@ -61,15 +61,15 @@ function PanelBody({ item, compact = false }: { item: PanelItem; compact?: boole
           <h3 className={`mp-in font-display text-[2.5rem] font-semibold leading-tight tracking-tight [@media(max-height:800px)]:text-3xl`}>{item.title}</h3>
         </>
       )}
-      <p className={`mp-in max-w-xl text-base leading-relaxed text-neutral-0/85 [@media(max-height:800px)]:text-sm ${compact ? "" : "mt-3"}`}>{item.desc}</p>
-      <div className={compact ? "pt-5" : `mt-auto pt-8 [@media(max-height:800px)]:pt-4`}>
+      <p className={`mp-in max-w-xl leading-relaxed text-neutral-0/85 ${compact ? "text-sm" : "mt-3 text-base [@media(max-height:800px)]:text-sm"}`}>{item.desc}</p>
+      <div className={compact ? "pt-4" :`mt-auto pt-8 [@media(max-height:800px)]:pt-4`}>
         {item.picks.length > 0 ? (
           <ul className="border-t border-neutral-0/30">
             {item.picks.map((c) => (
               <li key={c.slug} className="mp-in border-b border-neutral-0/30">
                 <Link
                   href={`/cursos/${c.slug}`}
-                  className={`grid grid-cols-[3.5rem_minmax(0,1fr)_auto] items-baseline gap-4 py-3 text-sm [@media(max-height:800px)]:py-2 transition-opacity duration-500 hover:opacity-75`}
+                  className={`grid grid-cols-[3.5rem_minmax(0,1fr)_auto] items-baseline gap-4 text-sm transition-opacity duration-500 hover:opacity-75 ${compact ? "py-2" : "py-3 [@media(max-height:800px)]:py-2"}`}
                 >
                   <span className="font-semibold">{c.code}</span>
                   <span className="truncate">{c.title}</span>
@@ -175,7 +175,7 @@ export function ModalityPanels({ items }: { items: PanelItem[] }) {
                 type="button"
                 aria-expanded={isOpen}
                 onClick={() => setOpen(i)}
-                className="flex w-full items-center justify-between gap-4 px-5 py-3.5 text-left"
+                className="flex w-full items-center justify-between gap-4 px-5 py-3 text-left"
               >
                 <span className="font-display text-xl font-semibold">{item.title}</span>
                 <span className="flex items-center gap-3 text-sm text-neutral-0/80">

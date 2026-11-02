@@ -57,10 +57,10 @@ export async function ModalitiesSection() {
   });
 
   return (
-    <section className="bg-neutral-50 py-10 sm:py-16 [@media(min-width:1024px)_and_(max-height:800px)]:py-10">
+    <section className="bg-neutral-50 py-8 sm:py-16 [@media(min-width:1024px)_and_(max-height:800px)]:py-10">
       <Container>
         <Reveal>
-          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between md:mb-8">
+          <div className="mb-5 flex flex-col gap-2 sm:mb-6 sm:flex-row sm:items-end sm:justify-between md:mb-8">
             <div>
               <h2 className="font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-[2.5rem]">
                 Cinco formas de capacitarte
