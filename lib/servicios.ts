@@ -1,3 +1,4 @@
+import { pegarTodo } from "@/lib/texto";
 export interface Servicio {
   id: string;
   title: string;
@@ -12,7 +13,7 @@ export interface Servicio {
 
 // Títulos y bajadas de Laura (revisión 1.0). El desarrollo ampliado profundiza esas
 // bajadas con detalle profesional consistente con la propuesta de ELEVAR.
-export const SERVICIOS_DATA: Servicio[] = [
+export const SERVICIOS_DATA: Servicio[] = pegarTodo([
   {
     id: "formacion-profesional",
     title: "Formación profesional",
@@ -109,7 +110,7 @@ export const SERVICIOS_DATA: Servicio[] = [
       "Mejora continua sostenible",
     ],
   },
-];
+]);
 
 export function getServicioById(id: string): Servicio | undefined {
   return SERVICIOS_DATA.find((s) => s.id === id);

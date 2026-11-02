@@ -9,6 +9,7 @@ import { useRef } from "react";
 import { gsap, prefersReducedMotion, START, useGSAP } from "@/lib/gsap";
 import { Container } from "@/components/ui/container";
 import { ENFOQUE } from "./contenido";
+import { sinViuda } from "@/lib/texto";
 
 export function Enfoque() {
   const root = useRef<HTMLElement>(null);
@@ -35,9 +36,15 @@ export function Enfoque() {
       <Container>
         <div className="grid gap-14 lg:grid-cols-[1.5fr_1fr] lg:items-end lg:gap-20">
           <p className="ef-lead font-display text-[clamp(1.6rem,3.4vw,3rem)] font-semibold leading-[1.18] tracking-tight text-ink-900 [text-wrap:balance]">
-            {ENFOQUE.lead.split(" ").map((w, i) => (
-              <span key={i} className={`ef-word ${ENFOQUE.hot.includes(w) ? "text-brand-500" : ""}`}>
-                {w}{" "}
+            {/* pegar() une «y respuesta» con un espacio duro: el tramo va junto y se pinta cada palabra. */}
+            {sinViuda(ENFOQUE.lead).split(" ").map((w, i) => (
+              <span key={i} className="ef-word">
+                {w.split("\u00A0").map((p, j) => (
+                  <span key={j} className={ENFOQUE.hot.includes(p) ? "text-brand-500" : undefined}>
+                    {j > 0 ? "\u00A0" : ""}
+                    {p}
+                  </span>
+                ))}{" "}
               </span>
             ))}
           </p>

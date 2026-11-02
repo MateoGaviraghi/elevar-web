@@ -7,6 +7,18 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Saltos de línea (regla de Mateo, 2026-10-26): nunca una palabra sola en la última línea.
+ * En la capa base, así las clases text-balance de cada título siguen mandando. Las frases
+ * partidas en una palabra de enlace las evita pegar() (lib/texto.ts). */
+@layer base {
+  p, li, dd, dt, figcaption, blockquote, label {
+    text-wrap: pretty;
+  }
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+}
+
 /* Lenis smooth scroll (el momentum lo maneja JS, no el navegador) */
 html.lenis,
 html.lenis body {

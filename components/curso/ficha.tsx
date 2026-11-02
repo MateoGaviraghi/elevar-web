@@ -14,6 +14,7 @@ import { ModalityChip } from "@/components/ui/modality-chip";
 import { Container } from "@/components/ui/container";
 import { SplitLines } from "@/components/anim/split-lines";
 import { gsap } from "@/lib/gsap";
+import { pegar } from "@/lib/texto";
 import {
   Breadcrumb,
   BuyBar,
@@ -227,8 +228,7 @@ export function CourseFicha({ data }: { data: FichaData }) {
             <div className="max-w-2xl">
               <p className="cl-in font-mono text-xs font-semibold tracking-wider text-neutral-0/85">{course.code}</p>
               <p className="cl-in mt-2 text-balance font-display text-2xl font-semibold leading-tight tracking-tight md:text-4xl">
-                {isFree(course) ? "Reservá tu lugar en " : "Inscribite a "}
-                {course.title}
+                {pegar(`${isFree(course) ? "Reservá tu lugar en" : "Inscribite a"} ${course.title}`)}
               </p>
               <p className="cl-in mt-3 text-sm text-neutral-0/90">
                 {priceARS(course)}

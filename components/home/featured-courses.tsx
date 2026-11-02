@@ -6,6 +6,7 @@ import { getCourses, getPromos } from "@/lib/api";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { CourseRail } from "@/components/catalog/course-rail";
+import { pegar } from "@/lib/texto";
 
 // Cursos destacados del Inicio: primero los destacados, después el resto, hasta 8.
 // Se leen en el navegador para que reflejen lo cargado desde el panel.
@@ -32,7 +33,7 @@ export function FeaturedCoursesSection() {
       <SectionHeader
         eyebrow="Cursos"
         title="Cursos destacados"
-        lead="Capacitaciones abiertas para tu laboratorio. Tocá un curso para ver el detalle."
+        lead={pegar("Capacitaciones abiertas para tu laboratorio. Tocá un curso para ver el detalle.")}
         action={{ label: "Ver todos los cursos", href: "/formacion" }}
       />
     </Container>

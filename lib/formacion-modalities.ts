@@ -1,4 +1,5 @@
 import type { Modality } from "@/types";
+import { pegarTodo } from "@/lib/texto";
 
 export interface ModalityInfo {
   slug: string;
@@ -10,7 +11,7 @@ export interface ModalityInfo {
   img: string;
 }
 
-export const MODALITIES: ModalityInfo[] = [
+export const MODALITIES: ModalityInfo[] = pegarTodo([
   {
     slug: "cursos-online-en-vivo",
     modality: "LIVE",
@@ -52,7 +53,7 @@ export const MODALITIES: ModalityInfo[] = [
     img: "/assets/formacion/pictograma2.2_asincronico.png",
     desc: "Material de estudio descargable sobre temas puntuales de la norma, para leer y consultar cuando lo necesites.",
   },
-];
+]);
 
 export function getModalityBySlug(slug: string): ModalityInfo | undefined {
   return MODALITIES.find((m) => m.slug === slug);

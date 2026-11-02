@@ -10,6 +10,7 @@ import { ClientsSection } from "@/components/home/clients";
 import { ContactSection } from "@/components/home/contact";
 import { PromoStrip } from "@/components/promos/promo-strip";
 import { FeaturedCoursesSection } from "@/components/home/featured-courses";
+import { pegar } from "@/lib/texto";
 
 export const metadata: Metadata = {
   title: "Elevar — Formación y Asistencia Técnica para Laboratorios ISO/IEC 17025",
@@ -24,8 +25,7 @@ export default function HomePage() {
       <ServicesSection />
       <ParallaxBand image="/assets/mockup/m4.jpg">
         <p className="max-w-3xl font-display text-2xl font-medium leading-snug tracking-tight md:text-[2.4rem]">
-          Trabajamos junto a laboratorios de alimentos, ambiente, minería y salud en toda
-          América Latina.
+          {pegar("Trabajamos junto a laboratorios de alimentos, ambiente, minería y salud en toda América Latina.")}
         </p>
       </ParallaxBand>
       <ModalitiesSection />

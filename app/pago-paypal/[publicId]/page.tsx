@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ApiError, getOrder, simulatePayment } from "@/lib/api";
@@ -16,7 +16,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  * hacia el checkout real de PayPal y vuelve por la URL de retorno; el estado de
  * la operación lo confirma el webhook.
  */
-export default function PagoPayPalPage({ params }: { params: { publicId: string } }) {
+export default function PagoPayPalPage(props: { params: Promise<{ publicId: string }> }) {
+  const params = use(props.params);
   const router = useRouter();
   const { publicId } = params;
 

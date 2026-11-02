@@ -31,6 +31,7 @@ import { scrollPageTo } from "@/components/anim/smooth-scroll";
 import { BTN, isFree, useMotion } from "@/components/curso/ficha-parts";
 import { Closing } from "@/components/formacion/portada";
 import { NumeroRodante } from "@/components/promos/numero-rodante";
+import { sinDuros, pegar } from "@/lib/texto";
 
 const MAX_PEOPLE = 20;
 const sessionBased = (c: Course) => c.modality === "LIVE" || c.modality === "WEBINAR";
@@ -118,8 +119,8 @@ function Hero({ group }: { group: Promo | null }) {
             <div className="max-w-2xl">
               <p className="pr-in text-lg leading-relaxed text-neutral-300">
                 {group
-                  ? `Inscribí a ${group.minQuantity} o más personas de tu laboratorio en el mismo curso y el total baja solo en el carrito.`
-                  : "Formá a tu laboratorio bajo la norma ISO/IEC 17025 con cursos en vivo, asincrónicos y talleres."}
+                  ? pegar(`Inscribí a ${group.minQuantity} o más personas de tu laboratorio en el mismo curso y el total baja solo en el carrito.`)
+                  : pegar("Formá a tu laboratorio bajo la norma ISO/IEC 17025 con cursos en vivo, asincrónicos y talleres.")}
               </p>
               <ul className="pr-in mt-5 flex flex-wrap gap-x-3 gap-y-2 text-sm text-neutral-200">
                 {facts.map((f, i) => (
@@ -168,7 +169,7 @@ function CoursePicker({ courses, value, onChange }: { courses: Course[]; value: 
 
   const list = useMemo(() => {
     const t = q.trim().toLowerCase();
-    return t ? courses.filter((c) => c.title.toLowerCase().includes(t) || c.code.toLowerCase().includes(t)) : courses;
+    return t ? courses.filter((c) => sinDuros(c.title).toLowerCase().includes(t) || c.code.toLowerCase().includes(t)) : courses;
   }, [courses, q]);
 
   useEffect(() => {
@@ -397,8 +398,8 @@ function Calculator({ courses, promos, group }: { courses: Course[]; promos: Pro
                 <Stepper value={qty} min={team ? minTeam : 1} disabled={!team} onChange={(n) => setPeople(n)} />
                 <p className="text-sm text-ink-700">
                   {!team && group
-                    ? `Elegí "Mi equipo" para inscribir a ${minTeam} o más personas con ${group.value} % de descuento.`
-                    : `Hasta ${MAX_PEOPLE} personas. Para grupos más grandes, escribinos.`}
+                    ? pegar(`Elegí "Mi equipo" para inscribir a ${minTeam} o más personas con ${group.value}\u00A0% de descuento.`)
+                    : pegar(`Hasta ${MAX_PEOPLE} personas. Para grupos más grandes, escribinos.`)}
                 </p>
               </div>
             </div>
@@ -462,9 +463,9 @@ function Abroad() {
             <span className="pa-big block">−{PAYMENT_PCT} %</span>
           </p>
           <div className="max-w-xl">
-            <h2 className="pa-in font-display text-3xl font-semibold tracking-tight md:text-[2.5rem]">¿Pagás desde el exterior?</h2>
+            <h2 className="pa-in font-display text-3xl font-semibold tracking-tight md:text-[2.5rem]">{pegar("¿Pagás desde el exterior?")}</h2>
             <p className="pa-in mt-4 text-lg leading-relaxed text-neutral-300">
-              Pagando desde el exterior mediante Western Union se aplica un descuento del {PAYMENT_PCT} %. Ese pago se coordina directamente con ELEVAR, por eso no se descuenta en el carrito.
+              {pegar(`Pagando desde el exterior mediante Western Union se aplica un descuento del ${PAYMENT_PCT}\u00A0%. Ese pago se coordina directamente con ELEVAR, por eso no se descuenta en el carrito.`)}
             </p>
           </div>
           <a

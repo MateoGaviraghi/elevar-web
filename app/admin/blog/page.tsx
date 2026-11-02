@@ -6,6 +6,7 @@ import { deletePost, listPosts, savePost, type FullPost } from "@/lib/content";
 import { resetCollection } from "@/lib/local-db";
 import { formatBlogDate } from "@/lib/blog-date";
 import { useCollection } from "@/components/admin/use-collection";
+import { sinDuros } from "@/lib/texto";
 import {
   AdminButton,
   Chip,
@@ -36,7 +37,7 @@ export default function AdminBlogPage() {
         if (filter === "PUBLISHED" && !p.published) return false;
         if (filter === "DRAFT" && p.published) return false;
         if (!q) return true;
-        return p.title.toLowerCase().includes(q) || p.teaser.toLowerCase().includes(q);
+        return sinDuros(p.title).toLowerCase().includes(q) || sinDuros(p.teaser).toLowerCase().includes(q);
       })
       .sort((a, b) => (a.date < b.date ? 1 : -1));
   }, [posts, query, filter]);

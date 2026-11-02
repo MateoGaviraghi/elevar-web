@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/anim/reveal";
 import { BLOG_POSTS } from "@/lib/blog";
+import { pegar } from "@/lib/texto";
 
 export const metadata: Metadata = {
   title: "Blog — Elevar",
@@ -26,9 +27,8 @@ export default function BlogPage() {
             <h1 className="max-w-3xl font-display text-4xl font-semibold leading-[1.05] tracking-tight md:text-5xl">
               Cápsulas informativas
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-neutral-300">
-              Notas breves sobre calidad, metrología y la norma ISO/IEC 17025 para el
-              día a día del laboratorio.
+            <p className="mt-6 text-lg leading-relaxed text-neutral-300">
+              {pegar("Notas breves sobre calidad, metrología y la norma ISO/IEC 17025 para el día a día del laboratorio.")}
             </p>
           </Reveal>
         </Container>

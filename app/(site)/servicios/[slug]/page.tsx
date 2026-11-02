@@ -7,6 +7,7 @@ import { MediaHero } from "@/components/media/media-hero";
 import { buttonClasses } from "@/components/ui/button";
 import { SERVICIOS_DATA, getServicioById } from "@/lib/servicios";
 import { RevealImage } from "@/components/anim/reveal-image";
+import { pegarTodo } from "@/lib/texto";
 
 // Foto de hero por servicio (mockup lab/ciencia).
 const HERO_IMG: Record<string, string> = {
@@ -28,31 +29,33 @@ const BODY_IMG: Record<string, string> = {
   gestion: "/assets/mockup/m3.jpg",
 };
 
-const STEPS = [
+const STEPS = pegarTodo([
   { t: "Diagnóstico", d: "Entendemos el punto de partida de tu laboratorio y dónde están las brechas." },
   { t: "Plan a medida", d: "Definimos alcance, tiempos y entregables junto a tu equipo." },
   { t: "Acompañamiento", d: "Trabajamos codo a codo hasta llegar al resultado y sostenerlo." },
-];
+]);
 
 export function generateStaticParams() {
   return SERVICIOS_DATA.map((s) => ({ slug: s.id }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const s = getServicioById(params.slug);
   if (!s) return { title: "Servicio no encontrado — Elevar" };
   return { title: `${s.title} — Servicios Elevar`, description: s.desc };
 }
 
-export default function ServicioDetailPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default async function ServicioDetailPage(
+  props: {
+    params: Promise<{ slug: string }>;
+  }
+) {
+  const params = await props.params;
   const servicio = getServicioById(params.slug);
   if (!servicio) notFound();
 

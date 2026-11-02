@@ -1,3 +1,4 @@
+import { pegarTodo } from "@/lib/texto";
 /** Bloque de contenido del cuerpo de una nota. */
 export interface BlogBlock {
   type: "p" | "h" | "li";
@@ -20,7 +21,7 @@ const CATEGORY = "Cápsula informativa";
 
 // Títulos + ganchos + bajadas REALES del blog del sitio (web-anterior). El cuerpo
 // completo de cada nota es placeholder de Fase 0 (se redacta con Laura en Fase 1).
-export const BLOG_POSTS: BlogPost[] = [
+export const BLOG_POSTS: BlogPost[] = pegarTodo([
   {
     slug: "componentes-incertidumbre-microbiologia-iso-19036",
     title: "3 componentes de la incertidumbre en microbiología según ISO 19036",
@@ -96,7 +97,7 @@ export const BLOG_POSTS: BlogPost[] = [
     category: CATEGORY,
     date: "2026-04-02",
   },
-];
+]);
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
   return BLOG_POSTS.find((p) => p.slug === slug);

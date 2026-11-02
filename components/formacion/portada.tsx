@@ -22,6 +22,7 @@ import { Pictogram } from "@/components/ui/pictogram";
 import { VideoSlot } from "@/components/media/video-slot";
 import { scrollPageTo } from "@/components/anim/smooth-scroll";
 import { BTN, isFree, priceARS, sessionInfo, useMotion } from "@/components/curso/ficha-parts";
+import { pegarTodo, pegar } from "@/lib/texto";
 
 // ── Datos ────────────────────────────────────────────────────────────────────
 
@@ -84,7 +85,7 @@ function Hero({ courses }: { courses: Course[] }) {
           <div className="mt-10 grid gap-8 border-t border-neutral-0/15 pt-8 md:mt-14 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-12 [@media(min-width:768px)_and_(max-height:800px)]:mt-8 [@media(min-width:768px)_and_(max-height:800px)]:pt-6">
             <div className="max-w-2xl">
               <p className="ph-in text-lg leading-relaxed text-neutral-300">
-                Formá a tu equipo bajo la norma ISO/IEC 17025: cursos en vivo, asincrónicos, webinars gratuitos, talleres y e-books.
+                {pegar("Formá a tu equipo bajo la norma ISO/IEC 17025: cursos en vivo, asincrónicos, webinars gratuitos, talleres y e-books.")}
               </p>
               <ul className="ph-in mt-5 flex flex-wrap gap-x-3 gap-y-2 text-sm text-neutral-200">
                 {facts.map((f, i) => (
@@ -123,10 +124,10 @@ function picksOf(list: Course[]): Course[] {
   return list.slice(0, 3);
 }
 
-const EMPTY_NOTE: Record<string, string> = {
+const EMPTY_NOTE: Record<string, string> = pegarTodo({
   WORKSHOP: "Talleres a medida para tu equipo, en tu laboratorio o por videollamada.",
   EBOOK: "Estamos preparando los primeros e‑books.",
-};
+});
 
 function Paths({ courses }: { courses: Course[] }) {
   // Al llegar: el título sube y las líneas de cada banda se dibujan de a una.
@@ -326,7 +327,7 @@ function Teach() {
               <span className="block overflow-hidden"><span className="pt-title block">no solo leyendo</span></span>
             </h2>
             <p className="pt-in mt-5 max-w-md text-lg leading-relaxed text-ink-700">
-              Clases prácticas dictadas por profesionales que trabajan en laboratorios bajo ISO/IEC 17025.
+              {pegar("Clases prácticas dictadas por profesionales que trabajan en laboratorios bajo ISO/IEC 17025.")}
             </p>
             <ul className="mt-8">
               {TEACH.map((t) => (
@@ -363,7 +364,7 @@ export function Closing() {
           <h2 className="overflow-hidden font-display text-3xl font-semibold tracking-tight md:text-[2.5rem]">
             <span className="pc-title block">¿Tenés preguntas?</span>
           </h2>
-          <p className="pc-in mt-4 text-lg text-neutral-0/85">Escribinos y te ayudamos a elegir el curso para vos o para tu equipo.</p>
+          <p className="pc-in mt-4 text-lg text-neutral-0/85">{pegar("Escribinos y te ayudamos a elegir el curso para vos o para tu equipo.")}</p>
         </div>
         <div className="pc-in flex shrink-0 flex-col gap-3 sm:flex-row">
           <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className={BTN.onBrand}>

@@ -22,6 +22,7 @@ import {
   listPromos,
 } from "@/lib/content";
 import { computePricing } from "@/lib/promos";
+import { pegar, pegarOpt } from "@/lib/texto";
 import { getStoredOrder, saveOrder, setOrderStatus } from "@/lib/orders-store";
 import { arsToUsd } from "@/lib/formatters";
 import { newId } from "@/lib/local-db";
@@ -84,13 +85,29 @@ export async function getCourses(params?: {
       (c) => c.title.toLowerCase().includes(q) || c.code.toLowerCase().includes(q)
     );
   }
-  return { count: list.length, next: null, previous: null, results: list };
+  return { count: list.length, next: null, previous: null, results: list.map(paraMostrar) };
 }
 
 export async function getCourse(slug: string): Promise<Course> {
   const course = catalog().find((c) => c.slug === slug);
   if (!course) throw new ApiError("Curso no encontrado.", "NOT_FOUND", 404);
-  return course;
+  return paraMostrar(course);
+}
+
+/** Textos del curso listos para mostrar, sin frases partidas en una palabra de enlace
+ * (lib/texto.ts). Va a la salida, después de filtrar: la búsqueda y los slugs usan el texto
+ * original. Los buscadores sobre cursos ya entregados comparan con `sinDuros()`. */
+function paraMostrar(c: Course): Course {
+  return {
+    ...c,
+    title: pegar(c.title),
+    summary: pegar(c.summary),
+    description: pegarOpt(c.description),
+    lead: pegarOpt(c.lead),
+    objectives: pegarOpt(c.objectives),
+    syllabus: c.syllabus?.map(pegar),
+    instructor: c.instructor ? { ...c.instructor, role: pegar(c.instructor.role) } : c.instructor,
+  };
 }
 
 // ── Promociones ───────────────────────────────────────────────────────────────

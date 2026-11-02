@@ -1,7 +1,9 @@
 // Datos de la sección "Dirección" de /nosotros: Laura Delissi (reemplaza "El equipo"
 // por pedido de ella). Fuente: su CV (`public/docs/cv-laura-delissi.pdf`) y elevar.com.ar/nosotros.
 
-export const LAURA = {
+import { pegarTodo } from "@/lib/texto";
+
+export const LAURA = pegarTodo({
   name: "Laura Delissi",
   role: "Directora de ELEVAR",
   photo: "/assets/equipo/laura.png",
@@ -10,7 +12,7 @@ export const LAURA = {
   cvFileName: "CV Laura Delissi.pdf",
   /** Credencial destacada (el "sello"). */
   seal: { title: "Experta técnica y evaluadora coordinadora del OAA", detail: "Organismo Argentino de Acreditación" },
-};
+});
 
 export interface CredRow {
   /** Años o fecha; vacío si no aplica. */
@@ -25,7 +27,7 @@ export interface CredGroup {
   rows: CredRow[];
 }
 
-export const CRED_GROUPS: CredGroup[] = [
+export const CRED_GROUPS: CredGroup[] = pegarTodo([
   {
     id: "trayectoria",
     label: "Trayectoria",
@@ -54,4 +56,4 @@ export const CRED_GROUPS: CredGroup[] = [
       { when: "+50", title: "Cursos de capacitación técnica y de gestión", place: "INTI · OAA · GQSP" },
     ],
   },
-];
+]);

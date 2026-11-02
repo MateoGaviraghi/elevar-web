@@ -6,6 +6,7 @@ import { MediaHero } from "@/components/media/media-hero";
 import { buttonClasses } from "@/components/ui/button";
 import { SERVICIOS_DATA } from "@/lib/servicios";
 import { Pictogram } from "@/components/ui/pictogram";
+import { pegar } from "@/lib/texto";
 
 export const metadata: Metadata = {
   title: "Servicios — Elevar",
@@ -31,7 +32,7 @@ export default function ServiciosPage() {
         eyebrow="Servicios"
         size="lg"
         title="Nuestros servicios"
-        subtitle="Acompañamos a laboratorios de ensayo y calibración en cada etapa de su sistema de gestión, con foco en la norma ISO/IEC 17025."
+        subtitle={pegar("Acompañamos a laboratorios de ensayo y calibración en cada etapa de su sistema de gestión, con foco en la norma ISO/IEC 17025.")}
       />
 
       {/* Grilla de servicios con foto */}
@@ -88,11 +89,10 @@ export default function ServiciosPage() {
           <Reveal as="div" className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
             <div>
               <h2 className="font-display text-2xl font-semibold tracking-tight text-ink-900 md:text-3xl">
-                ¿Querés evaluar el sistema de tu laboratorio?
+                {pegar("¿Querés evaluar el sistema de tu laboratorio?")}
               </h2>
-              <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-ink-700">
-                Contanos en qué etapa estás y armamos una propuesta a la medida de tus
-                necesidades y recursos.
+              <p className="mt-3 text-[15px] leading-relaxed text-ink-700">
+                {pegar("Contanos en qué etapa estás y armamos una propuesta a la medida de tus necesidades y recursos.")}
               </p>
             </div>
             <Link

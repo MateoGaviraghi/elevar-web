@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import type { Promo } from "@/types";
 import { getPromo } from "@/lib/content";
 import { PromoForm } from "@/components/admin/promo-form";
 import { AdminButton, EmptyState, PageHeader } from "@/components/admin/ui";
 
-export default function EditPromoPage({ params }: { params: { id: string } }) {
+export default function EditPromoPage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params);
   const [promo, setPromo] = useState<Promo | null | undefined>(undefined);
 
   useEffect(() => {

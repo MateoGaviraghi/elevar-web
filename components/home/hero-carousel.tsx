@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, prefersReducedMotion, SplitText, useGSAP, airMasks, LINE_FROM } from "@/lib/gsap";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
+import { pegarTodo } from "@/lib/texto";
 
 interface Slide {
   img: string;
@@ -13,7 +14,7 @@ interface Slide {
   href: string;
 }
 
-const SLIDES: Slide[] = [
+const SLIDES: Slide[] = pegarTodo([
   {
     img: "/assets/hero/slide-auditorias.png",
     eyebrow: "Mejora continua",
@@ -42,7 +43,7 @@ const SLIDES: Slide[] = [
     desc: "Elevar es una consultora de gestión de calidad aplicada a laboratorios de primera, segunda y tercera parte.",
     href: "/servicios/gestion",
   },
-];
+]);
 
 const SLIDE_MS = 7000;
 

@@ -14,6 +14,7 @@ import { useRef } from "react";
 import { gsap, prefersReducedMotion, START, useGSAP } from "@/lib/gsap";
 import { Container } from "@/components/ui/container";
 import { CRED_GROUPS, LAURA, type CredGroup } from "./laura";
+import { pegar } from "@/lib/texto";
 
 // Botón sobre azul: naranja que se llena de blanco al pasar el mouse (el relleno
 // tinta de los botones del sitio se perdería contra el fondo).
@@ -148,12 +149,12 @@ export function Direccion() {
           <div className="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-2 lg:gap-20">
             <div className="relative">
               <Portrait className="aspect-[4/5]" />
-              <Seal className="absolute -bottom-10 right-4 h-28 w-28 md:-right-10 md:h-36 md:w-36" />
+              <Seal className="absolute -bottom-10 right-4 h-28 w-28 md:h-36 md:w-36 lg:-right-10" />
             </div>
             <div data-reveal="" className="dr-intro lg:pt-6">
               <p className="dr-in font-medium text-brand-400">{LAURA.role}</p>
               <p className="dr-in mt-4 font-display text-2xl font-medium leading-snug tracking-tight text-neutral-0 md:text-3xl">{LAURA.lead}</p>
-              <p className="dr-in mt-6 leading-relaxed text-neutral-300">Experta técnica y evaluadora coordinadora en el {LAURA.seal.detail} (OAA).</p>
+              <p className="dr-in mt-6 leading-relaxed text-neutral-300">{pegar(`Experta técnica y evaluadora coordinadora en el ${LAURA.seal.detail} (OAA).`)}</p>
               <div className="dr-in mt-8">
                 <a href={LAURA.cv} download={LAURA.cvFileName} className={CV_BUTTON}>
                   Descargar CV

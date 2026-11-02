@@ -4,6 +4,7 @@ import { CommunityButton, WhatsAppIcon } from "@/components/common/whatsapp";
 import { ChannelGroup, ChannelIcon, ChannelRow } from "@/components/common/channel-link";
 import { CONTACT_CHANNELS, SOCIAL_CHANNELS } from "@/lib/contact";
 import { Logo } from "@/components/brand/logo";
+import { pegar } from "@/lib/texto";
 
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
@@ -84,8 +85,7 @@ export function Footer() {
               Comunidad Elevar
             </h3>
             <p className="mb-4 text-sm leading-relaxed text-neutral-400">
-              Sumate a nuestra comunidad de WhatsApp y recibí novedades de cursos, promociones y
-              contenido técnico sobre ISO/IEC&nbsp;17025.
+              {pegar("Sumate a nuestra comunidad de WhatsApp y recibí novedades de cursos, promociones y contenido técnico sobre ISO/IEC 17025.")}
             </p>
             <CommunityButton tone="dark" className="w-full sm:w-auto" />
             <p className="mt-4 flex items-center gap-2 text-xs text-neutral-500">

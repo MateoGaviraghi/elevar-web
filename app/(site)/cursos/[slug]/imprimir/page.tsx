@@ -39,7 +39,8 @@ async function fetchCourse(slug: string): Promise<Course | null> {
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params;
   const course = await fetchCourse(params.slug);
   return { title: course ? `${course.code} · ${course.title} — PDF` : "Curso no encontrado — Elevar", robots: { index: false } };
 }
@@ -53,7 +54,8 @@ function Block({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
-export default async function PrintCoursePage({ params }: { params: { slug: string } }) {
+export default async function PrintCoursePage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const course = await fetchCourse(params.slug);
   if (!course) notFound();
   const tpl = MODALITY_TEMPLATES[course.modality];

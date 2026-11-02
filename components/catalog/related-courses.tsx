@@ -6,6 +6,7 @@ import { getCourses, getPromos } from "@/lib/api";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { CourseRail } from "@/components/catalog/course-rail";
+import { pegar, sinViuda } from "@/lib/texto";
 
 // "Otros cursos" al final de la ficha: misma categoría o modalidad, sin el actual.
 // Primero los de la misma categoría, después los de la misma modalidad; hasta 8.
@@ -51,7 +52,7 @@ export function RelatedCourses({
           <Container>
             <SectionHeader
               eyebrow="Seguí capacitándote"
-              title="Otros cursos que te pueden interesar"
+              title={sinViuda("Otros cursos que te pueden interesar")}
               action={{ label: "Ver todos los cursos", href: "/formacion" }}
             />
           </Container>

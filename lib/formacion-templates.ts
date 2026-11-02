@@ -1,4 +1,5 @@
 import type { Modality } from "@/types";
+import { pegarTodo } from "@/lib/texto";
 
 /**
  * Bloques de la ficha que son iguales en todos los cursos de una modalidad.
@@ -60,15 +61,15 @@ const EMPTY: ModalityTemplate = { includes: [], howItWorks: [], certificate: nul
  * E-Books (Mateo, 2026-10-19: la ficha se diseña con E-Books). Son una modalidad más
  * desde la página de la lista; ELEVAR todavía no confirmó si existen.
  */
-export const EBOOK_TEMPLATE: ModalityTemplate = {
+export const EBOOK_TEMPLATE: ModalityTemplate = pegarTodo({
   includes: ["{{CONFIRMAR}} Qué incluye el e-book (formato, páginas)."],
   howItWorks: ["{{CONFIRMAR}} Cómo se recibe el e-book después del pago."],
   certificate: null,
   payment: PAGO,
   promos: [],
-};
+});
 
-export const MODALITY_TEMPLATES: Record<Modality, ModalityTemplate> = {
+export const MODALITY_TEMPLATES: Record<Modality, ModalityTemplate> = pegarTodo({
   ASYNC: {
     includes: INCLUYE,
     howItWorks: [
@@ -99,4 +100,4 @@ export const MODALITY_TEMPLATES: Record<Modality, ModalityTemplate> = {
   // El sitio actual no tiene talleres publicados.
   WORKSHOP: EMPTY,
   EBOOK: EBOOK_TEMPLATE,
-};
+});

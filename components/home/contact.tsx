@@ -10,6 +10,7 @@ import { gsap, prefersReducedMotion, START, useGSAP } from "@/lib/gsap";
 import { ChannelGroup, ChannelIcon, ChannelRow } from "@/components/common/channel-link";
 import { CONTACT_CHANNELS, SOCIAL_CHANNELS } from "@/lib/contact";
 import { createLead, ApiError } from "@/lib/api";
+import { pegar, sinViuda } from "@/lib/texto";
 
 interface FormState {
   name: string;
@@ -125,10 +126,10 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
                 <span className="h-px w-8 bg-brand-500" aria-hidden />
               </div>
               <h2 className="font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-4xl">
-                ¿Tiene alguna consulta?
+                {sinViuda("¿Tiene alguna consulta?")}
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-neutral-600">
-                Dejanos tu consulta y te respondemos a la brevedad.
+                {pegar("Dejanos tu consulta y te respondemos a la brevedad.")}
               </p>
             </div>
           </Reveal>
@@ -152,8 +153,8 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
 
               <div className="relative">
                 <h3 className="font-display text-2xl font-semibold tracking-tight">Hablemos</h3>
-                <p className="mt-3 max-w-xs text-sm leading-relaxed text-neutral-300">
-                  Estamos en Gualeguaychú y trabajamos con laboratorios de toda América Latina.
+                <p className="mt-3 text-sm leading-relaxed text-neutral-300">
+                  {pegar("Estamos en Gualeguaychú y trabajamos con laboratorios de toda América Latina.")}
                 </p>
 
                 <ChannelGroup className="mt-8 space-y-4">

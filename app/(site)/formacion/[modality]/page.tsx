@@ -11,11 +11,12 @@ export function generateStaticParams() {
   return MODALITIES.map((m) => ({ modality: m.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { modality: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ modality: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const info = getModalityBySlug(params.modality);
   if (!info) return {};
   return {
@@ -29,11 +30,12 @@ export async function generateMetadata({
  * Work). Recibe todos los cursos: las píldoras cambian de modalidad sin recargar y
  * actualizan la dirección (/formacion/<modalidad>).
  */
-export default async function ModalityPage({
-  params,
-}: {
-  params: { modality: string };
-}) {
+export default async function ModalityPage(
+  props: {
+    params: Promise<{ modality: string }>;
+  }
+) {
+  const params = await props.params;
   const info = getModalityBySlug(params.modality);
   if (!info) notFound();
 

@@ -1,10 +1,12 @@
 // Textos de /nosotros (fuente: elevar.com.ar/nosotros). La sección "Dirección"
 // tiene los suyos en `laura.ts`.
 
+import { pegarTodo } from "@/lib/texto";
+
 /** Texto con tramos resaltados: `[texto, resaltado]`. */
 export type Tramo = [string, boolean?];
 
-export const HERO = {
+export const HERO = pegarTodo({
   title: [
     ["ELEVAR es una consultora de "],
     ["gestión de calidad", true],
@@ -12,9 +14,9 @@ export const HERO = {
   ] as Tramo[],
   lead: "Formación, asistencia, asesoría y auditoría para laboratorios de ensayo y calibración.",
   link: { label: "Conocé a nuestra directora", href: "#direccion" },
-};
+});
 
-export const ENFOQUE = {
+export const ENFOQUE = pegarTodo({
   lead: "Nos destacamos por nuestra capacidad resolutiva y respuesta rápida, entendiendo que las actividades en los laboratorios requieren soluciones inmediatas.",
   /** Palabras del lead que se encienden en naranja. */
   hot: ["capacidad", "resolutiva", "respuesta", "rápida,"],
@@ -22,9 +24,9 @@ export const ENFOQUE = {
     "Creemos que la competencia en los laboratorios es clave para el éxito de ensayos y calibraciones. Por eso ofrecemos formación, asistencia, asesoría y auditoría, asegurando la validez de los resultados.",
     "Nuestra pasión nos ha unido en un equipo interdisciplinario, brindando un servicio integral para los laboratorios.",
   ],
-};
+});
 
-export const MISION_VISION = [
+export const MISION_VISION = pegarTodo([
   {
     title: "Misión",
     text: [
@@ -57,16 +59,16 @@ export const MISION_VISION = [
       [", y contribuyendo al desarrollo sostenible y exitoso de las organizaciones con las que colaboramos."],
     ] as Tramo[],
   },
-];
+]);
 
-export const VALORES = [
+export const VALORES = pegarTodo([
   { img: "/assets/valores/pictograma3.1_escuchar.png", title: "Escuchar", desc: "Escuchar e interpretar las necesidades de nuestros clientes." },
   { img: "/assets/valores/pictograma3.2_trabajar.png", title: "Trabajar", desc: "Trabajar en equipo entre nuestros clientes y expertos." },
   { img: "/assets/valores/pictograma3.3_sugerir.png", title: "Sugerir", desc: "Sugerir soluciones adaptadas a las necesidades y recursos de nuestros clientes." },
-];
+]);
 
 /** "Nuestra red de colaboradores": texto de Laura (revisión 1.0), sin fotos ni nombres. */
-export const COLABORADORES = {
+export const COLABORADORES = pegarTodo({
   title: "Nuestra red de colaboradores",
   lead: [
     ["En ELEVAR contamos con una red de profesionales y especialistas de "],
@@ -77,9 +79,9 @@ export const COLABORADORES = {
     "Nuestros colaboradores aportan conocimientos y experiencias en diferentes disciplinas, lo que nos permite ofrecer formación y asesoramiento especializado, adaptado a las necesidades de cada organización.",
     "Esta diversidad de experiencias y enfoques enriquece nuestras propuestas y nos permite abordar los desafíos de los laboratorios desde una perspectiva integral, práctica y actualizada.",
   ],
-};
+});
 
-export const CIERRE = {
+export const CIERRE = pegarTodo({
   title: "¿Trabajamos juntos?",
   text: "Contanos sobre tu laboratorio y te ayudamos a dar el próximo paso hacia la acreditación.",
-};
+});

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/anim/reveal";
 import { ContactSection } from "@/components/home/contact";
+import { pegar, sinViuda } from "@/lib/texto";
 
 export const metadata: Metadata = {
   title: "Contacto — Elevar",
@@ -23,10 +24,10 @@ export default function ContactoPage() {
               </span>
             </div>
             <h1 className="max-w-3xl font-display text-4xl font-semibold leading-[1.05] tracking-tight md:text-5xl">
-              ¿Tiene alguna consulta?
+              {sinViuda("¿Tiene alguna consulta?")}
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-neutral-300">
-              Contanos en qué podemos ayudarte y te respondemos a la brevedad.
+              {pegar("Contanos en qué podemos ayudarte y te respondemos a la brevedad.")}
             </p>
           </Reveal>
         </Container>

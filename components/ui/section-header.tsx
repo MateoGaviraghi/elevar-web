@@ -60,7 +60,7 @@ export function SectionHeader({
 
           {lead && (
             <p
-              className={`mt-4 max-w-xl ${
+              className={`mt-4 ${
                 dark ? "text-neutral-300" : "text-neutral-700"
               } ${isCentered ? "mx-auto" : ""}`}
             >

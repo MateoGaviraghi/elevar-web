@@ -17,6 +17,7 @@ import type { Course } from "@/types";
 import type { ModalityTemplate } from "@/lib/formacion-templates";
 import { formatARS } from "@/lib/formatters";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
+import { pegar } from "@/lib/texto";
 import { openCartDrawer } from "@/lib/cart";
 import { canQuickAdd, quickAddCourse } from "@/lib/quick-add";
 import { Logo } from "@/components/brand/logo";
@@ -99,7 +100,7 @@ export function leadOf({ course, tpl }: FichaData): string {
     ? ` En ${items.length} ${items.some((i) => i.isModule) ? "módulos" : "temas"} recorrés ${topics.join(", ").replace(/, ([^,]*)$/, " y $1")}${items.length > 3 ? ", entre otros" : ""}.`
     : "";
   const third = tpl.certificate ? " Al terminar recibís el certificado de ELEVAR." : "";
-  return first + second + third;
+  return pegar(first + second + third);
 }
 
 export interface SectionLink {
@@ -497,7 +498,9 @@ export function CursadaPath({ tpl }: { tpl: ModalityTemplate }) {
     });
   });
   return (
-    <ol ref={ref} className="relative pl-12 md:pl-16">
+    // overflow-x-clip: el texto entra desde 24 px a la derecha; sin recorte, los pasos que
+    // todavía no entraron corrían la página de costado en el celular (+8 px a 375).
+    <ol ref={ref} className="relative overflow-x-clip pl-12 md:pl-16">
       <span aria-hidden className="absolute bottom-3 left-[11px] top-3 w-px bg-neutral-0/15 md:left-[15px]" />
       <span aria-hidden className="cu-fill absolute bottom-3 left-[11px] top-3 w-px origin-top bg-brand-500 md:left-[15px]" />
       {tpl.howItWorks.map((step, i) => (

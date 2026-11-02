@@ -1,8 +1,9 @@
 import type { BlogBlock } from "./blog";
+import { pegarTodo } from "@/lib/texto";
 
 // Cuerpo completo de cada nota, extraído del sitio real (elevar.com.ar/blog).
 // Clave = slug de la nota. Texto verbatim del sitio.
-export const BLOG_CONTENT: Record<string, BlogBlock[]> = {
+export const BLOG_CONTENT: Record<string, BlogBlock[]> = pegarTodo({
   "componentes-incertidumbre-microbiologia-iso-19036": [
     { type: "p", text: `¿Conoces los 3 componentes de la incertidumbre en microbiología? Para conocer sobre ellos vamos a centrarnos en la norma ISO 19036 - Microbiología de la cadena alimentaria - Estimación de la incertidumbre de medida para determinaciones cuantitativas. En este documento, de referencia internacional, se proponen 2 opciones:` },
     { type: "li", text: `Informar un valor general de incertidumbre basado solo en una desviación estándar de reproducibilidad (SR), si es consistente con los protocolos de laboratorio y los requisitos del cliente.` },
@@ -168,7 +169,7 @@ export const BLOG_CONTENT: Record<string, BlogBlock[]> = {
     { type: "li", text: `Cuarta situación: El laboratorio posee hojas de cálculo en formato digital como registro primario de sus análisis. En dichas hojas no se incluyen la fecha de la actividad y tampoco se encuentran protegidas para que su uso sea seguro. En este caso, el incumplimiento es al numeral 7.5.1 y 8.4.2 de la norma ISO/IEC 17025:2017` },
     { type: "p", text: `En resumen, analizando estas cuatro situaciones, podemos ver que la respuesta a la pregunta es si, puede una situación ser incumplimiento para varios requisitos.` },
   ],
-};
+});
 
 export function getBlogContent(slug: string): BlogBlock[] {
   return BLOG_CONTENT[slug] ?? [];

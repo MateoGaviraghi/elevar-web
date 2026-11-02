@@ -6,6 +6,7 @@ import { formatARS } from "@/lib/formatters";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/anim/reveal";
 import { ModalityPanels, type PanelItem } from "@/components/home/modality-panels";
+import { pegarTodo, pegar } from "@/lib/texto";
 
 /* "Cinco formas de capacitarte" (inicio). Rediseño de Mateo, 2026-10-23 ("banda inicio",
  * referencia CodeFronts · Color Block, "tu elección" + "GO-AHEAD"): reemplaza la grilla
@@ -33,10 +34,10 @@ function metaOf(c: Course): string {
   return parseFloat(c.price) === 0 ? "Gratis" : formatARS(c.price);
 }
 
-const EMPTY_NOTE: Record<string, string> = {
+const EMPTY_NOTE: Record<string, string> = pegarTodo({
   WORKSHOP: "Talleres a medida para tu equipo, en tu laboratorio o por videollamada.",
   EBOOK: "Estamos preparando los primeros e-books.",
-};
+});
 
 export async function ModalitiesSection() {
   const data = await getCourses().catch(() => null);
@@ -66,7 +67,7 @@ export async function ModalitiesSection() {
                 Cinco formas de capacitarte
               </h2>
               <p className="mt-2 hidden text-base text-ink-700 sm:block md:text-lg">
-                Elegí la modalidad que mejor se adapta a tu equipo y tus tiempos.
+                {pegar("Elegí la modalidad que mejor se adapta a tu equipo y tus tiempos.")}
               </p>
             </div>
             <Link

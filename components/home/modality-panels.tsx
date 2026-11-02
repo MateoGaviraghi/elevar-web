@@ -61,7 +61,7 @@ function PanelBody({ item, compact = false }: { item: PanelItem; compact?: boole
           <h3 className={`mp-in font-display text-[2.5rem] font-semibold leading-tight tracking-tight [@media(max-height:800px)]:text-3xl`}>{item.title}</h3>
         </>
       )}
-      <p className={`mp-in max-w-xl leading-relaxed text-neutral-0/85 ${compact ? "text-sm" : "mt-3 text-base [@media(max-height:800px)]:text-sm"}`}>{item.desc}</p>
+      <p className={`mp-in leading-relaxed text-neutral-0/85 ${compact ? "text-sm" : "mt-3 text-base [@media(max-height:800px)]:text-sm"}`}>{item.desc}</p>
       <div className={compact ? "pt-4" :`mt-auto pt-8 [@media(max-height:800px)]:pt-4`}>
         {item.picks.length > 0 ? (
           <ul className="border-t border-neutral-0/30">

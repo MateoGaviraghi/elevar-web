@@ -2,8 +2,9 @@ import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/anim/reveal";
 import { Pictogram } from "@/components/ui/pictogram";
+import { pegarTodo } from "@/lib/texto";
 
-const VALUES = [
+const VALUES = pegarTodo([
   {
     img: "/assets/valores/pictograma3.1_escuchar.png",
     title: "Escuchar",
@@ -19,7 +20,7 @@ const VALUES = [
     title: "Sugerir",
     desc: "Sugerir soluciones adaptadas a las necesidades y recursos de nuestros clientes.",
   },
-];
+]);
 
 export function ValuesSection() {
   return (

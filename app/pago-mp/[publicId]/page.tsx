@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ApiError, getOrder, simulatePayment } from "@/lib/api";
@@ -29,7 +29,8 @@ function cuotaOptions(total: number) {
   }));
 }
 
-export default function PagoMercadoPagoPage({ params }: { params: { publicId: string } }) {
+export default function PagoMercadoPagoPage(props: { params: Promise<{ publicId: string }> }) {
+  const params = use(props.params);
   const router = useRouter();
   const { publicId } = params;
 

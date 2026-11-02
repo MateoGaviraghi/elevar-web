@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function OrderStatusPage({ params }: { params: { publicId: string } }) {
+export default async function OrderStatusPage(props: { params: Promise<{ publicId: string }> }) {
+  const params = await props.params;
   return <OrderStatusClient publicId={params.publicId} />;
 }

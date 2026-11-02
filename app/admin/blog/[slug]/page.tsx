@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { getPost, type FullPost } from "@/lib/content";
 import { PostForm } from "@/components/admin/post-form";
 import { AdminButton, EmptyState, PageHeader } from "@/components/admin/ui";
 
-export default function EditPostPage({ params }: { params: { slug: string } }) {
+export default function EditPostPage(props: { params: Promise<{ slug: string }> }) {
+  const params = use(props.params);
   const [post, setPost] = useState<FullPost | null | undefined>(undefined);
 
   useEffect(() => {

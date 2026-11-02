@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type JSX } from "react";
 import type { AdminSession } from "@/types";
 import { getSession, onSessionChange, signOut } from "@/lib/admin/auth";
 

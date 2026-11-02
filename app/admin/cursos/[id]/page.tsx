@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import type { Course } from "@/types";
 import { getCourseById } from "@/lib/content";
 import { CourseForm } from "@/components/admin/course-form";
 import { AdminButton, EmptyState, PageHeader } from "@/components/admin/ui";
 
-export default function EditCoursePage({ params }: { params: { id: string } }) {
+export default function EditCoursePage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params);
   const [course, setCourse] = useState<Course | null | undefined>(undefined);
 
   useEffect(() => {

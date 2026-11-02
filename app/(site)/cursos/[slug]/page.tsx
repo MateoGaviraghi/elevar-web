@@ -28,11 +28,12 @@ async function fetchCourse(slug: string): Promise<Course | null> {
   }
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const course = await fetchCourse(params.slug);
   if (!course) return { title: "Curso no encontrado — Elevar" };
   return {
@@ -41,11 +42,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function CourseDetailPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default async function CourseDetailPage(
+  props: {
+    params: Promise<{ slug: string }>;
+  }
+) {
+  const params = await props.params;
   const course = await fetchCourse(params.slug);
   if (!course) notFound();
 

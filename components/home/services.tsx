@@ -1,9 +1,10 @@
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/anim/reveal";
 import { Pictogram } from "@/components/ui/pictogram";
+import { pegarTodo, sinViuda } from "@/lib/texto";
 
 // Textos de Laura (revisión 1.0, oct 2026). Orden row-major: índices pares = columna izq, impares = der.
-const SERVICES = [
+const SERVICES = pegarTodo([
   {
     title: "Formación profesional",
     img: "/assets/servicios/pictograma1.1_formacion.png",
@@ -34,7 +35,7 @@ const SERVICES = [
     img: "/assets/servicios/pictograma1.6_gestion.png",
     desc: "Acompañamos a los laboratorios en el mantenimiento y la mejora continua de sus sistemas de gestión. Brindamos asistencia periódica para asegurar que los requisitos se integren a las actividades cotidianas, se mantenga la eficacia del sistema y se facilite la preparación para las evaluaciones externas.",
   },
-];
+]);
 
 export function ServicesSection() {
   return (
@@ -62,7 +63,7 @@ export function ServicesSection() {
               >
                 <Pictogram src={s.img} index={idx} className="h-14 w-14 sm:h-24 sm:w-24" />
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-600">{s.title}</h3>
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-600">{sinViuda(s.title)}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-neutral-700">{s.desc}</p>
                 </div>
               </div>

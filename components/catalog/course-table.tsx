@@ -19,6 +19,7 @@ import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { Container } from "@/components/ui/container";
 import { keepScrollOnNextPath, scrollPageTo } from "@/components/anim/smooth-scroll";
 import { BTN, isFree, priceARS, priceUSD, sessionInfo, useToneBehind } from "@/components/curso/ficha-parts";
+import { pegar } from "@/lib/texto";
 
 // ── Datos ────────────────────────────────────────────────────────────────────
 
@@ -744,7 +745,7 @@ export function CourseCatalog({ courses, initial, workshop }: { courses: Course[
           <Container className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
             <div className="max-w-2xl">
               <h2 className="font-display text-3xl font-semibold tracking-tight md:text-[2.5rem]">¿No encontrás lo que buscás?</h2>
-              <p className="mt-4 text-lg text-neutral-300">Armamos talleres a medida para tu equipo, en tu laboratorio o por videollamada.</p>
+              <p className="mt-4 text-lg text-neutral-300">{pegar("Armamos talleres a medida para tu equipo, en tu laboratorio o por videollamada.")}</p>
             </div>
             <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
               <Link href="/formacion/talleres" className={BTN.primary} onClick={(e) => { e.preventDefault(); pick("talleres"); }}>

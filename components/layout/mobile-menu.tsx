@@ -50,7 +50,7 @@ export function MobileMenu({
   open: boolean;
   onClose: () => void;
   /** El header: la cortina nace en su borde de abajo. */
-  anchorRef: RefObject<HTMLElement>;
+  anchorRef: RefObject<HTMLElement | null>;
   isActive: (href: string) => boolean;
 }) {
   const root = useRef<HTMLDivElement>(null);

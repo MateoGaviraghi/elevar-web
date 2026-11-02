@@ -55,17 +55,19 @@ export function generateStaticParams() {
   return BLOG_POSTS.map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const post = getPostBySlug(params.slug);
   if (!post) return { title: "Nota no encontrada — Elevar" };
   return { title: `${post.title} — Blog Elevar`, description: post.teaser };
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
+export default async function BlogPostPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const post = getPostBySlug(params.slug);
   if (!post) notFound();
   const content = getBlogContent(post.slug);

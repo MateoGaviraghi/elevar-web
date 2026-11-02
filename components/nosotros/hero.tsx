@@ -95,7 +95,7 @@ export function NosotrosHero() {
             )}
           </SplitLines>
           <div data-reveal="" className="mt-8 md:mt-10">
-            <p className="nh-in max-w-xl text-lg leading-relaxed text-neutral-300">{HERO.lead}</p>
+            <p className="nh-in text-lg leading-relaxed text-neutral-300">{HERO.lead}</p>
             <a
               href={HERO.link.href}
               className="nh-in group mt-8 inline-flex items-center gap-3 text-sm font-semibold tracking-wide text-neutral-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-4 focus-visible:ring-offset-ink-900"

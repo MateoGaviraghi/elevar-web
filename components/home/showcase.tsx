@@ -1,12 +1,13 @@
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/anim/reveal";
 import { VideoSlot } from "@/components/media/video-slot";
+import { pegarTodo, pegar } from "@/lib/texto";
 
-const STATS = [
+const STATS = pegarTodo([
   { value: "+20", label: "años de trayectoria" },
   { value: "LATAM", label: "alcance regional" },
   { value: "ISO/IEC", label: "17025" },
-];
+]);
 
 /** Banda de presentación con espacio para video (mockup) — refuerza lo visual del home. */
 export function ShowcaseSection() {
@@ -27,8 +28,7 @@ export function ShowcaseSection() {
               Calidad que se ve en cada resultado
             </h2>
             <p className="mt-5 max-w-md text-[15px] leading-relaxed text-neutral-300">
-              Más de 20 años acompañando a laboratorios de toda América Latina en su
-              camino hacia la acreditación ISO/IEC 17025.
+              {pegar("Más de 20 años acompañando a laboratorios de toda América Latina en su camino hacia la acreditación ISO/IEC 17025.")}
             </p>
 
             <dl className="mt-8 grid grid-cols-3 gap-3 border-t border-neutral-0/10 pt-6 sm:mt-10 sm:gap-6 sm:pt-8">

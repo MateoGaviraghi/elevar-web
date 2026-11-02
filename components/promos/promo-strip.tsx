@@ -22,6 +22,7 @@ import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { Container } from "@/components/ui/container";
 import { BTN, useMotion } from "@/components/curso/ficha-parts";
 import { NumeroRodante } from "@/components/promos/numero-rodante";
+import { pegar } from "@/lib/texto";
 
 const WORDS = ["equipo", "laboratorio", "área de calidad", "grupo de analistas"];
 const EVERY = 3200;
@@ -147,8 +148,8 @@ export function PromoStrip() {
               </span>
               <RotatingWord running={inView && !hover && !reduced} />
             </h2>
-            <p className="ps-in mt-6 max-w-xl text-lg leading-relaxed text-neutral-0/90">
-              Inscribí a {group.minQuantity} o más personas en el mismo curso. Se aplica sola en el carrito.
+            <p className="ps-in mt-6 text-lg leading-relaxed text-neutral-0/90">
+              {pegar(`Inscribí a ${group.minQuantity} o más personas en el mismo curso. Se aplica sola en el carrito.`)}
             </p>
             <div className="ps-in mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/promociones" className={BTN.onBrand}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import type { Order, OrderStatus } from "@/types";
 import { getStoredOrder, setOrderStatus } from "@/lib/orders-store";
 import { formatARS, formatDate, formatUSD } from "@/lib/formatters";
@@ -26,7 +26,8 @@ const NEXT_STATUSES: { value: OrderStatus; label: string }[] = [
   { value: "CANCELLED", label: "Cancelar orden" },
 ];
 
-export default function AdminOrderDetailPage({ params }: { params: { publicId: string } }) {
+export default function AdminOrderDetailPage(props: { params: Promise<{ publicId: string }> }) {
+  const params = use(props.params);
   // Se re-lee al cambiar la colección para reflejar cambios de estado.
   useCollection(listOrders);
   const [order, setOrder] = useState<Order | null | undefined>(undefined);

@@ -2,8 +2,9 @@ import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/anim/reveal";
 import { RevealImage } from "@/components/anim/reveal-image";
+import { pegarTodo } from "@/lib/texto";
 
-const POINTS = [
+const POINTS = pegarTodo([
   {
     num: "01",
     title: "Respuesta rápida",
@@ -24,7 +25,7 @@ const POINTS = [
     title: "Servicio integral",
     desc: "No solo formamos equipos de trabajo: brindamos consultoría y capacitación de forma integral.",
   },
-];
+]);
 
 export function WhyUsSection() {
   return (
