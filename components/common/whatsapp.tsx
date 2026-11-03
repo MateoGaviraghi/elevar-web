@@ -277,8 +277,8 @@ export function CommunityModal({
     if (state !== "done" || !done.current) return;
     const ctx = gsap.context(() => {
       if (prefersReducedMotion()) return;
-      gsap.fromTo(".cm-ring", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.6, ease: "power2.out" });
-      gsap.fromTo(".cm-check", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.45, ease: "power2.out", delay: 0.35 });
+      gsap.fromTo(".cm-ring", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.6, ease: "power2.out", autoRound: false });
+      gsap.fromTo(".cm-check", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.45, ease: "power2.out", delay: 0.35, autoRound: false });
       gsap.fromTo(".cm-ok", { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, ease: "expo.out", stagger: 0.08, delay: 0.4 });
     }, done);
     return () => ctx.kill();

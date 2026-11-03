@@ -32,10 +32,12 @@ export function NosotrosHero() {
 
       gsap.set(".nh-bar", { scaleY: 0, transformOrigin: "50% 100%" });
       gsap.set(".nh-draw", { strokeDashoffset: 1 });
+      // El isotipo arranca oculto (data-reveal) para que no se vea completo antes de armarse.
+      gsap.set(".nh-mark", { visibility: "inherit" });
       gsap
         .timeline({ delay: 0.25 })
         .to(".nh-bar", { scaleY: 1, duration: 1.3, ease: "back.out(1.6)", stagger: 0.12 }, 0)
-        .to(".nh-draw", { strokeDashoffset: 0, duration: 1.2, ease: "power3.out" }, 0.3)
+        .to(".nh-draw", { strokeDashoffset: 0, duration: 1.2, ease: "power3.out", autoRound: false }, 0.3)
         .fromTo(".nh-in", { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1.2, ease: "expo.out", stagger: 0.1 }, 0.45);
 
       const st = { trigger: el, start: "top top", end: "bottom top", scrub: 0.6 };
@@ -53,6 +55,7 @@ export function NosotrosHero() {
           a la derecha en escritorio; debajo del texto en el teléfono. */}
       <div
         aria-hidden
+        data-reveal=""
         className="nh-mark pointer-events-none absolute bottom-10 right-[8%] h-[19rem] sm:h-[24rem] lg:bottom-16 lg:right-[6%] lg:top-16 lg:h-auto"
       >
         <svg viewBox="-2 0 676 981" className="h-full w-auto overflow-visible">

@@ -56,7 +56,7 @@ export function Logo({
       const entrada = gsap
         .timeline({ paused: true, delay })
         .to(bars, { scaleY: 1, duration: 1.3, ease: "back.out(1.6)", stagger: 0.1 }, 0)
-        .to(draws, { strokeDashoffset: 0, duration: 1.0, ease: "power3.out" }, 0.3)
+        .to(draws, { strokeDashoffset: 0, duration: 1.0, ease: "power3.out", autoRound: false }, 0.3)
         .to(letters, { y: 0, duration: 0.9, ease: "expo.out", stagger: 0.06 }, 0.45);
 
       const pulso = gsap.timeline({ paused: true });

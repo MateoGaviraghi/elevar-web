@@ -110,6 +110,35 @@ export function SmoothScroll() {
     };
   }, []);
 
+  // Links dentro de la misma página (Mateo, 2026-11-03: "salta directo, no scrollea"):
+  // un ancla (#incluye, #gestion…) baja con el scroll suave hasta la sección, respetando
+  // su scroll-margin-top; un link a la misma página sin ancla (el logo estando en el
+  // inicio) sube con el scroll suave en vez de saltar. La duración crece con la distancia
+  // (0,7 a 1,6 s).
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!a || (a.target && a.target !== "_self")) return;
+      const url = new URL(a.href, window.location.href);
+      if (url.origin !== window.location.origin || url.pathname !== window.location.pathname || url.search !== window.location.search) return;
+      let y = 0;
+      if (url.hash) {
+        const el = document.getElementById(decodeURIComponent(url.hash.slice(1)));
+        if (!el) return;
+        const margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+        y = Math.max(0, el.getBoundingClientRect().top + window.scrollY - margin);
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      const dist = Math.abs(window.scrollY - y);
+      scrollPageTo(y, Math.min(1.6, 0.7 + dist / 4000));
+      if (url.hash) history.replaceState(null, "", url.hash);
+    };
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
+  }, []);
+
   // Al navegar entre páginas, arrancar arriba sin animación.
   useEffect(() => {
     const from = prevPath.current;
