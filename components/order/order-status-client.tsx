@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { buttonClasses } from "@/components/ui/button";
-import { getOrder } from "@/lib/api";
+import { confirmMercadoPago, getOrder } from "@/lib/api";
+import { clearCart } from "@/lib/cart";
 import { formatARS, formatDate, formatUSD } from "@/lib/formatters";
 import { CONTACT } from "@/lib/contact";
 import type { Order, OrderStatus, PaymentMethod } from "@/types";
@@ -60,7 +61,17 @@ export function OrderStatusClient({ publicId }: { publicId: string }) {
 
   useEffect(() => {
     let cancelled = false;
-    getOrder(publicId)
+    // Vuelta de Mercado Pago (Checkout Pro): trae payment_id. El estado se confirma con
+    // Mercado Pago antes de mostrar la orden; si se aprobó, se vacía el carrito.
+    const paymentId = new URLSearchParams(window.location.search).get("payment_id");
+    const confirmar =
+      paymentId && paymentId !== "null"
+        ? confirmMercadoPago(publicId, paymentId).then((s) => {
+            if (s === "PAID") clearCart();
+          })
+        : Promise.resolve();
+    confirmar
+      .then(() => getOrder(publicId))
       .then((o) => {
         if (!cancelled) {
           setOrder(o);

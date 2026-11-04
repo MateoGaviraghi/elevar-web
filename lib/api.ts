@@ -269,9 +269,32 @@ export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult
     source: "COMPRA",
   });
 
-  // En producción, `init_point` es la URL real de Mercado Pago / PayPal.
-  const initPoint =
+  // Mercado Pago: página oficial (Checkout Pro) si el servidor tiene MP_ACCESS_TOKEN;
+  // si no está configurado, la pantalla de prueba propia. PayPal sigue simulado.
+  let initPoint =
     payload.paymentMethod === "PAYPAL" ? `/pago-paypal/${publicId}` : `/pago-mp/${publicId}`;
+  if (payload.paymentMethod === "MERCADOPAGO") {
+    const mp = await fetch("/api/mercadopago/orden", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        publicId,
+        email: payload.buyer.email,
+        total: order.total,
+        items: orderItems.map((i) => ({
+          title: i.title_snapshot,
+          unit_price: i.unit_price,
+          quantity: i.quantity,
+        })),
+      }),
+    }).catch(() => null);
+    if (mp?.ok) {
+      const { checkout_url } = (await mp.json()) as { checkout_url: string };
+      initPoint = checkout_url;
+    } else if (mp && mp.status !== 503) {
+      throw new ApiError("No pudimos iniciar el pago con Mercado Pago. Probá de nuevo.", "MP_ERROR", 502);
+    }
+  }
 
   return {
     order_public_id: publicId,
@@ -316,6 +339,24 @@ export async function simulatePayment(payload: {
     order_public_id: payload.order_public_id,
     order_status: status,
   };
+}
+
+/**
+ * Al volver de Mercado Pago con `payment_id`: consulta el pago en Mercado Pago (vía
+ * /api/mercadopago/pago) y deja la orden con ese estado. Devuelve null si no se pudo.
+ */
+export async function confirmMercadoPago(
+  publicId: string,
+  paymentId: string
+): Promise<Order["status"] | null> {
+  const res = await fetch(`/api/mercadopago/pago/${encodeURIComponent(paymentId)}`).catch(() => null);
+  if (!res?.ok) return null;
+  const pago = (await res.json()) as { status: string; external_reference: string | null; date_approved: string | null };
+  if (pago.external_reference !== publicId) return null;
+  const status: Order["status"] =
+    pago.status === "approved" ? "PAID" : pago.status === "rejected" || pago.status === "cancelled" ? "FAILED" : "PENDING";
+  setOrderStatus(publicId, status, status === "PAID" ? pago.date_approved ?? new Date().toISOString() : null);
+  return status;
 }
 
 export async function getOrder(publicId: string): Promise<Order> {
