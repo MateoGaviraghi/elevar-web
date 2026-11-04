@@ -35,7 +35,6 @@ const LISTING_LABEL: Record<Course["modality"], string> = {
   ASYNC: "Cursos asincrónicos",
   LIVE: "Cursos online en vivo",
   WEBINAR: "Webinars gratuitos",
-  WORKSHOP: "Talleres",
   EBOOK: "E-Books",
 };
 

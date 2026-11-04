@@ -17,7 +17,7 @@ export function nextSession(course: Course): CourseSession | undefined {
 }
 
 /**
- * Se puede agregar directo si no hace falta elegir nada: asincrónicos y talleres,
+ * Se puede agregar directo si no hace falta elegir nada: asincrónicos,
  * o cursos en vivo con una fecha disponible. Los webinars gratuitos se inscriben
  * desde su ficha (formulario propio).
  */

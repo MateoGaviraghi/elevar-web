@@ -8,7 +8,7 @@ const SERVICES = pegarTodo([
   {
     title: "Formación profesional",
     img: "/assets/servicios/pictograma1.1_formacion.png",
-    desc: "Ofrecemos cursos, talleres y webinars especializados en gestión de calidad, actividades de laboratorio, auditorías y metrología. Nuestras capacitaciones combinan conocimientos técnicos con herramientas prácticas para fortalecer las competencias de los profesionales y facilitar su aplicación en el trabajo diario.",
+    desc: "Ofrecemos cursos y webinars especializados en gestión de calidad, actividades de laboratorio, auditorías y metrología. Nuestras capacitaciones combinan conocimientos técnicos con herramientas prácticas para fortalecer las competencias de los profesionales y facilitar su aplicación en el trabajo diario.",
   },
   {
     title: "Asistencia técnica especializada",

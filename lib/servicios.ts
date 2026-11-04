@@ -199,7 +199,7 @@ const DATOS: Servicio[] = sinViudas(pegarTodo([
     nombre: "Formación profesional",
     titulo: "Formación profesional",
     frase: "Formación en temas de gestión, laboratorio, auditoría y metrología, en diferentes modalidades.",
-    desc: "Ofrecemos cursos, talleres y webinars especializados en gestión de calidad, actividades de laboratorio, auditorías y metrología. Nuestras capacitaciones combinan conocimientos técnicos con herramientas prácticas para fortalecer las competencias de los profesionales y facilitar su aplicación en el trabajo diario.",
+    desc: "Ofrecemos cursos y webinars especializados en gestión de calidad, actividades de laboratorio, auditorías y metrología. Nuestras capacitaciones combinan conocimientos técnicos con herramientas prácticas para fortalecer las competencias de los profesionales y facilitar su aplicación en el trabajo diario.",
     pictogram: `${P}pictograma1.1_formacion.png`,
     foto: "/assets/mockup/m2.jpg",
     bloques: [
@@ -212,7 +212,7 @@ const DATOS: Servicio[] = sinViudas(pegarTodo([
       {
         kind: "lista",
         titulo: "Formación",
-        items: ["Cursos online en vivo", "Cursos asincrónicos", "Webinars gratuitos", "Talleres en vivo"],
+        items: ["Cursos online en vivo", "Cursos asincrónicos", "Webinars gratuitos"],
       },
     ],
     cta: { label: "Ver la oferta de formación", href: "/formacion" },

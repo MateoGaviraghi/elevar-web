@@ -5,7 +5,7 @@ import { getCourses } from "@/lib/api";
 export const metadata: Metadata = {
   title: "Formación — Elevar",
   description:
-    "Capacitación en calidad de laboratorio bajo la norma ISO/IEC 17025. Cursos en vivo, asincrónicos, webinars gratuitos, talleres y e-books.",
+    "Capacitación en calidad de laboratorio bajo la norma ISO/IEC 17025. Cursos en vivo, asincrónicos, webinars gratuitos y e-books.",
 };
 
 /**

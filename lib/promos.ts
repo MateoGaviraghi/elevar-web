@@ -287,6 +287,5 @@ const MODALITY_LABEL: Record<string, string> = {
   ASYNC: "Cursos asincrónicos",
   LIVE: "Cursos online en vivo",
   WEBINAR: "Webinars",
-  WORKSHOP: "Talleres",
   EBOOK: "E-Books",
 };

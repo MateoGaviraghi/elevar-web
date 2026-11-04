@@ -89,7 +89,6 @@ const COLS: Record<Modality, string> = {
   ASYNC: "Disertante",
   LIVE: "Fecha",
   WEBINAR: "Fecha",
-  WORKSHOP: "Disertante",
   EBOOK: "Autor",
 };
 
@@ -531,7 +530,7 @@ function Hero({ info, items, onSeeList }: { info: ModalityInfo; items: Course[];
 
 // ── Página ───────────────────────────────────────────────────────────────────
 
-export function CourseCatalog({ courses, initial, workshop }: { courses: Course[]; initial: string; workshop: ReactNode }) {
+export function CourseCatalog({ courses, initial }: { courses: Course[]; initial: string }) {
   const byModality = useMemo(() => {
     const map: Record<string, Course[]> = {};
     for (const m of MODALITIES) map[m.slug] = courses.filter((c) => c.modality === m.modality);
@@ -636,14 +635,12 @@ export function CourseCatalog({ courses, initial, workshop }: { courses: Course[
     gsap.killTweensOf(root.querySelectorAll(".ct-rule"));
     gsap.set(root, { clearProps: "height" });
     fromH.current = root.offsetHeight;
-    // Sin filas a la vista (talleres, e-books vacío): se cambia directo. Pero si la página
-    // está bajada, cambiar ya achica la página mientras sube y asoma el pie: primero se
-    // apaga el contenido de talleres y se cambia cuando la página llegó arriba (o a 1,6 s).
+    // Sin filas a la vista (e-books vacío): se cambia directo. Pero si la página está
+    // bajada, cambiar ya achica la página mientras sube y asoma el pie: se cambia cuando
+    // la página llegó arriba (o a 1,6 s).
     if (!ins.length || root.offsetParent === null) {
       if (window.scrollY <= 40) { land(); return; }
       const token = ++waitToken.current;
-      const wk = document.querySelector("[data-workshop]");
-      if (wk) gsap.to(wk, { autoAlpha: 0, duration: 0.5, ease: "power2.out" });
       const t0 = performance.now();
       const wait = () => {
         if (token !== waitToken.current) return;
@@ -700,7 +697,6 @@ export function CourseCatalog({ courses, initial, workshop }: { courses: Course[
     rowsIn(root, 0.25);
   }, [swap]);
 
-  const isWorkshop = info.modality === "WORKSHOP";
   const isEbook = info.modality === "EBOOK";
 
   return (
@@ -709,17 +705,14 @@ export function CourseCatalog({ courses, initial, workshop }: { courses: Course[
 
       <Pills active={active} counts={counts} onPick={pick} />
 
-      {/* Talleres no tiene cursos cargados: muestra su contenido propio. */}
-      {isWorkshop && <div data-workshop data-tone="light" className="pt-8">{workshop}</div>}
-
       {/* Tabla (blanco). */}
-      <section data-tone="light" className={`bg-neutral-0 pt-16 md:pt-20 ${isWorkshop ? "hidden" : "pb-24 md:pb-32"}`}>
+      <section data-tone="light" className="bg-neutral-0 pb-24 pt-16 md:pb-32 md:pt-20">
         <Container>
           {/* Al pasar el mouse por una fila, se apagan todas las demás (de todos los grupos). */}
           <div ref={list} className="overflow-hidden md:[&:has(.ct-row:hover)_.ct-row:not(:hover)]:opacity-[0.35]" onMouseLeave={() => preview.current?.set(null)}>
             {table.length > 0 ? (
               table
-            ) : isWorkshop ? null : (
+            ) : (
               <div className="ct-head relative max-w-2xl pb-10">
                 <p className="overflow-hidden font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-4xl">
                   <span className="ct-in block">{isEbook ? "Estamos preparando los primeros e‑books." : "Pronto hay cursos nuevos en esta modalidad."}</span>
@@ -740,22 +733,12 @@ export function CourseCatalog({ courses, initial, workshop }: { courses: Course[
       </section>
 
       {/* Cierre (tinta). */}
-      {!isWorkshop && (
-        <section data-tone="dark" className="bg-ink-900 py-20 text-neutral-0 md:py-28">
-          <Container className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
-            <div className="max-w-2xl">
-              <h2 className="font-display text-3xl font-semibold tracking-tight md:text-[2.5rem]">¿No encontrás lo que buscás?</h2>
-              <p className="mt-4 text-lg text-neutral-300">{pegar("Armamos talleres a medida para tu equipo, en tu laboratorio o por videollamada.")}</p>
-            </div>
-            <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
-              <Link href="/formacion/talleres" className={BTN.primary} onClick={(e) => { e.preventDefault(); pick("talleres"); }}>
-                Ver talleres
-              </Link>
-              <Link href="/contacto" className={BTN.ghostDark}>Escribinos</Link>
-            </div>
-          </Container>
-        </section>
-      )}
+      <section data-tone="dark" className="bg-ink-900 py-20 text-neutral-0 md:py-28">
+        <Container className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
+          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-[2.5rem]">¿No encontrás lo que buscás?</h2>
+          <Link href="/contacto" className={`${BTN.primary} shrink-0`}>Escribinos</Link>
+        </Container>
+      </section>
 
       <Preview api={preview} />
     </>

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { TalleresContent } from "@/components/formacion/talleres-content";
 import { CourseCatalog } from "@/components/catalog/course-table";
 import { getCourses } from "@/lib/api";
 import { MODALITIES, getModalityBySlug } from "@/lib/formacion-modalities";
@@ -42,10 +41,6 @@ export default async function ModalityPage(
   const data = await getCourses().catch(() => null);
 
   return (
-    <CourseCatalog
-      courses={data?.results ?? []}
-      initial={info.slug}
-      workshop={<TalleresContent />}
-    />
+    <CourseCatalog courses={data?.results ?? []} initial={info.slug} />
   );
 }

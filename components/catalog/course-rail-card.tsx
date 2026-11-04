@@ -13,7 +13,6 @@ export const RAIL_GRADIENTS: Record<Modality, string> = {
   ASYNC: "from-ink-600 to-ink-900",
   LIVE: "from-emerald-600 to-emerald-800",
   WEBINAR: "from-brand-500 to-brand-700",
-  WORKSHOP: "from-amber-500 to-amber-700",
   EBOOK: "from-sky-600 to-ink-800",
 };
 

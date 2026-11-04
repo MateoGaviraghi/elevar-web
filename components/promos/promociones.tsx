@@ -120,7 +120,7 @@ function Hero({ group }: { group: Promo | null }) {
               <p className="pr-in text-lg leading-relaxed text-neutral-300">
                 {group
                   ? pegar(`Inscribí a ${group.minQuantity} o más personas de tu laboratorio en el mismo curso y el total baja solo en el carrito.`)
-                  : pegar("Formá a tu laboratorio bajo la norma ISO/IEC 17025 con cursos en vivo, asincrónicos y talleres.")}
+                  : pegar("Formá a tu laboratorio bajo la norma ISO/IEC 17025 con cursos en vivo, asincrónicos y webinars.")}
               </p>
               <ul className="pr-in mt-5 flex flex-wrap gap-x-3 gap-y-2 text-sm text-neutral-200">
                 {facts.map((f, i) => (

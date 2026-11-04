@@ -37,14 +37,6 @@ export const MODALITIES: ModalityInfo[] = pegarTodo([
     desc: "Temas puntuales, en encuentros cortos, como alternativa para mantener la actualización técnica.",
   },
   {
-    slug: "talleres",
-    modality: "WORKSHOP",
-    title: "Talleres",
-    short: "Talleres",
-    img: "/assets/formacion/pictograma2.4_workshop.png",
-    desc: "Nuestros talleres son encuentros de capacitación donde los participantes se forman en un tema específico de forma intensiva.",
-  },
-  {
     // ELEVAR todavía no confirmó si existen (OQ en 15-MEMORY); bajada y pictograma provisorios.
     slug: "e-books",
     modality: "EBOOK",

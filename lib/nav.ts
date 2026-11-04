@@ -16,7 +16,6 @@ export const FORMACION = [
   { label: "Online en vivo", href: "/formacion/cursos-online-en-vivo" },
   { label: "Asincrónicos", href: "/formacion/cursos-asincronicos" },
   { label: "Webinars gratuitos", href: "/formacion/webinars-gratuitos" },
-  { label: "Talleres", href: "/formacion/talleres" },
   { label: "E-Books", href: "/formacion/e-books" },
   { label: "Promociones", href: "/promociones" },
 ];

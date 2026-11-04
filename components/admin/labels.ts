@@ -4,6 +4,5 @@ export const MODALITY_LABEL: Record<Modality, string> = {
   ASYNC: "Asincrónico",
   LIVE: "En vivo",
   WEBINAR: "Webinar",
-  WORKSHOP: "Taller",
   EBOOK: "E-Book",
 };

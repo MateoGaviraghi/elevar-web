@@ -85,7 +85,7 @@ function Hero({ courses }: { courses: Course[] }) {
           <div className="mt-10 grid gap-8 border-t border-neutral-0/15 pt-8 md:mt-14 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-12 [@media(min-width:768px)_and_(max-height:800px)]:mt-8 [@media(min-width:768px)_and_(max-height:800px)]:pt-6">
             <div className="max-w-2xl">
               <p className="ph-in text-lg leading-relaxed text-neutral-300">
-                {pegar("Formá a tu equipo bajo la norma ISO/IEC 17025: cursos en vivo, asincrónicos, webinars gratuitos, talleres y e-books.")}
+                {pegar("Formá a tu equipo bajo la norma ISO/IEC 17025: cursos en vivo, asincrónicos, webinars gratuitos y e-books.")}
               </p>
               <ul className="ph-in mt-5 flex flex-wrap gap-x-3 gap-y-2 text-sm text-neutral-200">
                 {facts.map((f, i) => (
@@ -125,7 +125,6 @@ function picksOf(list: Course[]): Course[] {
 }
 
 const EMPTY_NOTE: Record<string, string> = pegarTodo({
-  WORKSHOP: "Talleres a medida para tu equipo, en tu laboratorio o por videollamada.",
   EBOOK: "Estamos preparando los primeros e‑books.",
 });
 

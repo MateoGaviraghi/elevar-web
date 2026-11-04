@@ -8,7 +8,7 @@ import { Reveal } from "@/components/anim/reveal";
 import { ModalityPanels, type PanelItem } from "@/components/home/modality-panels";
 import { pegarTodo, pegar } from "@/lib/texto";
 
-/* "Cinco formas de capacitarte" (inicio). Rediseño de Mateo, 2026-10-23 ("banda inicio",
+/* "Cuatro formas de capacitarte" (inicio). Rediseño de Mateo, 2026-10-23 ("banda inicio",
  * referencia CodeFronts · Color Block, "tu elección" + "GO-AHEAD"): reemplaza la grilla
  * de 5 tarjetas iguales por paneles de color, una modalidad abierta a la vez. Textos de
  * lib/formacion-modalities.ts (los mismos de Formación) y cursos reales. */
@@ -35,7 +35,6 @@ function metaOf(c: Course): string {
 }
 
 const EMPTY_NOTE: Record<string, string> = pegarTodo({
-  WORKSHOP: "Talleres a medida para tu equipo, en tu laboratorio o por videollamada.",
   EBOOK: "Estamos preparando los primeros e-books.",
 });
 
@@ -64,7 +63,7 @@ export async function ModalitiesSection() {
           <div className="mb-5 flex flex-col gap-2 sm:mb-6 sm:flex-row sm:items-end sm:justify-between md:mb-8">
             <div>
               <h2 className="font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-[2.5rem]">
-                Cinco formas de capacitarte
+                Cuatro formas de capacitarte
               </h2>
               <p className="mt-2 hidden text-base text-ink-700 sm:block md:text-lg">
                 {pegar("Elegí la modalidad que mejor se adapta a tu equipo y tus tiempos.")}

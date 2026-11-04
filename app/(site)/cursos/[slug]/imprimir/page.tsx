@@ -17,7 +17,6 @@ const MODALITY_LABEL: Record<Course["modality"], string> = {
   ASYNC: "Curso asincrónico",
   LIVE: "Curso online en vivo",
   WEBINAR: "Webinar gratuito",
-  WORKSHOP: "Taller",
   EBOOK: "E-Book",
 };
 

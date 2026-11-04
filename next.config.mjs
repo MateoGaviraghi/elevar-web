@@ -6,5 +6,10 @@ const nextConfig = {
   // Fase 1: re-agregar output:"export" + generateStaticParams en [slug]/[modality] +
   // rewrite/query-param para la orden.
   images: { unoptimized: true },
+  // Talleres se quitó (KAN-30, 2026-11-04). En elevar.com.ar el link "E-Books" apunta a
+  // /formacion/talleres, así que esa dirección lleva a E-Books.
+  async redirects() {
+    return [{ source: "/formacion/talleres", destination: "/formacion/e-books", permanent: true }];
+  },
 };
 export default nextConfig;

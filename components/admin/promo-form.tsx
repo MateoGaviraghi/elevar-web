@@ -36,7 +36,6 @@ const MODALITIES: { value: Modality; label: string }[] = [
   { value: "ASYNC", label: "Cursos asincrónicos" },
   { value: "LIVE", label: "Cursos online en vivo" },
   { value: "WEBINAR", label: "Webinars" },
-  { value: "WORKSHOP", label: "Talleres" },
   { value: "EBOOK", label: "E-Books" },
 ];
 

@@ -97,7 +97,5 @@ export const MODALITY_TEMPLATES: Record<Modality, ModalityTemplate> = pegarTodo(
   },
   // El sitio actual no muestra estos bloques en los webinars (gratuitos).
   WEBINAR: EMPTY,
-  // El sitio actual no tiene talleres publicados.
-  WORKSHOP: EMPTY,
   EBOOK: EBOOK_TEMPLATE,
 });

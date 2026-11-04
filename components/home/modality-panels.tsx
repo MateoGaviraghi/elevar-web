@@ -1,6 +1,6 @@
 "use client";
 
-/* Paneles de color de "Cinco formas de capacitarte" (inicio).
+/* Paneles de color de "Cuatro formas de capacitarte" (inicio).
  * Referencia CodeFronts · Color Block ("tu elección", Mateo 2026-10-23, plan con
  * "GO-AHEAD"): una modalidad abierta a la vez, con el color de sus tapas de curso.
  * Escritorio: 5 paneles en fila; el abierto se ensancha (0,9 s) y su contenido sube

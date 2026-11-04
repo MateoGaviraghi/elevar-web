@@ -19,7 +19,6 @@ const MODALITIES: { value: Modality; label: string }[] = [
   { value: "ASYNC", label: "Curso asincrónico" },
   { value: "LIVE", label: "Curso online en vivo" },
   { value: "WEBINAR", label: "Webinar gratuito" },
-  { value: "WORKSHOP", label: "Taller" },
   { value: "EBOOK", label: "E-Book" },
 ];
 

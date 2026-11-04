@@ -92,7 +92,6 @@ export default function AdminCoursesPage() {
             { value: "ASYNC", label: "Asincrónicos" },
             { value: "LIVE", label: "En vivo" },
             { value: "WEBINAR", label: "Webinars" },
-            { value: "WORKSHOP", label: "Talleres" },
             { value: "EBOOK", label: "E-Books" },
             {
               value: "DRAFT",
