@@ -132,35 +132,44 @@ export async function validateCart(
   const list = catalog();
   const resultItems: CartValidateResult["items"] = [];
 
-  items.forEach((item, i) => {
+  // Una línea que ya no se puede comprar (curso borrado del catálogo, fecha que cambió o
+  // pasó, sin cupo) no hace fallar todo el carrito: queda marcada y no suma al total
+  // (2026-11-04: un CV45 viejo en el carrito dejaba el checkout cargando para siempre).
+  const unavailable = (item: CartItem, reason: string) =>
+    resultItems.push({
+      course_id: item.courseId,
+      session_id: item.sessionId,
+      title: item.titleSnapshot,
+      unit_price: item.unitPrice,
+      quantity: item.quantity,
+      line_total: money(0),
+      available: false,
+      seats_available: null,
+      unavailable_reason: reason,
+    });
+
+  items.forEach((item) => {
     const course = list.find((c) => c.id === item.courseId);
-    if (!course) {
-      throw new ApiError("Hay un curso inválido en el carrito.", "VALIDATION_ERROR", 400, {
-        [`items.${i}.course_id`]: ["Curso no encontrado o no disponible."],
-      });
-    }
+    if (!course) return unavailable(item, "Este curso ya no está disponible.");
 
     let session = null;
     if (isSessionBased(course.modality)) {
-      if (item.sessionId == null) {
-        throw new ApiError("Falta elegir una fecha/sesión.", "VALIDATION_ERROR", 400, {
-          [`items.${i}.session_id`]: ["Elegí una fecha/sesión."],
-        });
-      }
       session = (course.sessions ?? []).find((s) => s.id === item.sessionId) ?? null;
-      if (!session) {
-        throw new ApiError("Sesión inválida.", "VALIDATION_ERROR", 400, {
-          [`items.${i}.session_id`]: ["Sesión inválida."],
-        });
-      }
+      if (!session) return unavailable(item, "Esta fecha ya no está disponible.");
     }
 
     let available = true;
+    let reason: string | undefined;
     if (session) {
-      if (session.status !== "SCHEDULED") available = false;
-      // Con cupo limitado, la cantidad pedida no puede superar las vacantes.
-      else if (session.capacity != null && (session.seats_available ?? 0) < item.quantity)
+      if (session.status !== "SCHEDULED") {
         available = false;
+        reason = "Esta fecha ya pasó.";
+      }
+      // Con cupo limitado, la cantidad pedida no puede superar las vacantes.
+      else if (session.capacity != null && (session.seats_available ?? 0) < item.quantity) {
+        available = false;
+        reason = "No quedan vacantes suficientes.";
+      }
     }
 
     const lineTotal = parseFloat(course.price) * item.quantity;
@@ -174,10 +183,13 @@ export async function validateCart(
       line_total: money(lineTotal),
       available,
       seats_available: session?.seats_available ?? null,
+      ...(reason ? { unavailable_reason: reason } : {}),
     });
   });
 
-  const pricing = computePricing({ items, promos: promos(), couponCode });
+  // El total sale solo de las líneas que se pueden comprar.
+  const buyable = items.filter((_, i) => resultItems[i]?.available);
+  const pricing = computePricing({ items: buyable, promos: promos(), couponCode });
 
   return {
     valid: resultItems.every((it) => it.available),

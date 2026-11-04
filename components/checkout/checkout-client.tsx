@@ -9,7 +9,7 @@ import type {
   CartValidateResult,
   PaymentMethod,
 } from "@/types";
-import { getCart, clearCart, setAttendees as persistAttendees } from "@/lib/cart";
+import { getCart, clearCart, removeItem, setAttendees as persistAttendees } from "@/lib/cart";
 import { validateCart, checkout, simulatePayment, ApiError } from "@/lib/api";
 import { arsToUsd, formatARS, formatUSD, USD_RATE } from "@/lib/formatters";
 import { CONTACT } from "@/lib/contact";
@@ -37,6 +37,7 @@ export function CheckoutClient() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [coupon, setCoupon] = useState<string | null>(null);
   const [validation, setValidation] = useState<CartValidateResult | null>(null);
+  const [validationError, setValidationError] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
   const [buyer, setBuyer] = useState({
@@ -72,11 +73,32 @@ export function CheckoutClient() {
       )
     );
     if (cart.items.length > 0) {
-      validateCart(cart.items, cart.coupon)
-        .then(setValidation)
-        .catch(() => setValidation(null));
+      revalidate(cart.items, cart.coupon);
     }
   }, []);
+
+  // Si el total no se puede calcular, se avisa: nunca un total gris para siempre.
+  function revalidate(list: CartItem[], code: string | null) {
+    setValidationError(false);
+    validateCart(list, code)
+      .then((res) => {
+        setValidation(res);
+        // En el teléfono el resumen está plegado: se abre para que se vea qué quitar.
+        if (!res.valid) setSummaryOpen(true);
+      })
+      .catch(() => {
+        setValidation(null);
+        setValidationError(true);
+      });
+  }
+
+  // Quita del carrito una línea que ya no se puede comprar y recalcula.
+  function quitar(item: CartItem) {
+    removeItem(item.courseId, item.sessionId);
+    const rest = items.filter((i) => lineKey(i.courseId, i.sessionId) !== lineKey(item.courseId, item.sessionId));
+    setItems(rest);
+    if (rest.length > 0) revalidate(rest, coupon);
+  }
 
   const validByKey = useMemo(() => {
     const m = new Map<string, CartValidateResult["items"][number]>();
@@ -217,7 +239,9 @@ export function CheckoutClient() {
     );
   }
 
-  const totalLabel = total == null ? <Skel className="h-6 w-24" /> : isFreeOrder ? "Gratis" : formatARS(total);
+  const totalLabel =
+    total == null ? (validationError ? "—" : <Skel className="h-6 w-24" />) : isFreeOrder ? "Gratis" : formatARS(total);
+  const blocked = !validation || !validation.valid;
 
   const summaryCard = (
     <div className="overflow-hidden border border-neutral-200 bg-neutral-0">
@@ -234,6 +258,7 @@ export function CheckoutClient() {
           const price = v?.unit_price ?? item.unitPrice;
           const free = parseFloat(price) === 0;
           const lineTotal = parseFloat(price) * item.quantity;
+          const gone = v != null && !v.available;
           return (
             <li key={lineKey(item.courseId, item.sessionId)} className="flex items-start gap-3 py-4">
               <div className="relative shrink-0">
@@ -252,8 +277,20 @@ export function CheckoutClient() {
                     {item.quantity} × {formatARS(price)}
                   </p>
                 )}
+                {gone && (
+                  <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-red-700">
+                    {v.unavailable_reason ?? "Ya no está disponible."}
+                    <button
+                      type="button"
+                      onClick={() => quitar(item)}
+                      className="font-semibold text-ink-900 underline underline-offset-2 transition-colors hover:text-brand-600"
+                    >
+                      Quitar
+                    </button>
+                  </p>
+                )}
               </div>
-              <span className={`shrink-0 text-sm font-semibold ${free ? "text-brand-600" : "text-ink-900"}`}>
+              <span className={`shrink-0 text-sm font-semibold ${gone ? "text-neutral-400 line-through" : free ? "text-brand-600" : "text-ink-900"}`}>
                 {free ? "Gratis" : formatARS(lineTotal)}
               </span>
             </li>
@@ -509,6 +546,18 @@ export function CheckoutClient() {
               </Section>
             )}
 
+            {validation && !validation.valid && (
+              <p className="mt-6 border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                Hay un curso en tu orden que ya no está disponible. Quitalo desde el resumen para poder pagar.
+              </p>
+            )}
+            {validationError && (
+              <p className="mt-6 border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                No pudimos calcular el total.{" "}
+                <Link href="/carrito" className="underline underline-offset-2">Volvé al carrito</Link> y revisá los cursos.
+              </p>
+            )}
+
             {payError && (
               <p className="mt-6 border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
                 {payError}
@@ -523,7 +572,7 @@ export function CheckoutClient() {
                 <button
                   type="button"
                   onClick={startPayment}
-                  disabled={processing || !validation}
+                  disabled={processing || blocked}
                   className="inline-flex min-w-[220px] items-center justify-center gap-2 bg-brand-500 px-8 py-4 text-sm font-semibold text-neutral-0 transition-colors hover:bg-brand-600 disabled:opacity-50"
                 >
                   {processing ? <><Spinner /> Procesando…</> : "Confirmar inscripción"}
@@ -532,7 +581,7 @@ export function CheckoutClient() {
                 <button
                   type="button"
                   onClick={startPayment}
-                  disabled={processing || !validation}
+                  disabled={processing || blocked}
                   className="inline-flex min-w-[240px] items-center justify-center gap-2.5 px-8 py-4 text-sm font-semibold text-ink-900 transition-colors disabled:opacity-60"
                   style={{ background: PAYPAL_YELLOW }}
                   onMouseEnter={(ev) => (ev.currentTarget.style.background = PAYPAL_YELLOW_DARK)}
@@ -551,7 +600,7 @@ export function CheckoutClient() {
                 <button
                   type="button"
                   onClick={startPayment}
-                  disabled={processing || !validation}
+                  disabled={processing || blocked}
                   className="inline-flex min-w-[240px] items-center justify-center gap-2.5 px-8 py-4 text-sm font-semibold text-neutral-0 transition-colors disabled:opacity-60"
                   style={{ background: MP_BLUE }}
                   onMouseEnter={(ev) => (ev.currentTarget.style.background = MP_BLUE_DARK)}

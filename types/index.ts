@@ -161,6 +161,8 @@ export interface CartValidateItem {
   line_total: string;
   available: boolean;
   seats_available: number | null;
+  /** Por qué no se puede comprar (curso que ya no existe, fecha pasada, sin cupo). */
+  unavailable_reason?: string;
 }
 
 export interface CartValidateResult {
