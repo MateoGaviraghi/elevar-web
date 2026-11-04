@@ -13,6 +13,8 @@ import { getCart, clearCart, setAttendees as persistAttendees } from "@/lib/cart
 import { validateCart, checkout, simulatePayment, ApiError } from "@/lib/api";
 import { arsToUsd, formatARS, formatUSD, USD_RATE } from "@/lib/formatters";
 import { CONTACT } from "@/lib/contact";
+import { PAIS_INICIAL, telefonoCompleto, telefonoValido, type Pais } from "@/lib/paises";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { ModalityThumb } from "@/components/catalog/modality-thumb";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
 import { MercadoPagoLogo, CardBrands, MP_BLUE, MP_BLUE_DARK } from "./mercado-pago";
@@ -44,6 +46,7 @@ export function CheckoutClient() {
     phone: "",
     company: "",
   });
+  const [pais, setPais] = useState<Pais>(PAIS_INICIAL);
   const [attendees, setAttendeesState] = useState<Record<string, Attendee[]>>({});
   const [method, setMethod] = useState<PaymentMethod>("MERCADOPAGO");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -131,8 +134,8 @@ export function CheckoutClient() {
     if (!buyer.lastName.trim()) e.lastName = "Ingresá tu apellido.";
     // El teléfono es obligatorio: es el canal de contacto para pagos por fuera
     // de los medios automáticos (transferencia, factura a empresa).
-    if (buyer.phone.replace(/\D/g, "").length < 8)
-      e.phone = "Ingresá un teléfono de contacto.";
+    if (!telefonoValido(buyer.phone))
+      e.phone = "Ingresá un teléfono de contacto con código de área.";
 
     multiLines.forEach((item) => {
       const key = lineKey(item.courseId, item.sessionId);
@@ -162,7 +165,7 @@ export function CheckoutClient() {
         buyer: {
           email: buyer.email.trim(),
           name: `${buyer.firstName.trim()} ${buyer.lastName.trim()}`.trim(),
-          phone: buyer.phone.trim() || undefined,
+          phone: telefonoCompleto(pais, buyer.phone),
           company: buyer.company.trim() || undefined,
         },
         items: itemsWithAttendees,
@@ -366,23 +369,23 @@ export function CheckoutClient() {
                 <Field label="Nombre" autoComplete="given-name" value={buyer.firstName} onChange={(v) => set("firstName", v)} error={errors.firstName} />
                 <Field label="Apellido" autoComplete="family-name" value={buyer.lastName} onChange={(v) => set("lastName", v)} error={errors.lastName} />
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field
-                  label="Teléfono"
-                  type="tel"
-                  autoComplete="tel"
-                  placeholder="+54 9 …"
-                  value={buyer.phone}
-                  onChange={(v) => set("phone", v)}
-                  error={errors.phone}
-                />
-                <Field
-                  label="Laboratorio / empresa (opcional)"
-                  autoComplete="organization"
-                  value={buyer.company}
-                  onChange={(v) => set("company", v)}
-                />
-              </div>
+              {/* Uno debajo del otro: lado a lado, la etiqueta larga de empresa ocupaba
+                  dos líneas y bajaba su campo (KAN-33). */}
+              <PhoneInput
+                variant="box"
+                label="Teléfono"
+                pais={pais}
+                onPais={setPais}
+                local={buyer.phone}
+                onLocal={(v) => set("phone", v)}
+                error={errors.phone}
+              />
+              <Field
+                label="Laboratorio / empresa (opcional)"
+                autoComplete="organization"
+                value={buyer.company}
+                onChange={(v) => set("company", v)}
+              />
               <p className="text-xs leading-relaxed text-neutral-400">
                 Usamos el teléfono y el correo únicamente para coordinar la inscripción o un pago
                 por fuera de los medios automáticos (transferencia o factura a empresa).

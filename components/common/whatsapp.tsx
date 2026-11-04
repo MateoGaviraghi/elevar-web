@@ -5,6 +5,8 @@ import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
 import { COMUNIDAD_WHATSAPP_URL } from "@/lib/nav";
 import { CONTACT } from "@/lib/contact";
 import { joinCommunity } from "@/lib/api";
+import { PAIS_INICIAL, telefonoCompleto, telefonoValido, type Pais } from "@/lib/paises";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -233,6 +235,7 @@ export function CommunityModal({
   anchor?: "center" | "fab";
 }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [pais, setPais] = useState<Pais>(PAIS_INICIAL);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [state, setState] = useState<"idle" | "sending" | "done">("idle");
   // Montado mientras está abierto o mientras corre la salida.
@@ -289,7 +292,7 @@ export function CommunityModal({
     const e: Record<string, string> = {};
     if (!form.name.trim()) e.name = "Ingresá tu nombre.";
     if (!EMAIL_RE.test(form.email.trim())) e.email = "Ingresá un email válido.";
-    if (form.phone.replace(/\D/g, "").length < 8) e.phone = "Ingresá tu WhatsApp.";
+    if (!telefonoValido(form.phone)) e.phone = "Ingresá tu WhatsApp con código de área.";
     setErrors(e);
     if (Object.keys(e).length) return;
 
@@ -297,7 +300,7 @@ export function CommunityModal({
     await joinCommunity({
       name: form.name.trim(),
       email: form.email.trim(),
-      phone: form.phone.trim(),
+      phone: telefonoCompleto(pais, form.phone),
     });
     setState("done");
   }
@@ -376,7 +379,7 @@ export function CommunityModal({
           <form onSubmit={submit} noValidate className="space-y-5 px-6 pb-6 pt-6">
             <Field label="Nombre y apellido" autoComplete="name" value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} error={errors.name} />
             <Field label="Correo electrónico" type="email" autoComplete="email" value={form.email} onChange={(v) => setForm((f) => ({ ...f, email: v }))} error={errors.email} />
-            <Field label="WhatsApp" type="tel" autoComplete="tel" value={form.phone} onChange={(v) => setForm((f) => ({ ...f, phone: v }))} error={errors.phone} />
+            <PhoneInput variant="line" label="WhatsApp" pais={pais} onPais={setPais} local={form.phone} onLocal={(v) => setForm((f) => ({ ...f, phone: v }))} error={errors.phone} />
             <button
               type="submit"
               disabled={state === "sending"}
