@@ -10,6 +10,7 @@ import { gsap, prefersReducedMotion, START, useGSAP } from "@/lib/gsap";
 import { ChannelGroup, ChannelIcon, ChannelRow } from "@/components/common/channel-link";
 import { CONTACT_CHANNELS, SOCIAL_CHANNELS } from "@/lib/contact";
 import { createLead, ApiError } from "@/lib/api";
+import { AvisoEnviado } from "@/components/common/aviso-enviado";
 import { pegar, sinViuda } from "@/lib/texto";
 
 interface FormState {
@@ -35,6 +36,7 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
   const [fieldErrors, setFieldErrors] = useState<Partial<FormState>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [enviadoA, setEnviadoA] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   function set(key: keyof FormState) {
@@ -90,6 +92,7 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
         company: fields.company || undefined,
         phone: fields.phone || undefined,
       });
+      setEnviadoA(fields.email.trim());
       setSuccess(true);
       setFields(EMPTY);
     } catch (err) {
@@ -182,11 +185,7 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
                 aria-hidden
                 className="ct-shadow pointer-events-none absolute inset-0 -z-10 shadow-[0_1px_2px_rgba(11,30,51,0.06),0_12px_24px_-8px_rgba(11,30,51,0.12),0_48px_96px_-24px_rgba(11,30,51,0.28)]"
               />
-              {success && (
-                <AlertBanner variant="success" className="mb-6">
-                  ¡Mensaje enviado! Te respondemos a la brevedad.
-                </AlertBanner>
-              )}
+              {success && <AvisoEnviado email={enviadoA} onClose={() => setSuccess(false)} />}
               {errorMsg && (
                 <AlertBanner variant="error" className="mb-6">
                   {errorMsg}
