@@ -407,6 +407,42 @@ export async function registerWebinar(payload: {
   };
 }
 
+/**
+ * Servidor de ELEVAR (KAN-34, 2026-11-06): Django en Railway, cuenta de la clienta.
+ * Las consultas y las altas a la comunidad se guardan ahí y le llega un mail a ELEVAR.
+ * Sin `NEXT_PUBLIC_API_URL` (desarrollo sin servidor) se siguen guardando solo en el navegador.
+ */
+const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/+$/, "");
+
+/** Manda un contacto al servidor. Si falla, tira ApiError con un mensaje para mostrar. */
+async function postLead(body: Record<string, string | undefined>): Promise<void> {
+  if (!API_URL) return;
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/api/v1/leads/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new ApiError("No pudimos enviar tus datos. Revisá tu conexión e intentá de nuevo.", "NETWORK", 0);
+  }
+  if (res.ok) return;
+  if (res.status === 429) {
+    throw new ApiError("Hiciste varios envíos seguidos. Probá de nuevo en unos minutos.", "RATE_LIMITED", 429);
+  }
+  const data = (await res.json().catch(() => null)) as
+    | { error?: { code?: string; message?: string; field_errors?: Record<string, string[]> } }
+    | null;
+  const err = data?.error;
+  throw new ApiError(
+    err?.message && res.status < 500 ? err.message : "No pudimos enviar tus datos. Intentá de nuevo en unos minutos.",
+    err?.code ?? "SERVER_ERROR",
+    res.status,
+    err?.field_errors ?? null
+  );
+}
+
 export async function createLead(payload: {
   name: string;
   email: string;
@@ -415,6 +451,8 @@ export async function createLead(payload: {
   company?: string;
   phone?: string;
 }): Promise<{ submitted: boolean; lead: Lead; message: string }> {
+  await postLead({ ...payload, source: "CONTACTO" });
+  // Copia en el navegador para el panel de demostración (Fase 0).
   const lead = addLead({ ...payload, source: "CONTACTO" });
   return { submitted: true, lead, message: "Consulta enviada." };
 }
@@ -424,6 +462,7 @@ export async function joinCommunity(payload: {
   email: string;
   phone: string;
 }): Promise<{ joined: boolean }> {
+  await postLead({ ...payload, source: "COMUNIDAD" });
   addLead({ ...payload, subject: "Comunidad de WhatsApp", source: "COMUNIDAD" });
   return { joined: true };
 }

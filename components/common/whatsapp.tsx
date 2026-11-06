@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
 import { COMUNIDAD_WHATSAPP_URL } from "@/lib/nav";
 import { CONTACT } from "@/lib/contact";
-import { joinCommunity } from "@/lib/api";
+import { ApiError, joinCommunity } from "@/lib/api";
 import { PAIS_INICIAL, telefonoCompleto, telefonoValido, type Pais } from "@/lib/paises";
 import { PhoneInput } from "@/components/ui/phone-input";
 
@@ -238,6 +238,7 @@ export function CommunityModal({
   const [pais, setPais] = useState<Pais>(PAIS_INICIAL);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [state, setState] = useState<"idle" | "sending" | "done">("idle");
+  const [sendError, setSendError] = useState<string | null>(null);
   // Montado mientras está abierto o mientras corre la salida.
   const [mounted, setMounted] = useState(open);
   const backdrop = useRef<HTMLDivElement>(null);
@@ -297,12 +298,19 @@ export function CommunityModal({
     if (Object.keys(e).length) return;
 
     setState("sending");
-    await joinCommunity({
-      name: form.name.trim(),
-      email: form.email.trim(),
-      phone: telefonoCompleto(pais, form.phone),
-    });
-    setState("done");
+    setSendError(null);
+    try {
+      await joinCommunity({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: telefonoCompleto(pais, form.phone),
+      });
+      setState("done");
+    } catch (err) {
+      // Lo escrito queda en el formulario para volver a intentar.
+      setSendError(err instanceof ApiError ? err.message : "No pudimos sumarte. Intentá de nuevo.");
+      setState("idle");
+    }
   }
 
   if (!mounted) return null;
@@ -380,6 +388,11 @@ export function CommunityModal({
             <Field label="Nombre y apellido" autoComplete="name" value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} error={errors.name} />
             <Field label="Correo electrónico" type="email" autoComplete="email" value={form.email} onChange={(v) => setForm((f) => ({ ...f, email: v }))} error={errors.email} />
             <PhoneInput variant="line" label="WhatsApp" pais={pais} onPais={setPais} local={form.phone} onLocal={(v) => setForm((f) => ({ ...f, phone: v }))} error={errors.phone} />
+            {sendError && (
+              <p role="alert" className="border border-red-200 bg-red-50 px-3 py-2.5 text-xs font-medium text-red-700">
+                {sendError}
+              </p>
+            )}
             <button
               type="submit"
               disabled={state === "sending"}
