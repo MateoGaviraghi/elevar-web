@@ -9,7 +9,7 @@
 //
 // Uso: node scripts/saltos-de-linea.mjs [base] — base por defecto http://localhost:3000.
 // Necesita Playwright y Chrome. Si el proyecto no lo tiene instalado, se toma de
-// PLAYWRIGHT_PATH (por defecto el de Sanalys: C:/Users/mateo/Desktop/sanalys/node_modules/playwright).
+// PLAYWRIGHT_PATH (por defecto el de Sanalys: C:/Dev/clientes/sanalys/sanalys/node_modules/playwright).
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
@@ -17,7 +17,7 @@ function loadPlaywright() {
   try {
     return require("playwright");
   } catch {
-    return require(process.env.PLAYWRIGHT_PATH ?? "C:/Users/mateo/Desktop/sanalys/node_modules/playwright");
+    return require(process.env.PLAYWRIGHT_PATH ?? "C:/Dev/clientes/sanalys/sanalys/node_modules/playwright");
   }
 }
 const { chromium } = loadPlaywright();
