@@ -82,6 +82,28 @@ export function objectivesOf(c: Course): string[] {
   return (c.objectives ?? "").split("\n").map((s) => s.trim().replace(/\.$/, "")).filter(Boolean);
 }
 
+/** Siglas que quedan en mayúscula cuando un tema viene todo en mayúscula. */
+const SIGLAS = new Set(["ISO", "IEC", "IRAM", "OAA", "ILAC", "ELEVAR", "ANMAT", "SENASA", "BPL", "BPM", "GMP", "HACCP", "SGC"]);
+
+/**
+ * Un tema del temario dicho dentro de una oración: solo el nombre (hasta el primer
+ * «:» o « - »), sin mayúsculas sostenidas y con minúscula inicial salvo sigla.
+ */
+function temaEnOracion(title: string): string {
+  let t = title.split(/:|\s[-–]\s/)[0].trim().replace(/\.$/, "");
+  const letras = t.replace(/[^A-Za-zÁÉÍÓÚÑÜáéíóúñü]/g, "");
+  if (letras && letras === letras.toUpperCase()) {
+    t = t
+      .split(" ")
+      .map((w) => (SIGLAS.has(w.replace(/[^A-ZÁÉÍÓÚÑÜ]/g, "")) || /[\d/]/.test(w) ? w : w.toLowerCase()))
+      .join(" ");
+  }
+  const primera = t.split(" ")[0];
+  return SIGLAS.has(primera.replace(/[^A-ZÁÉÍÓÚÑÜ]/g, "")) || /[\d/]/.test(primera)
+    ? t
+    : t.charAt(0).toLowerCase() + t.slice(1);
+}
+
 /** Resumen de arriba: la bajada de ELEVAR (`lead`) o uno armado con datos reales. */
 export function leadOf({ course, tpl }: FichaData): string {
   if (course.lead) return course.lead;
@@ -94,7 +116,7 @@ export function leadOf({ course, tpl }: FichaData): string {
         ? `Webinar gratuito${s ? ` del ${s.short}` : ""}${who}.`
         : `Curso online en vivo${s ? ` el ${s.short}` : ""}${who}.`;
   const items = syllabusOf(course);
-  const topics = items.slice(0, 3).map((i) => i.title.charAt(0).toLowerCase() + i.title.slice(1));
+  const topics = items.slice(0, 3).map((i) => temaEnOracion(i.title));
   const second = items.length
     ? ` En ${items.length} ${items.some((i) => i.isModule) ? "módulos" : "temas"} recorrés ${topics.join(", ").replace(/, ([^,]*)$/, " y $1")}${items.length > 3 ? ", entre otros" : ""}.`
     : "";
