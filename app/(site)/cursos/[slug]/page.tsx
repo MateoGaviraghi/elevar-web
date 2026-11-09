@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { RelatedCourses } from "@/components/catalog/related-courses";
 import { CourseFicha } from "@/components/curso/ficha";
 import { MODALITY_TEMPLATES } from "@/lib/formacion-templates";
-import { ApiError, getCourse } from "@/lib/api";
+import { ApiError, getCourse, getCourses } from "@/lib/api";
 import type { Course } from "@/types";
 
 // Fase 0 (mockup sobre next dev): se renderiza on-demand. En Fase 1 (export estático)
@@ -27,6 +27,15 @@ async function fetchCourse(slug: string): Promise<Course | null> {
   }
 }
 
+/** Dirección vieja de un curso cuyo título cambió: el slug termina en el código
+ * ("…-ca41"), que no cambia. Devuelve el slug actual o null. */
+async function currentSlugFor(slug: string): Promise<string | null> {
+  const code = slug.split("-").pop();
+  if (!code) return null;
+  const { results } = await getCourses();
+  return results.find((c) => c.slug.endsWith(`-${code}`))?.slug ?? null;
+}
+
 export async function generateMetadata(
   props: {
     params: Promise<{ slug: string }>;
@@ -48,7 +57,11 @@ export default async function CourseDetailPage(
 ) {
   const params = await props.params;
   const course = await fetchCourse(params.slug);
-  if (!course) notFound();
+  if (!course) {
+    const current = await currentSlugFor(params.slug);
+    if (current && current !== params.slug) permanentRedirect(`/cursos/${current}`);
+    notFound();
+  }
 
   const data = {
     course,

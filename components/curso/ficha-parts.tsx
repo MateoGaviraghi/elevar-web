@@ -78,6 +78,11 @@ export function syllabusOf(c: Course): { title: string; isModule: boolean }[] {
   });
 }
 
+/** Temas para contar y resumir: sin los títulos de bloque ("PRIMERA PARTE – …"), que agrupan módulos. */
+export function temasOf(c: Course) {
+  return syllabusOf(c).filter((i) => !/^\S+\s+PARTE\b/i.test(i.title));
+}
+
 export function objectivesOf(c: Course): string[] {
   return (c.objectives ?? "").split("\n").map((s) => s.trim().replace(/\.$/, "")).filter(Boolean);
 }
@@ -113,9 +118,9 @@ export function leadOf({ course, tpl }: FichaData): string {
     course.modality === "ASYNC"
       ? `Curso asincrónico${course.duration_hours ? ` de ${course.duration_hours} ${course.duration_hours === 1 ? "hora" : "horas"}` : ""}${who}: lo hacés a tu ritmo.`
       : course.modality === "WEBINAR"
-        ? `Webinar gratuito${s ? ` del ${s.short}` : ""}${who}.`
-        : `Curso online en vivo${s ? ` el ${s.short}` : ""}${who}.`;
-  const items = syllabusOf(course);
+        ? `Webinar gratuito${s && !s.past ? ` del ${s.short}` : ""}${who}.`
+        : `Curso online en vivo${s && !s.past ? ` el ${s.short}` : ""}${who}.`;
+  const items = temasOf(course);
   const topics = items.slice(0, 3).map((i) => temaEnOracion(i.title));
   const second = items.length
     ? ` En ${items.length} ${items.some((i) => i.isModule) ? "módulos" : "temas"} recorrés ${topics.join(", ").replace(/, ([^,]*)$/, " y $1")}${items.length > 3 ? ", entre otros" : ""}.`
@@ -274,8 +279,8 @@ export function HeroMeta({ data }: { data: FichaData }) {
   const items: { icon: IconName; text: string }[] = [];
   if (s) items.push({ icon: "calendar", text: s.past ? `Se realizó el ${s.short}` : `${cap(s.short)} · ${s.time}` });
   else if (course.duration_hours) items.push({ icon: "clock", text: `${course.duration_hours} ${course.duration_hours === 1 ? "hora certificada" : "horas certificadas"}` });
-  const n = course.syllabus?.length ?? 0;
-  if (n) items.push({ icon: "list", text: `${n} ${syllabusOf(course).some((i) => i.isModule) ? "módulos" : "temas"}` });
+  const temas = temasOf(course);
+  if (temas.length) items.push({ icon: "list", text: `${temas.length} ${temas.some((i) => i.isModule) ? "módulos" : "temas"}` });
   if (course.instructor) items.push({ icon: "user", text: course.instructor.name });
   if (tpl.certificate) items.push({ icon: "award", text: "Con certificado" });
   return (

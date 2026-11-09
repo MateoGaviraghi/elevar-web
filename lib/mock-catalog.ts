@@ -112,7 +112,8 @@ function sessionsFor(raw: RawCourse): CourseSession[] {
       timezone: "America/Argentina/Buenos_Aires",
       capacity: null,
       seats_available: null,
-      status: new Date(d.starts) < SURVEY ? "FINISHED" : "SCHEDULED",
+      // Contra hoy, no contra el relevamiento: una fecha que ya pasó no se vende.
+      status: new Date(d.starts).getTime() < Date.now() ? "FINISHED" : "SCHEDULED",
     },
   ];
 }

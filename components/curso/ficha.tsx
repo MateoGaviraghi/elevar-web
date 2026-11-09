@@ -36,6 +36,7 @@ import {
   priceUSD,
   sectionsOf,
   syllabusOf,
+  temasOf,
   useMotion,
   type FichaData,
 } from "./ficha-parts";
@@ -128,7 +129,7 @@ export function CourseFicha({ data }: { data: FichaData }) {
           <section id="temario" data-tone="dark" className={`bg-ink-900 ${PAD}`}>
             <Container>
               <div className={COL}>
-                <SectionTitle title="Temario" meta={`${items.length} ${unit}`} tone="dark" />
+                <SectionTitle title="Temario" meta={`${temasOf(course).length} ${unit}`} tone="dark" />
                 <SyllabusRows course={course} />
                 <div className="mt-10 flex flex-col gap-5 border-t border-neutral-0/15 pt-8 md:flex-row md:items-center md:justify-between">
                   <p className="font-display text-xl font-semibold text-neutral-0">

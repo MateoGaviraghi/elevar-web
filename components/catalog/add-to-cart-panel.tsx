@@ -10,6 +10,7 @@ import { promoBadge } from "@/lib/promos";
 import { buttonClasses } from "@/components/ui/button";
 import { formatARS, formatDate } from "@/lib/formatters";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
+import { pegar } from "@/lib/texto";
 import { WebinarSignupModal } from "@/components/formacion/webinar-signup";
 
 function seatsLabel(s: CourseSession): { text: string; soldOut: boolean; low: boolean } {
@@ -137,7 +138,9 @@ export function AddToCartPanel({ course }: { course: Course }) {
           </p>
           {noSessions ? (
             <p className="text-sm text-neutral-500">
-              Sin fechas programadas por el momento. Escribinos para conocer el próximo dictado.
+              {/* Una oración por bloque: si no entran juntas, el corte cae en el punto. */}
+              <span className="inline-block">{pegar("Sin fechas programadas por el momento.")}</span>{" "}
+              <span className="inline-block">{pegar("Escribinos para conocer el próximo dictado.")}</span>
             </p>
           ) : (
             <div className="flex flex-col gap-2">

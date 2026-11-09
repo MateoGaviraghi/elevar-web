@@ -321,7 +321,7 @@
       "url": "https://elevar.com.ar/formacion/cursos-asincronicos/250",
       "code": "CA38",
       "codeSuffix": null,
-      "title": "ACTUALIZACIÓN PREVISTA CON CONTENIDO AMPLIADO: OCTUBRE - CA38 - Buenas prácticas en el laboratorio de microbiología",
+      "title": "CA38 - Buenas prácticas en el laboratorio de microbiología",
       "objetivos": "Obtener los conocimientos necesarios para trabajar de forma segura en el laboratorio de microbiología",
       "temario": [
         "Generalidades sobre buenas prácticas de laboratorio",
@@ -381,7 +381,7 @@
       "url": "https://elevar.com.ar/formacion/cursos-asincronicos/355",
       "code": "CA41",
       "codeSuffix": null,
-      "title": "¡NUEVO! DISPONIBLE DESDE 1 DE OCTUBRE - Gestión y calificación de equipos según ISO/IEC 17025",
+      "title": "CA41 - Gestión y calificación de equipos según ISO/IEC 17025",
       "objetivos": "Brindar los conocimientos y herramientas prácticas necesarias para calificar y gestionar adecuadamente los equipos de laboratorio de físico-química, asegurando su confiabilidad metrológica, la trazabilidad de las mediciones y el cumplimiento de los requisitos de la norma ISO/IEC 17025, desde el enfoque del ciclo de vida del equipo hasta su evaluación en auditorías internas y externas.",
       "temario": [
         "PRIMERA PARTE – GESTIÓN DE EQUIPOS",
@@ -635,7 +635,7 @@
       "title": "CA48 - Orientaciones para el aseguramiento de la validez de los resultados en ensayos químicos. Basado en ISO/IEC 17025:2017",
       "objetivos": "Brindar los conocimientos para aplicar correctamente actividades de aseguramiento de la validez de los resultados en ensa-yos químicos teniendo en cuenta la norma ISO/IEC 17025.",
       "temario": [
-        "MÓDULO 1 | RESULTADOS ANALITICOS: Aseguramiento de la validez del resultado - Cumplimiento normativo - Interpretación ISO/IEC 17025 en función de la validez de los resultados",
+        "MÓDULO 1 | RESULTADOS ANALÍTICOS: Aseguramiento de la validez del resultado - Cumplimiento normativo - Interpretación ISO/IEC 17025 en función de la validez de los resultados",
         "MÓDULO 2 | CONTROLES DE CALIDAD INTERNOS: Materiales de referencia: Conceptos. Aplicaciones en procesos de validación y actividades de rutina - Resultados trazables a partir del uso de equipos calibrados: Conceptos de calibración. Importancia de la calibración. Cuando y porque calibrar un equipo. Elección del laboratorio de calibración para asegurar trazabilidad metrológica -Comprobaciones funcionales de equipos: fundamentos y aplicaciones prácticas en los ensayos de rutina - Patrones de verificación y patrones de trabajo: conceptos, usos de los patrones. Generación e interpretación de gráficos de control -Comprobaciones intermedias: concepto. Diferencia entre comprobación intermedia y calibración. Cuando y porqué realizar una comprobación intermedia en equipos - Establecimiento de técnicas estadística para establecer la forma de identificar la necesidad de repetición de ensayos - Orientaciones para conservar el ítem de ensayo hasta el momento del reensayo - Fundamentos para el establecimiento de correlación entre resultados analíticos - Revisión de informes de ensayo: cuando y cómo revisarlos - Importancia de su revisión. Cualificación del personal - Comparaciones intralaboratorio y ensayo de muestras ciegas: diferencias y similitudes. Importancia y uso dentro del control de calidad interno.",
         "MÓDULO 3 | CONTROLES DE CALIDAD EXTERNOS: Ensayos de aptitud y comparaciones interlaboratorio - Selección del proveedor de ensayo de aptitud - Evaluación de los resultados de los ensayos de aptitud",
         "MÓDULO 4 | SEGUIMIENTO DE LOS DATOS: Mejora continua -",
@@ -1262,8 +1262,8 @@
       "objetivos": "Comprender la estadística básica aplicada en los procesos de validación\nInterpretar las diferentes pruebas estadísticas aplicables en las validaciones de métodos\nDesarrollar diferentes características de desempeño\nInterpretar los resultados de las pruebas de validación mediante fundamentos estadísticos",
       "temario": [
         "MÓDULO 1 | INFRAESTRUCTURA DE LA CALIDAD: Metrología - Normalización - Acreditación - Infraestructura",
-        "MÓDULO 2 | ESTADÍSITCA BÁSICA: Variabilidad de los resultados - Error de medida: error sistemático, error aleatorio, fuentes de errores - distribución normal - grados de libertad - pruebas de hipótesis - contrastes de significación: prueba t y prueba f",
-        "MÓDULO 3 | VALIDACION Y VERIFICACIÓN DE MÉTODOS: Validación: conceptos descriptos en diferentes normas de referencia - ¿Cuándo validar un método? - ¿Cómo validar un método? - ¿Cuánto validar un método? - Verificación - Revalidación - Documentación de una validación",
+        "MÓDULO 2 | ESTADÍSTICA BÁSICA: Variabilidad de los resultados - Error de medida: error sistemático, error aleatorio, fuentes de errores - distribución normal - grados de libertad - pruebas de hipótesis - contrastes de significación: prueba t y prueba f",
+        "MÓDULO 3 | VALIDACIÓN Y VERIFICACIÓN DE MÉTODOS: Validación: conceptos descriptos en diferentes normas de referencia - ¿Cuándo validar un método? - ¿Cómo validar un método? - ¿Cuánto validar un método? - Verificación - Revalidación - Documentación de una validación",
         "MÓDULO 4 | CONSIDERACIONES PRÁCTICAS PARA EL DESARROLLO DE LA VALIDACIÓN: Definición del alcance de la validación - Herramientas de validación - Preparación del estudio de validación",
         "MÓDULO 5 | EVALUACIÓN DE CARACTERISTICAS DE DESEMPEÑO: Selectividad - Intervalo de trabajo - Límite de detección y límite de cuantificación - Precisión - Veracidad - Robustez - Incertidumbre",
         "MÓDULO 6 | CONTROLES DE CALIDAD: Control de calidad interno: cumplimiento normativo ISO/IEC 17025 e identificación del control adecuado para cada método de ensayo - Control de calidad externo: ensayos de aptitud, indicador de desempeño, errores insatisfactorios en un en-sayo de aptitud o interlaboratorio"
