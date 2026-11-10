@@ -18,6 +18,7 @@ import type { ModalityTemplate } from "@/lib/formacion-templates";
 import { formatARS } from "@/lib/formatters";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { pegar } from "@/lib/texto";
+import { WHATSAPP_URL } from "@/lib/nav";
 import { openCartDrawer } from "@/lib/cart";
 import { canQuickAdd, quickAddCourse } from "@/lib/quick-add";
 import { Logo } from "@/components/brand/logo";
@@ -242,15 +243,28 @@ export const BTN = {
   ghostLight: `${FILL} inline-flex items-center justify-center gap-2 border border-ink-900/25 px-6 py-3.5 text-sm font-semibold text-ink-900 before:bg-ink-900 hover:text-neutral-0`,
 };
 
+/** Curso con fecha que ya se realizó: no se ofrece inscribirse, se ofrece consultar. */
+const realizado = (c: Course) => !!sessionInfo(c)?.past;
+
+/** WhatsApp de ELEVAR con la consulta por la próxima fecha ya escrita. */
+const consultaHref = (c: Course) =>
+  `${WHATSAPP_URL}?text=${encodeURIComponent(`Hola, quiero saber cuándo es la próxima fecha de ${c.code} · ${c.title}.`)}`;
+
 /** Inscribirse + PDF: en el encabezado, tras el temario y en el cierre. */
 export function Ctas({ course, tone = "dark", className = "" }: { course: Course; tone?: Tone | "brand"; className?: string }) {
   const primary = tone === "brand" ? BTN.onBrand : BTN.primary;
   const ghost = tone === "light" ? BTN.ghostLight : BTN.ghostDark;
   return (
     <div className={`flex flex-col gap-3 sm:flex-row ${className}`}>
-      <button type="button" onClick={() => scrollToSection("inscripcion")} className={primary}>
-        {isFree(course) ? "Inscribirme gratis" : `Inscribirme · ${priceARS(course)}`}
-      </button>
+      {realizado(course) ? (
+        <a href={consultaHref(course)} target="_blank" rel="noopener noreferrer" className={primary}>
+          Consultar próxima fecha
+        </a>
+      ) : (
+        <button type="button" onClick={() => scrollToSection("inscripcion")} className={primary}>
+          {isFree(course) ? "Inscribirme gratis" : `Inscribirme · ${priceARS(course)}`}
+        </button>
+      )}
       <a href={pdfHref(course)} target="_blank" rel="noopener noreferrer" className={ghost}>
         <Icon name="download" className="h-4 w-4" />
         Descargar PDF
@@ -707,6 +721,10 @@ export function BuyCard({ data }: { data: FichaData }) {
           >
             {added ? "Agregado al carrito" : "Agregar al carrito"}
           </button>
+        ) : realizado(course) ? (
+          <a href={consultaHref(course)} target="_blank" rel="noopener noreferrer" className={`${BTN.primary} w-full ${ink ? "before:!bg-brand-700" : ""}`}>
+            Consultar próxima fecha
+          </a>
         ) : (
           <button type="button" onClick={() => scrollToSection("inscripcion")} className={`${BTN.primary} w-full ${ink ? "before:!bg-brand-700" : ""}`}>
             {isFree(course) ? "Inscribirme gratis" : "Elegir fecha e inscribirme"}
@@ -770,20 +788,27 @@ export function PaymentRows({ tpl }: { tpl: ModalityTemplate }) {
 
 /** Barra fija abajo en el teléfono: precio + inscribirse. */
 export function BuyBar({ course }: { course: Course }) {
-  const usd = priceUSD(course);
+  // Ya realizado: "Consultar fecha" es más ancho que "Inscribirme"; el USD queda en la tarjeta.
+  const usd = realizado(course) ? null : priceUSD(course);
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 border-t border-neutral-200 bg-neutral-0/95 backdrop-blur lg:hidden">
       <div className="flex items-center justify-between gap-4 py-3 pl-4 pr-20 sm:pl-6">
         <div className="min-w-0">
           <p className="truncate text-xs text-neutral-500">{course.code} · {course.title}</p>
-          <p className="font-display text-lg font-semibold text-ink-900">
+          <p className="whitespace-nowrap font-display text-lg font-semibold text-ink-900">
             {priceARS(course)}
             {usd && <span className="ml-2 text-xs font-medium text-neutral-500">{usd}</span>}
           </p>
         </div>
-        <button type="button" onClick={() => scrollToSection("inscripcion")} className={`${BTN.primary} shrink-0 !px-5 !py-3`}>
-          Inscribirme
-        </button>
+        {realizado(course) ? (
+          <a href={consultaHref(course)} target="_blank" rel="noopener noreferrer" className={`${BTN.primary} shrink-0 !px-5 !py-3`}>
+            Consultar fecha
+          </a>
+        ) : (
+          <button type="button" onClick={() => scrollToSection("inscripcion")} className={`${BTN.primary} shrink-0 !px-5 !py-3`}>
+            Inscribirme
+          </button>
+        )}
       </div>
     </div>
   );
