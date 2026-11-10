@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Promociones } from "@/components/promos/promociones";
 import { getCourses } from "@/lib/api";
 
+/** Los listados se rehacen cada hora: así un curso que ya se dictó deja de figurar como próximo sin esperar otra publicación. */
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Promociones — Elevar",
   description:

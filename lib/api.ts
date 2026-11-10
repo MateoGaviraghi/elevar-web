@@ -55,7 +55,23 @@ const isSessionBased = (m: Course["modality"]) => m === "LIVE" || m === "WEBINAR
 const money = (n: number) => n.toFixed(2);
 
 function catalog(): Course[] {
-  return typeof window === "undefined" ? COURSES : listCourses();
+  return (typeof window === "undefined" ? COURSES : listCourses()).map(alDia);
+}
+
+/** Estado de las fechas contra este momento, no contra cuando se cargó el catálogo: una
+ * fecha que ya empezó pasa a FINISHED y su curso deja de ser destacado (los destacados
+ * en vivo y webinars se eligen por fecha próxima). */
+function alDia(c: Course): Course {
+  const now = Date.now();
+  let changed = false;
+  const sessions = (c.sessions ?? []).map((s) => {
+    if (s.status !== "SCHEDULED" || new Date(s.starts_at).getTime() >= now) return s;
+    changed = true;
+    return { ...s, status: "FINISHED" as const };
+  });
+  if (!changed) return c;
+  const upcoming = sessions.some((s) => s.status === "SCHEDULED");
+  return { ...c, sessions, is_featured: upcoming ? c.is_featured : false };
 }
 
 function promos(): Promo[] {

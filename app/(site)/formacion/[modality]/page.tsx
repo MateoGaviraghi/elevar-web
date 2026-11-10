@@ -4,6 +4,9 @@ import { CourseCatalog } from "@/components/catalog/course-table";
 import { getCourses } from "@/lib/api";
 import { MODALITIES, getModalityBySlug } from "@/lib/formacion-modalities";
 
+/** Los listados se rehacen cada hora: así un curso que ya se dictó deja de figurar como próximo sin esperar otra publicación. */
+export const revalidate = 3600;
+
 export const dynamicParams = false;
 
 export function generateStaticParams() {

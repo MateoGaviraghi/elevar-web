@@ -69,19 +69,38 @@ export function sessionInfo(c: Course): { short: string; time: string; past: boo
   };
 }
 
-/** Temario: líneas sueltas o módulos ("MÓDULO 1 | …"), en minúscula de oración. */
-export function syllabusOf(c: Course): { title: string; isModule: boolean }[] {
+/** Título de bloque: "PRIMERA PARTE – GESTIÓN DE EQUIPOS" (agrupa módulos; puede traer su detalle tras «:»). */
+export interface SyllabusBlock {
+  label: string;
+  detail: string;
+}
+
+/** Temario: líneas sueltas, módulos ("MÓDULO 1 | …") o títulos de bloque, en minúscula de oración. */
+export function syllabusOf(c: Course): { title: string; isModule: boolean; block?: SyllabusBlock }[] {
+  const oracion = (t: string) => (t === t.toUpperCase() ? cap(t.toLowerCase()) : t);
   return (c.syllabus ?? []).map((line) => {
+    const b = line.match(/^(\S+\s+PARTE)\s*[–\-:]\s*(.+)$/i);
+    if (b) {
+      const [name, ...rest] = b[2].split(":");
+      return {
+        title: oracion(name.trim()),
+        isModule: false,
+        block: {
+          label: cap(b[1].toLowerCase()),
+          // Separadores pegados a la palabra anterior: ningún renglón empieza con un guion.
+          detail: rest.join(":").trim().replace(/\s+([-–])\s+/g, (_, d: string) => `\u00a0${d === "-" ? "·" : "–"} `),
+        },
+      };
+    }
     const m = line.match(/^M[ÓO]DULO\s*\d+\s*[|.:\-–]\s*(.+)$/i);
     if (!m) return { title: line, isModule: false };
-    const t = m[1].trim();
-    return { title: t === t.toUpperCase() ? cap(t.toLowerCase()) : t, isModule: true };
+    return { title: oracion(m[1].trim()), isModule: true };
   });
 }
 
-/** Temas para contar y resumir: sin los títulos de bloque ("PRIMERA PARTE – …"), que agrupan módulos. */
+/** Temas para contar y resumir: sin los títulos de bloque, que agrupan módulos. */
 export function temasOf(c: Course) {
-  return syllabusOf(c).filter((i) => !/^\S+\s+PARTE\b/i.test(i.title));
+  return syllabusOf(c).filter((i) => !i.block);
 }
 
 export function objectivesOf(c: Course): string[] {
@@ -473,33 +492,49 @@ export function ObjectivesRows({ course }: { course: Course }) {
  * el título lo sigue.
  */
 export function SyllabusRows({ course }: { course: Course }) {
-  const items = syllabusOf(course);
+  // Los títulos de bloque ("Primera parte") no llevan número: la numeración cuenta solo los temas.
+  let n = 0;
+  const items = syllabusOf(course).map((it) => ({ ...it, n: it.block ? 0 : ++n }));
   const ref = useMotion<HTMLOListElement>((root) => {
     root.querySelectorAll<HTMLElement>(".sy-row").forEach((row) => {
       const tl = gsap.timeline({ scrollTrigger: { trigger: row, start: "top 90%", once: true } });
-      tl.from(row.querySelector(".sy-rule"), { scaleX: 0, duration: 1.1, ease: "expo.out" })
-        .from(row.querySelector(".sy-num"), { yPercent: 110, duration: 1, ease: "expo.out" }, 0.05)
-        .from(row.querySelectorAll(".sy-txt"), { y: 18, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.06 }, 0.12);
+      tl.from(row.querySelector(".sy-rule"), { scaleX: 0, duration: 1.1, ease: "expo.out" });
+      const num = row.querySelector(".sy-num");
+      if (num) tl.from(num, { yPercent: 110, duration: 1, ease: "expo.out" }, 0.05);
+      tl.from(row.querySelectorAll(".sy-txt"), { y: 18, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.06 }, 0.12);
     });
   });
   return (
     <ol ref={ref}>
-      {items.map((it, i) => (
-        <li key={i} className="sy-row group relative grid grid-cols-[3.5rem_1fr] items-baseline gap-x-4 py-6 sm:grid-cols-[5rem_1fr_auto]">
-          <span aria-hidden className="sy-rule absolute inset-x-0 top-0 h-px origin-left bg-neutral-0/15" />
-          <span className="block overflow-hidden">
-            <span className="sy-num block font-display text-3xl font-semibold leading-none tabular-nums text-brand-500 md:text-4xl">
-              {String(i + 1).padStart(2, "0")}
+      {items.map((it, i) =>
+        it.block ? (
+          <li key={i} className={`sy-row relative pb-6 ${i === 0 ? "pt-6" : "pt-14"}`}>
+            <span aria-hidden className="sy-rule absolute inset-x-0 top-0 h-px origin-left bg-brand-500/60" />
+            <span className="sy-txt block text-xs font-semibold uppercase tracking-widest text-brand-300">{it.block.label}</span>
+            <span className="sy-txt mt-2 block font-display text-2xl font-semibold leading-tight text-neutral-0 md:text-3xl">
+              {it.title}
             </span>
-          </span>
-          <span className="sy-txt font-display text-lg font-semibold leading-snug text-neutral-0 transition-colors duration-500 group-hover:text-brand-300 md:text-xl">
-            {it.title}
-          </span>
-          {it.isModule && (
-            <span className="sy-txt col-start-2 mt-1 text-xs uppercase tracking-widest text-neutral-400 sm:col-start-3 sm:mt-0">Módulo {i + 1}</span>
-          )}
-        </li>
-      ))}
+            {it.block.detail && (
+              <span className="sy-txt mt-3 block text-base leading-relaxed text-neutral-300">{pegar(it.block.detail)}</span>
+            )}
+          </li>
+        ) : (
+          <li key={i} className="sy-row group relative grid grid-cols-[3.5rem_1fr] items-baseline gap-x-4 py-6 sm:grid-cols-[5rem_1fr_auto]">
+            <span aria-hidden className="sy-rule absolute inset-x-0 top-0 h-px origin-left bg-neutral-0/15" />
+            <span className="block overflow-hidden">
+              <span className="sy-num block font-display text-3xl font-semibold leading-none tabular-nums text-brand-500 md:text-4xl">
+                {String(it.n).padStart(2, "0")}
+              </span>
+            </span>
+            <span className="sy-txt font-display text-lg font-semibold leading-snug text-neutral-0 transition-colors duration-500 group-hover:text-brand-300 md:text-xl">
+              {it.title}
+            </span>
+            {it.isModule && (
+              <span className="sy-txt col-start-2 mt-1 text-xs uppercase tracking-widest text-neutral-400 sm:col-start-3 sm:mt-0">Módulo {it.n}</span>
+            )}
+          </li>
+        ),
+      )}
     </ol>
   );
 }

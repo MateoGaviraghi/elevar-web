@@ -12,6 +12,9 @@ import { PromoStrip } from "@/components/promos/promo-strip";
 import { FeaturedCoursesSection } from "@/components/home/featured-courses";
 import { pegar } from "@/lib/texto";
 
+/** Los listados se rehacen cada hora: así un curso que ya se dictó deja de figurar como próximo sin esperar otra publicación. */
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Elevar — Formación y Asistencia Técnica para Laboratorios ISO/IEC 17025",
   description:
