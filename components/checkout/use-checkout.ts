@@ -30,7 +30,11 @@ export function lineKey(courseId: number, sessionId: number | null) {
   return `${courseId}:${sessionId ?? "x"}`;
 }
 
-export type Buyer = { email: string; firstName: string; lastName: string; phone: string; company: string };
+export type Buyer = { email: string; firstName: string; lastName: string; phone: string; dni: string; company: string };
+
+/** DNI o documento: sin puntos ni espacios, de 6 a 15 letras o números. */
+export const limpiarDoc = (v: string) => v.replace(/[\s.\-]/g, "").toUpperCase();
+const DOC_RE = /^[0-9A-Z]{6,15}$/;
 
 export function useCheckout() {
   const router = useRouter();
@@ -40,7 +44,7 @@ export function useCheckout() {
   const [validationError, setValidationError] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
-  const [buyer, setBuyer] = useState<Buyer>({ email: "", firstName: "", lastName: "", phone: "", company: "" });
+  const [buyer, setBuyer] = useState<Buyer>({ email: "", firstName: "", lastName: "", phone: "", dni: "", company: "" });
   const [pais, setPais] = useState<Pais>(PAIS_INICIAL);
   const [attendees, setAttendeesState] = useState<Record<string, Attendee[]>>({});
   const [method, setMethod] = useState<PaymentMethod>("MERCADOPAGO");
@@ -130,6 +134,7 @@ export function useCheckout() {
     // El teléfono es obligatorio: es el canal de contacto para pagos por fuera
     // de los medios automáticos (transferencia, factura a empresa).
     if (campos.includes("phone") && !telefonoValido(buyer.phone)) e.phone = "Ingresá un teléfono de contacto con código de área.";
+    if (campos.includes("dni") && !DOC_RE.test(limpiarDoc(buyer.dni))) e.dni = "Ingresá tu DNI o documento, sin puntos.";
     if (campos.includes("participantes")) {
       multiLines.forEach((item) => {
         const key = lineKey(item.courseId, item.sessionId);
@@ -147,7 +152,7 @@ export function useCheckout() {
     return Object.keys(e).length === 0;
   }
 
-  const TODOS: (keyof Buyer | "participantes")[] = ["firstName", "lastName", "email", "phone", "participantes"];
+  const TODOS: (keyof Buyer | "participantes")[] = ["firstName", "lastName", "email", "phone", "dni", "participantes"];
   const validarDatos = () => validar(TODOS);
 
   async function startPayment(): Promise<boolean> {
@@ -171,6 +176,7 @@ export function useCheckout() {
           name: `${buyer.firstName.trim()} ${buyer.lastName.trim()}`.trim(),
           phone: telefonoCompleto(pais, buyer.phone),
           company: buyer.company.trim() || undefined,
+          dni: limpiarDoc(buyer.dni),
         },
         items: itemsWithAttendees,
         couponCode: coupon,

@@ -24,7 +24,7 @@ import {
 import { computePricing } from "@/lib/promos";
 import { pegar, pegarOpt } from "@/lib/texto";
 import { getStoredOrder, saveOrder, setOrderStatus } from "@/lib/orders-store";
-import { arsToUsd } from "@/lib/formatters";
+import { arsToUsd, formatDate } from "@/lib/formatters";
 import { newId } from "@/lib/local-db";
 
 // Mockup de Fase 0: el catálogo, las promociones y las órdenes son locales (sin
@@ -53,6 +53,11 @@ export class ApiError extends Error {
 
 const isSessionBased = (m: Course["modality"]) => m === "LIVE" || m === "WEBINAR";
 const money = (n: number) => n.toFixed(2);
+
+/** Un curso del catálogo por id (la página de la orden completa con esto las órdenes viejas). */
+export function courseById(id: number): Course | undefined {
+  return catalog().find((c) => c.id === id);
+}
 
 function catalog(): Course[] {
   return (typeof window === "undefined" ? COURSES : listCourses()).map(alDia);
@@ -224,6 +229,7 @@ export interface CheckoutPayload {
     name: string;
     phone?: string;
     company?: string;
+    dni?: string;
   };
   items: CartItem[];
   couponCode?: string | null;
@@ -246,13 +252,18 @@ export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult
         [`items.${i}.session_id`]: ["Elegí una fecha/sesión."],
       });
     }
+    const session = course.sessions.find((s) => s.id === item.sessionId) ?? null;
     orderItems.push({
       course_id: course.id,
       title_snapshot: course.title,
       unit_price: course.price,
       quantity: item.quantity,
-      session_label: item.sessionLabel ?? null,
+      session_label: session ? formatDate(session.starts_at) : (item.sessionLabel ?? null),
       attendees: normalizeAttendees(item.attendees, item.quantity),
+      code: course.code,
+      modality: course.modality,
+      starts_at: session?.starts_at ?? null,
+      ends_at: session?.ends_at ?? null,
     });
   });
 
@@ -272,6 +283,7 @@ export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult
     buyer_name: payload.buyer.name,
     buyer_phone: payload.buyer.phone,
     buyer_company: payload.buyer.company,
+    buyer_dni: payload.buyer.dni,
     subtotal: money(pricing.subtotal),
     discount_total: money(pricing.discountTotal),
     discounts: pricing.discounts,
@@ -308,6 +320,7 @@ export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult
       body: JSON.stringify({
         publicId,
         email: payload.buyer.email,
+        dni: payload.buyer.dni,
         total: order.total,
         items: orderItems.map((i) => ({
           title: i.title_snapshot,

@@ -194,6 +194,11 @@ export interface OrderItem {
   quantity: number;
   session_label?: string | null;
   attendees?: Attendee[];
+  /** Para la página de la orden (pase impreso y calendario). Órdenes viejas no los traen. */
+  code?: string;
+  modality?: Modality;
+  starts_at?: string | null;
+  ends_at?: string | null;
 }
 
 export interface Order {
@@ -203,6 +208,8 @@ export interface Order {
   buyer_name: string;
   buyer_phone?: string;
   buyer_company?: string;
+  /** DNI o documento del comprador (obligatorio desde 2026-11-11). */
+  buyer_dni?: string;
   subtotal: string;
   discount_total: string;
   discounts?: DiscountLine[];

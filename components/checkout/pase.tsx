@@ -44,7 +44,7 @@ export function CheckoutPase({ co }: { co: Checkout }) {
   const scope = useRef<HTMLDivElement>(null);
   const datos = useRef<HTMLElement>(null);
   const pago = useRef<HTMLElement>(null);
-  const ok = (k: "firstName" | "lastName" | "email" | "phone") => !co.erroresDe([k])[k];
+  const ok = (k: "firstName" | "lastName" | "email" | "phone" | "dni") => !co.erroresDe([k])[k];
 
   // Entrada (corrección de Mateo 2026-11-06: "más fluido, no tan rápido"), encadenada:
   // 0,0 s el formulario sube y se enfoca, de a un bloque cada 0,12 s (1,2 s cada uno);
@@ -118,7 +118,10 @@ export function CheckoutPase({ co }: { co: Checkout }) {
                 >
                   <PhoneInput variant="box" label="Teléfono" pais={co.pais} onPais={co.setPais} local={co.buyer.phone} onLocal={(v) => co.set("phone", v)} error={co.errors.phone} />
                 </div>
-                <div data-paso className="pase-in sm:col-span-2">
+                <div data-paso className="pase-in">
+                  <BoxField label="DNI o documento" placeholder="Sin puntos" inputMode="numeric" autoComplete="off" enterKeyHint="next" value={co.buyer.dni} onChange={(v) => co.set("dni", v)} error={co.errors.dni} ok={ok("dni")} />
+                </div>
+                <div data-paso className="pase-in">
                   <BoxField label="Laboratorio o empresa (opcional)" placeholder="Nombre del laboratorio" autoComplete="organization" enterKeyHint="done" value={co.buyer.company} onChange={(v) => co.set("company", v)} ok={co.buyer.company.trim().length > 0} />
                 </div>
               </div>

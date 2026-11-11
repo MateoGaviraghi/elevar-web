@@ -14,13 +14,13 @@ export async function POST(req: Request) {
   const token = process.env.MP_ACCESS_TOKEN;
   if (!token) return NextResponse.json({ error: "Mercado Pago no está configurado." }, { status: 503 });
 
-  let body: { publicId?: string; email?: string; total?: string; items?: Item[] };
+  let body: { publicId?: string; email?: string; dni?: string; total?: string; items?: Item[] };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Pedido inválido." }, { status: 400 });
   }
-  const { publicId, email, total, items } = body;
+  const { publicId, email, dni, total, items } = body;
   if (!publicId || !/^[\w-]{6,64}$/.test(publicId) || !total || !Array.isArray(items) || items.length === 0) {
     return NextResponse.json({ error: "Faltan datos de la orden." }, { status: 400 });
   }
@@ -30,6 +30,12 @@ export async function POST(req: Request) {
   const amount = Number(total).toFixed(2);
   const detalle = items.map((i) => `${i.quantity}× ${i.title}`).join(" · ");
   const title = `ELEVAR · Orden ${publicId.slice(0, 8).toUpperCase()}`;
+
+  // El DNI argentino (7 u 8 números) identifica al que paga; otro documento no se manda.
+  const doc = typeof dni === "string" ? dni.replace(/\D/g, "") : "";
+  const payer = email
+    ? { email, ...(/^\d{7,8}$/.test(doc) ? { identification: { type: "DNI", number: doc } } : {}) }
+    : null;
 
   const origin = new URL(req.url).origin;
   const vuelta = (status: string) => `${origin}/orden/${publicId}?status=${status}`;
@@ -48,7 +54,7 @@ export async function POST(req: Request) {
       total_amount: amount,
       external_reference: publicId,
       description: detalle.slice(0, MAX_TITLE),
-      ...(email ? { payer: { email } } : {}),
+      ...(payer ? { payer } : {}),
       items: [{ title: title.slice(0, MAX_TITLE), unit_price: amount, quantity: 1 }],
       config: {
         online: {
