@@ -16,7 +16,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { CartItem, Course, Promo } from "@/types";
 import { getPromos } from "@/lib/api";
-import { addItem } from "@/lib/cart";
+import { addItem, openCartDrawer } from "@/lib/cart";
 import { onCollectionChange } from "@/lib/local-db";
 import { CONTACT } from "@/lib/contact";
 import { formatARS, formatDate } from "@/lib/formatters";
@@ -348,6 +348,7 @@ function Calculator({ courses, promos, group }: { courses: Course[]; promos: Pro
       onLand: () => {
         addItem(item);
         setAdded(true);
+        window.setTimeout(openCartDrawer, 550);
         window.setTimeout(() => setAdded(false), 2400);
       },
     });

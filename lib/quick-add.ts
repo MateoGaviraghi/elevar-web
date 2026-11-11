@@ -1,5 +1,5 @@
 import type { Course, CourseSession } from "@/types";
-import { addItem } from "@/lib/cart";
+import { addItem, openCartDrawer } from "@/lib/cart";
 import { flyToCart } from "@/components/cart/fly-to-cart";
 import { formatDate } from "@/lib/formatters";
 
@@ -29,13 +29,15 @@ export function canQuickAdd(course: Course): boolean {
 
 /**
  * Agrega el curso volando desde `from` (la tapa de la tarjeta o el botón) hasta
- * la bolsa del header; se suma al carrito al llegar y el carrito queda cerrado.
+ * la bolsa del header; se suma al carrito al llegar y, tras el golpe de la bolsa, se abre
+ * el carrito (Mateo 2026-11-11, reemplaza "queda cerrado").
  * `card` es la tarjeta entera: sus hermanas se apagan mientras vuela.
  */
 export function quickAddCourse(course: Course, from: HTMLElement | null = null, card: HTMLElement | null = null): void {
   if (!canQuickAdd(course)) return;
   const session = sessionBased(course) ? nextSession(course) : undefined;
-  const add = () => addItem({
+  const add = () => {
+    addItem({
     courseId: course.id,
     sessionId: session?.id ?? null,
     titleSnapshot: course.title,
@@ -46,6 +48,8 @@ export function quickAddCourse(course: Course, from: HTMLElement | null = null, 
     code: course.code,
     sessionLabel: session ? formatDate(session.starts_at) : undefined,
     quantity: 1,
-  });
+    });
+    window.setTimeout(openCartDrawer, 550);
+  };
   flyToCart({ from, code: course.code, modality: course.modality, card, onLand: add });
 }

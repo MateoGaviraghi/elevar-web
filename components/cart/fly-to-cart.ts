@@ -8,7 +8,7 @@ import { RAIL_GRADIENTS } from "@/components/catalog/course-rail-card";
  * se tocó "Agregar", sube, hace un arco y entra en la bolsa del header
  * achicándose (1,4 s power2.inOut). Mientras vuela, las otras tarjetas se apagan
  * (0,6 s) y vuelven (0,8 s). Al llegar se agrega el curso y la bolsa rebota.
- * El carrito queda cerrado (Mateo: "queda cerrado").
+ * Quien llama abre el carrito 0,55 s después de llegar (Mateo 2026-11-11; antes quedaba cerrado).
  */
 
 interface FlyOptions {

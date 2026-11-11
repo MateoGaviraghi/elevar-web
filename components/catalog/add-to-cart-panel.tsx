@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { CartItem, Course, CourseSession, Promo } from "@/types";
-import { addItem } from "@/lib/cart";
+import { addItem, openCartDrawer } from "@/lib/cart";
 import { flyToCart } from "@/components/cart/fly-to-cart";
 import { getPromos } from "@/lib/api";
 import { promoBadge } from "@/lib/promos";
@@ -86,7 +86,8 @@ export function AddToCartPanel({ course }: { course: Course }) {
           ? Array.from({ length: quantity }, () => ({ name: "", email: "" }))
           : undefined,
     };
-    // Vuela desde el botón a la bolsa del header y se agrega al llegar; el carrito queda cerrado.
+    // Vuela desde el botón a la bolsa del header, se agrega al llegar y, después del golpe de
+    // la bolsa, se abre el carrito para seguir al pago (Mateo 2026-11-11: reemplaza "1 queda cerrado").
     setStatus("adding");
     flyToCart({
       from,
@@ -95,6 +96,7 @@ export function AddToCartPanel({ course }: { course: Course }) {
       onLand: () => {
         addItem(item);
         setStatus("added");
+        timers.current.push(window.setTimeout(openCartDrawer, 550));
         timers.current.push(window.setTimeout(() => setStatus("idle"), 2400));
       },
     });
