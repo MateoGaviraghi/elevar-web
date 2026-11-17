@@ -474,8 +474,19 @@ export async function registerWebinar(payload: {
   phone?: string;
   company?: string;
 }): Promise<{ registered: boolean; registration: WebinarRegistration; message: string }> {
+  // Tanda 3 (2026-11-17): la inscripción se guarda en el backend, que además crea la consulta
+  // de origen WEBINAR y le avisa a ELEVAR. Sin `NEXT_PUBLIC_API_URL` queda solo en el navegador.
+  if (API_URL) {
+    if (payload.session_id == null) throw new ApiError("Elegí un encuentro.", "VALIDATION_ERROR", 400);
+    await postWebinar(payload.session_id, {
+      name: payload.name,
+      email: payload.email,
+      phone: payload.phone,
+      company: payload.company,
+    });
+  }
+  // Copia en el navegador para el panel de demostración (Fase 0).
   const registration = addWebinarRegistration(payload);
-  // La inscripción también alimenta la base de contactos del panel.
   addLead({
     name: payload.name,
     email: payload.email,
@@ -488,8 +499,50 @@ export async function registerWebinar(payload: {
   return {
     registered: true,
     registration,
-    message: "Inscripción registrada. Te enviamos el acceso por correo.",
+    message: "Inscripción registrada. Te mandamos un mail de confirmación.",
   };
+}
+
+/** Manda la inscripción al servidor. Si falla, tira ApiError con el mensaje para mostrar. */
+async function postWebinar(sessionId: number, body: Record<string, string | undefined>): Promise<void> {
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/api/v1/webinars/${sessionId}/register/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new ApiError("No pudimos registrar tu inscripción. Probá de nuevo en unos minutos.", "NETWORK", 0);
+  }
+  if (res.ok) return;
+  if (res.status === 409) {
+    throw new ApiError(
+      "Ya estás inscripto a este webinar con este correo. Si no te llegó el mail, revisá la carpeta de correo no deseado o escribinos por WhatsApp.",
+      "ALREADY_REGISTERED",
+      409
+    );
+  }
+  if (res.status === 429) {
+    throw new ApiError("Hiciste varios intentos seguidos. Probá de nuevo en unos minutos.", "RATE_LIMITED", 429);
+  }
+  const data = (await res.json().catch(() => null)) as
+    | { error?: { field_errors?: Record<string, string[]> } }
+    | null;
+  // El backend contesta 422 tanto a un dato inválido (con `field_errors`) como a una fecha
+  // que ya no admite inscripciones (sin `field_errors`).
+  if (res.status === 422 && data?.error?.field_errors) {
+    throw new ApiError("Revisá tu nombre y tu correo.", "VALIDATION_ERROR", 422, data.error.field_errors);
+  }
+  if (res.status === 422) {
+    throw new ApiError("Este encuentro ya no admite inscripciones.", "VALIDATION_ERROR", 422);
+  }
+  throw new ApiError(
+    "No pudimos registrar tu inscripción. Probá de nuevo en unos minutos.",
+    "SERVER_ERROR",
+    res.status,
+    data?.error?.field_errors ?? null
+  );
 }
 
 /**

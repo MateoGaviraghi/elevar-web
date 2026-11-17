@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Course, CourseSession } from "@/types";
-import { registerWebinar } from "@/lib/api";
+import { ApiError, registerWebinar } from "@/lib/api";
 import { formatDate } from "@/lib/formatters";
+import { pegar } from "@/lib/texto";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -56,7 +57,8 @@ export function WebinarSignupModal({ course, open, onClose, sessionId }: Props) 
     if (Object.keys(e).length) return;
 
     setState("sending");
-    await registerWebinar({
+    try {
+      await registerWebinar({
       course_id: course.id,
       course_title: course.title,
       session_id: selected,
@@ -65,7 +67,17 @@ export function WebinarSignupModal({ course, open, onClose, sessionId }: Props) 
       email: form.email.trim(),
       phone: form.phone.trim() || undefined,
       company: form.company.trim() || undefined,
-    });
+      });
+    } catch (err) {
+      setErrors({
+        form:
+          err instanceof ApiError
+            ? err.message
+            : "No pudimos registrar tu inscripción. Probá de nuevo en unos minutos.",
+      });
+      setState("idle");
+      return;
+    }
     setState("done");
   }
 
@@ -122,9 +134,10 @@ export function WebinarSignupModal({ course, open, onClose, sessionId }: Props) 
                   Inscripción confirmada
                 </div>
                 <p className="mt-3 text-sm leading-relaxed text-ink-700">
-                  Te enviamos el enlace de acceso a <strong>{form.email}</strong>
-                  {chosen ? ` para el encuentro del ${formatDate(chosen.starts_at)}` : ""}. Revisá
-                  también la carpeta de correo no deseado.
+                  {pegar("Te mandamos un mail de confirmación a")}&nbsp;<strong>{form.email}</strong>.{" "}
+                  {pegar(
+                    `El link para entrar ${chosen ? `al encuentro del ${formatDate(chosen.starts_at)} ` : ""}te llega antes, al mismo correo.`
+                  )}
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link
@@ -204,6 +217,12 @@ export function WebinarSignupModal({ course, open, onClose, sessionId }: Props) 
                     onChange={(v) => setForm((f) => ({ ...f, company: v }))}
                   />
                 </div>
+
+                {errors.form && (
+                  <p role="alert" className="text-sm leading-relaxed text-red-600">
+                    {pegar(errors.form)}
+                  </p>
+                )}
 
                 <button
                   type="button"
