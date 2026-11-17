@@ -1,64 +1,18 @@
-/** Archivo .ics de un curso para agregarlo al calendario (Google, Apple, Outlook). */
+/**
+ * Enlace a Google Calendar con el evento ya cargado: la persona solo toca «Guardar».
+ * Reemplaza el archivo .ics (2026-11-17, Mateo: descargar un archivo está descartado).
+ */
 
-const stamp = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-const esc = (t: string) => t.replace(/\\/g, "\\\\").replace(/([,;])/g, "\\$1").replace(/\r?\n/g, "\\n");
+/** 2026-12-03T16:00:00.000Z → 20261203T160000Z (UTC, el formato que pide Google). */
+const utc = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
 
-/** RFC 5545 §3.1: ninguna línea pasa de 75 bytes; la continuación arranca con un espacio. Corta entre caracteres, nunca dentro de uno. */
-const bytes = (c: string) => new TextEncoder().encode(c).length;
-function plegar(linea: string): string {
-  const partes: string[] = [];
-  let actual = "";
-  let largo = 0;
-  for (const c of linea) {
-    const b = bytes(c);
-    const tope = partes.length === 0 ? 75 : 74;
-    if (largo + b > tope) {
-      partes.push(actual);
-      actual = "";
-      largo = 0;
-    }
-    actual += c;
-    largo += b;
-  }
-  partes.push(actual);
-  return partes.join("\r\n ");
-}
-
-export function eventoIcs(ev: {
-  uid: string;
-  titulo: string;
-  inicio: string;
-  fin: string;
-  detalle: string;
-  url: string;
-}): string {
-  return [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//ELEVAR//Formacion//ES",
-    "CALSCALE:GREGORIAN",
-    "BEGIN:VEVENT",
-    `UID:${ev.uid}@elevar.com.ar`,
-    `DTSTAMP:${stamp(new Date().toISOString())}`,
-    `DTSTART:${stamp(ev.inicio)}`,
-    `DTEND:${stamp(ev.fin)}`,
-    `SUMMARY:${esc(ev.titulo)}`,
-    `DESCRIPTION:${esc(ev.detalle)}`,
-    `URL:${ev.url}`,
-    "END:VEVENT",
-    "END:VCALENDAR",
-  ]
-    .map(plegar)
-    .join("\r\n") + "\r\n";
-}
-
-export function descargarIcs(nombre: string, contenido: string) {
-  const url = URL.createObjectURL(new Blob([contenido], { type: "text/calendar;charset=utf-8" }));
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = nombre;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+export function enlaceGoogleCalendar(ev: { titulo: string; inicio: string; fin: string; detalle: string }): string {
+  const q = new URLSearchParams({
+    action: "TEMPLATE",
+    text: ev.titulo,
+    dates: `${utc(ev.inicio)}/${utc(ev.fin)}`,
+    details: ev.detalle,
+    ctz: "America/Argentina/Buenos_Aires",
+  });
+  return `https://calendar.google.com/calendar/render?${q.toString()}`;
 }

@@ -21,7 +21,7 @@ import { formatARS, formatDate, formatUSD } from "@/lib/formatters";
 import { CONTACT } from "@/lib/contact";
 import { pegar } from "@/lib/texto";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
-import { descargarIcs, eventoIcs } from "@/lib/calendario";
+import { enlaceGoogleCalendar } from "@/lib/calendario";
 import { MODALIDAD } from "@/components/checkout/pase";
 import { PaseImpreso, type DatosPase } from "./pase-impreso";
 import type { Order, OrderItem, PaymentMethod } from "@/types";
@@ -181,18 +181,20 @@ ${formatDate(order.paid_at)}` : ""}`;
     selloTono: pagada ? "ok" : "wait",
   };
 
-  function agendar() {
-    if (!first.starts_at) return;
-    const ics = eventoIcs({
-      uid: `${order.public_id}-${first.course_id ?? 0}`,
-      titulo: `ELEVAR · ${first.code ?? ""} ${first.title_snapshot}`.trim(),
-      inicio: first.starts_at,
-      fin: first.ends_at ?? new Date(new Date(first.starts_at).getTime() + 2 * 3600e3).toISOString(),
-      detalle: `Orden #${orden}. Consultas: ${CONTACT.whatsappUrl}`,
-      url: window.location.href.split("?")[0],
-    });
-    descargarIcs(`elevar-${(first.code ?? "curso").toLowerCase()}.ics`, ics);
-  }
+  // Google Calendar con el evento ya cargado (sin DNI ni correo en el enlace).
+  const agenda = first.starts_at
+    ? enlaceGoogleCalendar({
+        titulo: `ELEVAR · ${first.code ?? ""} ${first.title_snapshot}`.replace(/\s+/g, " ").trim(),
+        inicio: first.starts_at,
+        fin: first.ends_at ?? new Date(new Date(first.starts_at).getTime() + 2 * 3600e3).toISOString(),
+        detalle: [
+          `Orden #${orden}`,
+          ...(first.modality ? [`Modalidad: ${MODALIDAD[first.modality]}`] : []),
+          `Tu pase: ${window.location.origin}/orden/${order.public_id}`,
+          `Consultas por WhatsApp: ${CONTACT.whatsappUrl}`,
+        ].join("\n"),
+      })
+    : null;
 
   useGSAP(
     () => {
@@ -211,8 +213,8 @@ ${formatDate(order.paid_at)}` : ""}`;
   );
 
   const pasos = [
-    ...(first.starts_at
-      ? [{ n: "01", titulo: "Agendá la fecha", texto: `${fecha(first.starts_at)}, ${hora(first.starts_at)} h.`, accion: "Agregar al calendario", onClick: agendar }]
+    ...(first.starts_at && agenda
+      ? [{ n: "01", titulo: "Agendá la fecha", texto: `${fecha(first.starts_at)}, ${hora(first.starts_at)} h.`, accion: "Agregar a Google Calendar", href: agenda }]
       : []),
     { n: first.starts_at ? "02" : "01", titulo: "Guardá tu pase", texto: "Es tu comprobante de inscripción.", accion: "Imprimir o guardar PDF", onClick: () => window.print() },
     { n: first.starts_at ? "03" : "02", titulo: "¿Dudas?", texto: "Te respondemos por WhatsApp.", accion: "Escribinos", href: CONTACT.whatsappUrl },
