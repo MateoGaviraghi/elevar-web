@@ -3,6 +3,27 @@
 const stamp = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
 const esc = (t: string) => t.replace(/\\/g, "\\\\").replace(/([,;])/g, "\\$1").replace(/\r?\n/g, "\\n");
 
+/** RFC 5545 §3.1: ninguna línea pasa de 75 bytes; la continuación arranca con un espacio. Corta entre caracteres, nunca dentro de uno. */
+const bytes = (c: string) => new TextEncoder().encode(c).length;
+function plegar(linea: string): string {
+  const partes: string[] = [];
+  let actual = "";
+  let largo = 0;
+  for (const c of linea) {
+    const b = bytes(c);
+    const tope = partes.length === 0 ? 75 : 74;
+    if (largo + b > tope) {
+      partes.push(actual);
+      actual = "";
+      largo = 0;
+    }
+    actual += c;
+    largo += b;
+  }
+  partes.push(actual);
+  return partes.join("\r\n ");
+}
+
 export function eventoIcs(ev: {
   uid: string;
   titulo: string;
@@ -26,7 +47,9 @@ export function eventoIcs(ev: {
     `URL:${ev.url}`,
     "END:VEVENT",
     "END:VCALENDAR",
-  ].join("\r\n");
+  ]
+    .map(plegar)
+    .join("\r\n") + "\r\n";
 }
 
 export function descargarIcs(nombre: string, contenido: string) {
