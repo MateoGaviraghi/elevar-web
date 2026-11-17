@@ -20,6 +20,13 @@ export type DatosPase = {
   selloTono: "ok" | "wait";
 };
 
+/** ¿La última fila de datos deja libre la columna derecha? (grilla de 2 columnas; `ancho` ocupa la fila entera) */
+function huecoFinal(filas: DatosPase["filas"]): boolean {
+  let enDerecha = false;
+  for (const f of filas) enDerecha = f.ancho ? false : !enDerecha;
+  return enDerecha;
+}
+
 export function PaseImpreso({ d }: { d: DatosPase }) {
   return (
     <div className="im-pase relative mx-auto w-full max-w-[520px]">
@@ -46,14 +53,28 @@ export function PaseImpreso({ d }: { d: DatosPase }) {
             </p>
             <p className="mt-3 line-clamp-2 text-[15px] font-medium leading-snug lg:text-base">{pegar(d.titulo)}</p>
 
-            <dl className="mt-5 grid grid-cols-2 gap-x-5 gap-y-3 border-t border-neutral-0/25 pt-4 text-sm">
-              {d.filas.map((f) => (
-                <div key={f.label} className={`min-w-0 ${f.ancho ? "col-span-2" : ""}`}>
-                  <dt className="text-[12px] text-neutral-0/70">{f.label}</dt>
-                  <dd className="font-semibold [overflow-wrap:anywhere]">{sinViuda(pegar(f.value))}</dd>
+            <div className="relative">
+              <dl className="mt-5 grid grid-cols-2 gap-x-5 gap-y-3 border-t border-neutral-0/25 pt-4 text-sm">
+                {d.filas.map((f) => (
+                  <div key={f.label} className={`min-w-0 ${f.ancho ? "col-span-2" : ""}`}>
+                    <dt className="text-[12px] text-neutral-0/70">{f.label}</dt>
+                    <dd className="font-semibold [overflow-wrap:anywhere]">{sinViuda(pegar(f.value))}</dd>
+                  </div>
+                ))}
+              </dl>
+
+              {/* El sello cae al final de la impresión, en un lugar libre: nunca tapa el código ni los datos.
+                  Si la última fila deja libre la columna derecha va ahí; si no, en una fila propia. */}
+              <div className={huecoFinal(d.filas) ? "absolute bottom-0 right-0 flex w-1/2 translate-y-1/3 justify-end pr-1" : "mt-5 flex justify-end pr-1 lg:mt-6"}>
+                <div
+                  className={`im-sello pointer-events-none -rotate-[8deg] border-[3px] px-3 py-1 font-display text-lg font-bold uppercase tracking-[0.2em] outline outline-[1.5px] outline-offset-[3px] sm:text-2xl lg:px-4 lg:py-1.5 lg:text-3xl ${
+                    d.selloTono === "ok" ? "border-ink-900 text-ink-900 outline-ink-900" : "border-dashed border-ink-900 text-ink-900 outline-transparent"
+                  }`}
+                >
+                  {d.sello}
                 </div>
-              ))}
-            </dl>
+              </div>
+            </div>
           </div>
 
           {/* Troquel: la línea punteada con dos muescas */}
@@ -71,15 +92,6 @@ export function PaseImpreso({ d }: { d: DatosPase }) {
               <p className="text-[12px] text-neutral-0/70">Total</p>
               <p className="font-display text-4xl font-bold tabular-nums tracking-tight lg:text-5xl">{d.total}</p>
             </div>
-          </div>
-
-          {/* El sello: cae al final de la impresión */}
-          <div
-            className={`im-sello pointer-events-none absolute right-5 top-[4.75rem] -rotate-[10deg] border-[3px] px-3 py-1 font-display text-lg font-bold uppercase tracking-[0.2em] outline outline-[1.5px] outline-offset-[3px] sm:text-2xl lg:right-8 lg:top-[4.5rem] lg:px-4 lg:py-1.5 lg:text-3xl ${
-              d.selloTono === "ok" ? "border-ink-900 text-ink-900 outline-ink-900" : "border-dashed border-ink-900 text-ink-900 outline-transparent"
-            }`}
-          >
-            {d.sello}
           </div>
         </div>
       </div>
