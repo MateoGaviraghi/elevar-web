@@ -71,14 +71,14 @@ Este documento está completo a propósito: no hay que ir a buscar nada afuera. 
 | Cada pedido | Se vuelve a leer el `Perfil` (rol y `activo`) de la base: un cambio de rol o una baja vale desde el próximo pedido | |
 | CSRF | Toda escritura (POST, PUT, PATCH, DELETE) lleva el token CSRF de Django en el encabezado `X-CSRFToken` | |
 
-### Cómo viaja la sesión (decisión 1 de `10-PENDIENTES.md`)
+### Cómo viaja la sesión (decidido el 2026-11-17: puente en Next)
 
 El sitio está en Vercel y el backend en Railway, en dominios distintos. Una cookie `SameSite=Lax` de Railway **no** viaja en un pedido que el navegador hace desde el dominio de Vercel. Hay dos caminos:
 
-- **Recomendado: puente en Next.** El navegador le pide todo a `/api/panel/...` del mismo sitio. Un route handler de Next (`app/api/panel/[...ruta]/route.ts`) reenvía el pedido a `https://<backend>/api/v1/panel/...` con la cookie y el token CSRF, y devuelve la respuesta tal cual, incluidas sus `Set-Cookie`. La cookie queda en el dominio del sitio. El puente no decide nada de seguridad: solo reenvía. Reenvía solo a la dirección del backend fijada en una variable del servidor (`PANEL_API_URL`), nunca a una que venga del pedido.
-- Alternativa: sitio y backend bajo el mismo dominio (`elevar.com.ar` y `api.elevar.com.ar`). Requiere los dominios definitivos, que hoy no están.
+- **Elegido: puente en Next** (Mateo, 2026-11-17). El navegador le pide todo a `/api/panel/...` del mismo sitio. Un route handler de Next (`app/api/panel/[...ruta]/route.ts`) reenvía el pedido a `https://<backend>/api/v1/panel/...` con la cookie y el token CSRF, y devuelve la respuesta tal cual, incluidas sus `Set-Cookie`. La cookie queda en el dominio del sitio. El puente no decide nada de seguridad: solo reenvía. Reenvía solo a la dirección del backend fijada en una variable del servidor (`PANEL_API_URL`), nunca a una que venga del pedido.
+- Descartada por ahora: sitio y backend bajo el mismo dominio (`elevar.com.ar` y `api.elevar.com.ar`). Requiere los dominios definitivos, que hoy no están. Se puede revisar cuando existan.
 
-Hasta que se decida, la etapa 1 se hace y se prueba solo en el backend (no depende de esto).
+La etapa 1 se hace y se prueba solo en el backend; el puente se arma en la etapa 2.
 
 ## 5. Permisos
 

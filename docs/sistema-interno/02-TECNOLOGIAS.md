@@ -11,7 +11,7 @@ Navegador ──► elevar-web (Next.js, en Vercel) ──► elevar-backend (Dj
 
 - Las **pantallas** del panel son páginas de Next.js dentro de `elevar-web`.
 - El **login, la sesión, los permisos, la auditoría y los datos** viven en Django, en `elevar-backend`.
-- El navegador del panel le habla a Django **a través de Next** (misma dirección del sitio). Ver `07-SEGURIDAD.md`, «Cómo viaja la sesión», y la decisión abierta en `10-PENDIENTES.md`.
+- El navegador del panel le habla a Django **a través de Next** (misma dirección del sitio). Decidido por Mateo el 2026-11-17 (decisión 1 de `10-PENDIENTES.md`); el detalle, en `07-SEGURIDAD.md`, «Cómo viaja la sesión».
 
 ## Frontend — `elevar-web`
 

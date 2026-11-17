@@ -109,7 +109,7 @@ app/admin/
 ├── consultas/page.tsx
 ├── consultas/[id]/page.tsx
 └── …                          # una carpeta por pantalla de 05-PANTALLAS.md
-app/api/panel/[...ruta]/route.ts   # puente hacia Django (si se elige esa opción, 10-PENDIENTES.md)
+app/api/panel/[...ruta]/route.ts   # puente hacia Django (decisión 1, 2026-11-17)
 components/admin/              # piezas del panel (tabla, filtros, diálogos, estados)
 lib/admin/
 ├── api.ts                     # cliente: un fetch por endpoint, tipado, maneja 401/403/404/429

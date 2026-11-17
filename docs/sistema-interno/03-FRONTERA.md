@@ -14,7 +14,7 @@ La regla es simple: **cada archivo tiene un dueño**. Un archivo que no es tuyo 
 | `app/admin/**` | Panel | Las pantallas del panel viven acá (reemplazan la demo) |
 | `components/admin/**` | Panel | |
 | `lib/admin/**` | Panel | El cliente de la API del panel y los tipos del panel |
-| `app/api/panel/**` | Panel | El puente (proxy) de Next hacia la API del panel en Django. {{CONFIRMAR}} decisión 1 de `10-PENDIENTES.md` |
+| `app/api/panel/**` | Panel | El puente (proxy) de Next hacia la API del panel en Django (decisión 1 de `10-PENDIENTES.md`, tomada el 2026-11-17) |
 | `docs/sistema-interno/**` | Los dos | Se actualiza en el mismo PR que cambia la decisión |
 | `app/(site)/**`, `app/checkout/**`, `app/pago-mp/**`, `app/pago-paypal/**`, `app/api/mercadopago/**` | Mateo | |
 | `components/**` salvo `components/admin/**` y `components/ui/**` | Mateo | |

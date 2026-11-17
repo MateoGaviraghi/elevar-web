@@ -5,7 +5,7 @@ Cada etapa termina con algo que funciona y una prueba que **puede fallar**. Si l
 | Etapa | Qué queda andando | Depende de |
 |---|---|---|
 | 1 | Login, segundo factor, sesión, roles y auditoría en Django (sin pantallas) | Nada: se puede empezar ya |
-| 2 | Pantallas de ingreso y el esqueleto del panel | Etapa 1 y la decisión 1 de `10-PENDIENTES.md` |
+| 2 | Pantallas de ingreso y el esqueleto del panel | Etapa 1 (la decisión 1 ya está tomada: puente en Next) |
 | 3 | Consultas | Etapa 2 y la columna `Lead.updated_at` (Mateo) |
 | 4 | Usuarios, auditoría y Mi cuenta | Etapa 2 |
 | 5 | Inscripciones a webinars | Etapa 2 y que el sitio guarde las inscripciones en la base (Mateo) |
@@ -68,10 +68,10 @@ Rama: `panel/etapa-1-login`. Repo: `elevar-backend`.
 
 ## Etapa 2 — Pantallas de ingreso y esqueleto del panel
 
-Rama: `panel/etapa-2-ingreso`. Repos: `elevar-web` (y `elevar-backend` si la decisión 1 cambia ajustes de cookies o CORS).
+Rama: `panel/etapa-2-ingreso`. Repos: `elevar-web` (y `elevar-backend` si el puente necesita ajustar el nombre de la cookie o el CSRF; esos ajustes son compartidos, por PR).
 
 **Qué se hace**
-1. Según la decisión 1 de `10-PENDIENTES.md`: el puente `app/api/panel/[...ruta]/route.ts` (reenvía a `PANEL_API_URL`, nunca a una dirección que venga del pedido) o la configuración de dominio.
+1. El puente `app/api/panel/[...ruta]/route.ts` (decisión 1): reenvía a `PANEL_API_URL`, nunca a una dirección que venga del pedido, con la cookie y el token CSRF, y devuelve la respuesta tal cual, incluidas sus `Set-Cookie`.
 2. `lib/admin/api.ts` y `lib/admin/tipos.ts` (`08-CODIGO.md`).
 3. Pantallas `/admin/ingresar`, `/admin/ingresar/codigo`, `/admin/primer-ingreso` (`05-PANTALLAS.md`).
 4. `app/admin/layout.tsx` con la barra superior, el menú por rol y «Salir»; `/admin` (inicio) vacío con «Todo al día».

@@ -4,7 +4,7 @@ Todo lo marcado `{{CONFIRMAR}}` en estos documentos está acá, con quién lo de
 
 | # | Qué falta decidir | Opción recomendada | Decide | Bloquea |
 |---|---|---|---|---|
-| 1 | Cómo viaja la sesión entre el sitio (Vercel) y el backend (Railway), que están en dominios distintos | Puente en Next (`app/api/panel/[...ruta]/route.ts`) hacia Django, con la cookie en el dominio del sitio (`07-SEGURIDAD.md`, sección 4) | Mateo | Etapa 2 |
+| 1 | Cómo viaja la sesión entre el sitio (Vercel) y el backend (Railway), que están en dominios distintos | **Decidido 2026-11-17 (Mateo: «sesión por el puente de Next»):** puente en Next (`app/api/panel/[...ruta]/route.ts`) hacia Django, con la cookie en el dominio del sitio (`07-SEGURIDAD.md`, sección 4) | Mateo | — |
 | 2 | Cuántas personas usan el panel y qué puede el rol `operador`: ver DNI completo, exportar, editar cursos | `operador` sin ver DNI completo, sin exportar y sin editar cursos; lo amplía Laura si hace falta | Laura (vía Mateo) | Matriz de `07-SEGURIDAD.md`; etapas 4 a 7 |
 | 3 | Qué pasa con el admin de Django (`/admin/` del backend) cuando exista el panel | Dejarlo solo para un superusuario técnico, con el mismo segundo factor (`django-otp` trae una versión del admin que lo exige) y límite de intentos. Hoy no tiene ninguna de las dos cosas | Mateo | Etapa 8 |
 | 4 | Promociones y cupones editables desde el panel | Afuera de la primera versión: siguen en el código del frontend | Mateo | — |
