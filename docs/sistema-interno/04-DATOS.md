@@ -68,7 +68,7 @@ Uno por cada usuario del panel. Atado a `auth.User`.
 | Columna | Tipo | Regla |
 |---|---|---|
 | `user` | OneToOne → `auth.User` (CASCADE) | |
-| `rol` | texto: `admin` u `operador` | Obligatorio. Sin rol, no entra |
+| `rol` | texto con una sola opción hoy: `admin` | Obligatorio. Sin rol, no entra. Se deja el campo para poder sumar un rol más adelante sin migrar datos |
 | `activo` | booleano, default `true` | Dar de baja = `activo=false` y cerrar todas sus sesiones. No se borra el usuario (la auditoría lo referencia) |
 | `segundo_factor_listo` | booleano, default `false` | `true` recién cuando confirmó un código de su app |
 | `created_at`, `updated_at` | fecha y hora | |
@@ -129,11 +129,11 @@ leads.Lead (sola)
 
 | Tabla | El panel puede | Rol |
 |---|---|---|
-| `leads.Lead` | Cambiar `status` | `admin`, `operador` |
-| `orders.Order` | PAID → FULFILLED (con `fulfilled_at`), escribir `admin_notes` | `admin`, `operador` |
-| `catalog.Course`, `CourseSession` | Crear y editar (etapa de cursos) | `admin`. {{CONFIRMAR}} si `operador` también |
-| `auth.User` + `panel.Perfil` | Alta, baja, cambio de rol | `admin` |
-| `orders.PaymentEvent`, `catalog.WebinarRegistration` | Solo leer | `admin`, `operador` |
+| `leads.Lead` | Cambiar `status` | `admin` |
+| `orders.Order` | PAID → FULFILLED (con `fulfilled_at`), escribir `admin_notes` | `admin` |
+| `catalog.Course`, `CourseSession` | Crear y editar (etapa de cursos) | `admin` |
+| `auth.User` + `panel.Perfil` | Nada desde el panel: alta, baja y reinicio del segundo factor por comandos de Django | — |
+| `orders.PaymentEvent`, `catalog.WebinarRegistration` | Solo leer | `admin` |
 | `panel.EventoAuditoria` | Solo leer | `admin` |
 
 Nada se borra desde el panel en la primera versión, salvo lo que diga `10-PENDIENTES.md`.

@@ -7,7 +7,7 @@ Cada etapa termina con algo que funciona y una prueba que **puede fallar**. Si l
 | 1 | Login, segundo factor, sesión, roles y auditoría en Django (sin pantallas) | Nada: se puede empezar ya |
 | 2 | Pantallas de ingreso y el esqueleto del panel | Etapa 1 (la decisión 1 ya está tomada: puente en Next) |
 | 3 | Consultas | Etapa 2 y la columna `Lead.updated_at` (Mateo) |
-| 4 | Usuarios, auditoría y Mi cuenta | Etapa 2 |
+| 4 | Auditoría, Mi cuenta y comandos de soporte | Etapa 2 |
 | 5 | Inscripciones a webinars | Etapa 2 y que el sitio guarde las inscripciones en la base (Mateo) |
 | 6 | Cursos y fechas | Etapa 2 y que el sitio lea los cursos de la base (Mateo) |
 | 7 | Órdenes | Etapa 2 y que el checkout guarde la orden en la base con su aviso de pago (Mateo) |
@@ -113,24 +113,25 @@ Rama: `panel/etapa-3-consultas`. Antes: Mateo une la columna `Lead.updated_at` (
 
 ---
 
-## Etapa 4 — Usuarios, auditoría y Mi cuenta
+## Etapa 4 — Auditoría, Mi cuenta y comandos de soporte
 
-Rama: `panel/etapa-4-usuarios`.
+Rama: `panel/etapa-4-cuenta`. Hay un solo usuario, el de Laura: no hay pantalla de usuarios.
 
 **Qué se hace**
-- API (solo `admin`): listar, crear (contraseña temporal), cambiar rol, dar de baja, cerrar sesiones de otro, reiniciar segundo factor; listar auditoría con filtros y paginación por cursor.
-- API (todos): cambiar mi contraseña, generar códigos de respaldo nuevos, ver y cerrar mis otras sesiones.
-- Pantallas `/admin/usuarios`, `/admin/auditoria`, `/admin/cuenta`.
+- API: listar auditoría con filtros y paginación por cursor; cambiar mi contraseña; generar códigos de respaldo nuevos; ver y cerrar mis otras sesiones.
+- Pantallas `/admin/auditoria` y `/admin/cuenta`.
+- Comandos de Django (los corre Mateo en el backend): `baja_usuario_panel --correo ...` (pone `activo=false` y cierra todas sus sesiones) y `reiniciar_segundo_factor_panel --correo ...` (borra sus dispositivos de segundo factor y códigos de respaldo, cierra sus sesiones y la obliga a pasar por `/admin/primer-ingreso`). Cada uno deja su evento en la auditoría.
 
 **Prueba que demuestra que terminó**
 - `pytest`:
-  - Un `operador` recibe 403 en cada ruta de usuarios y de auditoría.
-  - El último `admin` no puede darse de baja ni quitarse el rol.
-  - Dar de baja borra las sesiones de esa persona y su próximo pedido da 401.
+  - `baja_usuario_panel` borra las sesiones de esa persona y su próximo pedido da 401.
+  - `reiniciar_segundo_factor_panel` deja la cuenta sin dispositivos: el código viejo ya no sirve y el próximo ingreso termina en `primer-ingreso/`.
+  - Cada comando deja su evento en la auditoría.
   - Generar códigos de respaldo nuevos invalida los anteriores.
   - Una contraseña de 7 caracteres o de la lista de comunes se rechaza; una de 64 se acepta.
   - Cambiar la contraseña con «cerrar las otras sesiones» deja viva solo la actual.
-- Playwright: un `admin` crea un `operador`, el `operador` entra y no ve «Usuarios» ni «Auditoría» en el menú, y si escribe `/admin/usuarios` en la dirección ve «No tenés acceso a esta sección».
+  - La auditoría pagina por cursor sin repetir ni saltear eventos cuando entran eventos nuevos entre una página y otra.
+- Playwright: Laura entra, ve en `/admin/auditoria` su propio ingreso, cambia su contraseña y vuelve a entrar con la nueva.
 
 ---
 
@@ -140,7 +141,7 @@ Antes: Mateo hace que el sitio mande las inscripciones a `catalog.WebinarRegistr
 
 - API: `GET inscripciones/?sesion=<id>`, `GET inscripciones/exportar/?sesion=<id>` (CSV, rol según la matriz, con auditoría).
 - Pantalla `/admin/inscripciones`.
-- **Prueba:** `pytest` — la exportación deja un evento `exportacion` con la cantidad de filas, y un rol sin permiso recibe 403; Playwright — elegir un webinar muestra sus inscriptos y el cupo.
+- **Prueba:** `pytest` — la exportación deja un evento `exportacion` con la cantidad de filas, y una sesión sin segundo factor confirmado recibe 403; Playwright — elegir un webinar muestra sus inscriptos y el cupo.
 
 ## Etapa 6 — Cursos y fechas
 
@@ -161,5 +162,5 @@ Antes: Mateo hace que el checkout cree la orden en la base (con `buyer_dni` y `b
 ## Etapa 8 — Publicación con datos reales
 
 - Recorrer `07-SEGURIDAD.md`, sección 11, punto por punto, anotando «cumple», «no cumple» o «no se pudo verificar» con la evidencia.
-- Crear la cuenta de Laura con segundo factor, en persona o por llamada.
+- Crear la cuenta de Laura con `crear_usuario_panel` y acompañarla a configurar su segundo factor, en persona o por llamada.
 - **Prueba:** la lista completa en «cumple», o lo que no cumple aceptado por escrito por Mateo antes de publicar; un ingreso real en el dominio de producción con segundo factor; la restauración de la copia de seguridad hecha y anotada con su fecha.

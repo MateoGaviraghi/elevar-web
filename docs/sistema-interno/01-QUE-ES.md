@@ -2,14 +2,15 @@
 
 ## En una oración
 
-Un panel con login donde el equipo de ELEVAR atiende lo que entra por el sitio: consultas, inscripciones a webinars y compras de cursos, y mantiene al día los cursos y sus fechas.
+Un panel con login donde Laura, de ELEVAR, atiende lo que entra por el sitio: consultas, inscripciones a webinars y compras de cursos, y mantiene al día los cursos y sus fechas.
 
 ## Quién lo usa
 
 | Persona | Qué hace en el panel | Rol |
 |---|---|---|
-| Laura (dirección de ELEVAR) | Todo: ve ventas, da de alta usuarios, revisa la auditoría | `admin` |
-| Equipo de ELEVAR que atiende consultas | Responde consultas, marca órdenes como cumplidas, mira inscripciones | `operador` {{CONFIRMAR}} cuántas personas y con qué permisos (ver `10-PENDIENTES.md`) |
+| Laura (dirección de ELEVAR) | Todo: consultas, órdenes, inscripciones, cursos, auditoría y su cuenta | `admin` |
+
+**Hay un solo usuario: el de Laura** (Mateo, 2026-11-17). No hay rol `operador` ni pantalla de usuarios. Ni Mateo ni quien construye el panel tienen cuenta: el soporte (alta, baja, reinicio del segundo factor) se hace con comandos de Django desde el backend (`09-ETAPAS.md`).
 
 No hay usuarios externos: los compradores **no** tienen cuenta. Un comprador ve su orden por un link con un identificador aleatorio (UUID), sin login.
 
@@ -21,7 +22,7 @@ No hay usuarios externos: los compradores **no** tienen cuenta. Un comprador ve 
 | 2 | Ver las compras y marcar como «cumplida» la orden después de darle acceso al alumno en el aula virtual | Las órdenes hoy quedan solo en el navegador del comprador (ver `04-DATOS.md`) | La lista de órdenes pagadas pendientes de cumplir, con el comprador y el curso |
 | 3 | Ver quién se anotó a cada webinar | Las inscripciones hoy quedan solo en el navegador | Lista por webinar, con exportación |
 | 4 | Cargar cursos y fechas nuevas | Un archivo JSON dentro del repo del frontend | Alta y edición de cursos y fechas sin tocar código |
-| 5 | Dar de alta y de baja a quien usa el panel | Solo por consola en el backend | Pantalla de usuarios, solo para `admin` |
+| 5 | Dar de alta la cuenta de Laura y reiniciarle el segundo factor si pierde el teléfono | Solo por consola en el backend | Sigue por consola: comandos de Django con su auditoría (no hay pantalla de usuarios) |
 | 6 | Saber quién hizo qué | No existe | Pantalla de auditoría, solo para `admin` |
 
 Las tareas 2, 3 y 4 dependen de que la parte pública guarde sus datos en la base. Eso lo hace Mateo (ver `03-FRONTERA.md` y `09-ETAPAS.md`).

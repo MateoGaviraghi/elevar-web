@@ -9,7 +9,7 @@ Todas viven en `elevar-web/app/admin/`. Todas, salvo las de ingreso, exigen sesi
 | **Cargando** | Esqueleto con la forma real del contenido (filas grises del alto de una fila, no un círculo girando) | Título, filtros y menú aparecen enseguida; solo el bloque de datos espera |
 | **Vacía** | Por qué está vacía y qué hacer: «No hay consultas con estos filtros · Limpiar filtros» o «Todavía no entró ninguna consulta» | Distinguir «no hay nada» de «los filtros no encuentran nada» |
 | **Error** | Qué pasó en palabras simples y un botón «Reintentar». Un código corto de incidente para pasarle a soporte | Nunca el detalle técnico, el SQL ni la traza |
-| **Sin permiso** | «No tenés acceso a esta sección.» con un link al inicio | La API responde 403 a un rol sin permiso y 404 a un registro que no existe; la pantalla muestra este estado, no una página rota |
+| **Sin permiso** | «No tenés acceso a esta sección.» con un link al inicio | La API responde 403 a una sesión sin permiso (por ejemplo, sin segundo factor confirmado) y 404 a un registro que no existe; la pantalla muestra este estado, no una página rota |
 
 Además: si la sesión venció mientras la pantalla estaba abierta, el próximo pedido devuelve 401 y la pantalla lleva a `/admin/ingresar?volver=<ruta>`, sin perder lo que se estaba escribiendo si es posible avisarlo antes.
 
@@ -20,19 +20,18 @@ Además: si la sesión venció mientras la pantalla estaba abierta, el próximo 
 | `/admin/ingresar` | Correo y contraseña | Sin sesión | 2 |
 | `/admin/ingresar/codigo` | Código de 6 dígitos de la app, o un código de respaldo | Con contraseña ok, sin código | 2 |
 | `/admin/primer-ingreso` | Configurar el segundo factor la primera vez | Con contraseña ok, sin factor configurado | 2 |
-| `/admin` | Inicio: lo que hay que atender hoy | `admin`, `operador` | 2 (vacío), se completa en 3 y 7 |
-| `/admin/consultas` | Lista de consultas | `admin`, `operador` | 3 |
-| `/admin/consultas/[id]` | Detalle de una consulta | `admin`, `operador` | 3 |
-| `/admin/usuarios` | Usuarios del panel | `admin` | 4 |
+| `/admin` | Inicio: lo que hay que atender hoy | `admin` | 2 (vacío), se completa en 3 y 7 |
+| `/admin/consultas` | Lista de consultas | `admin` | 3 |
+| `/admin/consultas/[id]` | Detalle de una consulta | `admin` | 3 |
 | `/admin/auditoria` | Quién hizo qué | `admin` | 4 |
-| `/admin/cuenta` | Mi cuenta: contraseña, segundo factor, sesiones | `admin`, `operador` | 4 |
-| `/admin/inscripciones` | Inscriptos por webinar | `admin`, `operador` | 5 |
-| `/admin/cursos` | Cursos | `admin` {{CONFIRMAR}} | 6 |
-| `/admin/cursos/[id]` | Un curso y sus fechas | `admin` {{CONFIRMAR}} | 6 |
-| `/admin/ordenes` | Órdenes | `admin`, `operador` | 7 |
-| `/admin/ordenes/[publicId]` | Detalle de una orden | `admin`, `operador` | 7 |
+| `/admin/cuenta` | Mi cuenta: contraseña, segundo factor, sesiones | `admin` | 4 |
+| `/admin/inscripciones` | Inscriptos por webinar | `admin` | 5 |
+| `/admin/cursos` | Cursos | `admin` | 6 |
+| `/admin/cursos/[id]` | Un curso y sus fechas | `admin` | 6 |
+| `/admin/ordenes` | Órdenes | `admin` | 7 |
+| `/admin/ordenes/[publicId]` | Detalle de una orden | `admin` | 7 |
 
-Las rutas de la demo `/admin/blog/**`, `/admin/promociones/**`, `/admin/contactos` y `/admin/webinars` se borran (las reemplazan las de arriba).
+Las rutas de la demo `/admin/blog/**`, `/admin/promociones/**`, `/admin/contactos` y `/admin/webinars` se borran (las reemplazan las de arriba). No hay pantalla de usuarios: hay un solo usuario, el de Laura, y su alta y soporte se hacen por comandos (`09-ETAPAS.md`).
 
 ## Cada pantalla, en orden de arriba hacia abajo
 
@@ -82,13 +81,6 @@ Las rutas de la demo `/admin/blog/**`, `/admin/promociones/**`, `/admin/contacto
 5. Historial de cambios de esa consulta (de la auditoría): quién, qué y cuándo.
 - Si el `id` no existe: estado «No encontramos esa consulta», con link a la lista.
 
-### `/admin/usuarios` (solo `admin`)
-1. Título y botón «Agregar usuario».
-2. Tabla: Nombre, Correo, Rol, Segundo factor (configurado / pendiente), Último ingreso, Estado (activo / dado de baja).
-3. Por fila, menú: Cambiar rol, Dar de baja, Cerrar sus sesiones, Reiniciar segundo factor.
-4. «Agregar usuario»: nombre, correo, rol. El sistema genera una contraseña temporal que se muestra **una sola vez** y obliga a cambiarla en el primer ingreso. {{CONFIRMAR}} si en vez de eso se manda un link por mail.
-- Un `admin` no puede darse de baja a sí mismo ni quitarse el rol si es el último `admin`.
-
 ### `/admin/auditoria` (solo `admin`)
 1. Filtros en la URL: Persona, Acción, Entidad, Fecha.
 2. Tabla: Fecha y hora, Persona, Acción (en palabras: «Cambió el estado de una consulta»), Sobre qué (con link), Detalle (el cambio), IP.
@@ -106,7 +98,7 @@ Las rutas de la demo `/admin/blog/**`, `/admin/promociones/**`, `/admin/contacto
 1. Selector de webinar o curso en vivo (los que tienen fecha, la próxima arriba).
 2. Fecha, cupo y cuántos inscriptos.
 3. Tabla: Nombre, Correo, Fecha de inscripción.
-4. «Exportar CSV»: solo `admin` {{CONFIRMAR}}; queda en la auditoría con la cantidad de filas.
+4. «Exportar CSV»: queda en la auditoría con la cantidad de filas.
 
 ### `/admin/cursos`
 1. Filtros: Modalidad, Publicado, Con fecha próxima.

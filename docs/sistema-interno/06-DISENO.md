@@ -116,7 +116,7 @@ Todos: `px-4 py-2.5 text-sm font-semibold`, 44 px de alto, `focus-visible:ring-2
 
 ### Menú
 - Barra superior `bg-ink-900` de 56 px: logo, nombre de la persona, «Salir».
-- Menú lateral agrupado por tarea: **Atender** (Inicio, Consultas, Órdenes, Inscripciones) · **Catálogo** (Cursos) · **Administración** (Usuarios, Auditoría) · **Mi cuenta**. Un rol solo ve lo que puede usar (esconder el ítem es comodidad: el control lo hace la API).
+- Menú lateral agrupado por tarea: **Atender** (Inicio, Consultas, Órdenes, Inscripciones) · **Catálogo** (Cursos) · **Administración** (Auditoría) · **Mi cuenta**. El control de acceso lo hace la API, no el menú.
 - Ítem activo: texto `ink-900`, barra izquierda de 2 px `brand-500`.
 - Título de cada página que diga dónde se está.
 

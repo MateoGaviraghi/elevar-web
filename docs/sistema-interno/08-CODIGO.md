@@ -15,7 +15,8 @@ panel/
 ├── auditoria.py       # registrar(...) y la lista cerrada de acciones
 ├── sesion.py          # middleware de inactividad (30 min) y duración máxima (12 h)
 ├── ingreso.py         # servicio: contraseña, código, límites, primer ingreso
-├── services/          # un archivo por tema: consultas.py, ordenes.py, usuarios.py, cursos.py
+├── management/commands/ # crear_usuario_panel, baja_usuario_panel, reiniciar_segundo_factor_panel
+├── services/          # un archivo por tema: consultas.py, ordenes.py, cursos.py, cuenta.py
 ├── serializers.py     # uno por caso de uso (lista, detalle, escritura)
 ├── views.py           # finas: validan, llaman al servicio, devuelven
 ├── urls.py            # todo bajo /api/v1/panel/
@@ -92,7 +93,7 @@ Reglas:
 
 - `pytest` + `pytest-django`, en `tests/panel/`. Fábricas con `factory-boy` (ver `tests/factories.py`).
 - Cada servicio: el caso feliz, el caso repetido (el mismo pedido dos veces no duplica nada) y el caso prohibido.
-- Antes de escribir una prueba, la afirmación en castellano: «un operador que pide la lista de usuarios recibe 403 y queda un `permiso.denegado`».
+- Antes de escribir una prueba, la afirmación en castellano: «un usuario de Django sin perfil del panel que pide la lista de consultas recibe 403 y queda un `permiso.denegado`».
 - Contra Postgres de verdad (el de `docker-compose.yml`), no una base simulada.
 
 ## Frontend (`elevar-web`)

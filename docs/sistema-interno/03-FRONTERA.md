@@ -92,7 +92,7 @@ Lo que Mateo tiene en curso en `main` no se reescribe: nada de `push --force` so
 | Ruta base de la API del panel en Django | `/api/v1/panel/` | `elevar-backend/panel/urls.py` |
 | Ruta del puente en Next | `/api/panel/` | `elevar-web/app/api/panel/` |
 | App de Django | `panel` | |
-| Roles | `admin`, `operador` | `elevar-backend/panel/` (ver `04-DATOS.md`) |
+| Roles | `admin` (el único; hay un solo usuario, el de Laura) | `elevar-backend/panel/` (ver `04-DATOS.md`) |
 | Nombre de la cookie de sesión del panel | `__Host-elevar_panel` | `07-SEGURIDAD.md` |
 | Variables de entorno nuevas | Prefijo `PANEL_` (por ejemplo `PANEL_SESION_HORAS`) | Solo nombres; los valores los carga quien publica |
 | Estados de una orden | `PENDING`, `PAID`, `FAILED`, `CANCELLED`, `FULFILLED` | `orders/models.py`. Transiciones válidas: PENDING→PAID, PENDING→FAILED, PENDING→CANCELLED, PAID→FULFILLED. Cualquier otra es un error |

@@ -47,8 +47,8 @@ Este documento está completo a propósito: no hay que ir a buscar nada afuera. 
 | Ventana | Se acepta el código actual y uno anterior o siguiente (±30 s). Un código ya usado no se acepta dos veces | |
 | Límite de intentos | 5 códigos fallidos en 15 minutos → bloqueo de 15 minutos, contado en `panel.IntentoIngreso` con `paso='codigo'` | ASVS 6.6.3 |
 | Paso intermedio | Después de la contraseña correcta, la sesión queda «a medio ingresar» por 5 minutos como máximo; si no llega el código, se descarta | |
-| Recupero | No hay recupero solo. Si alguien pierde el teléfono y los códigos, un `admin` reinicia su segundo factor desde `/admin/usuarios`, **después de confirmar por otro medio que es esa persona** (llamada o en persona). Queda en la auditoría | ASVS 6.4.3 y 6.4.4 |
-| Recupero de contraseña | Lo hace un `admin`, igual que el alta: contraseña temporal. Nunca saltea el segundo factor | ASVS 6.4.3 |
+| Recupero | No hay recupero solo. Si Laura pierde el teléfono y los códigos, Mateo corre `python manage.py reiniciar_segundo_factor_panel --correo <correo>` en el backend, **después de confirmar por otro medio que es ella** (llamada o en persona). El comando cierra todas sus sesiones y queda en la auditoría | ASVS 6.4.3 y 6.4.4 |
+| Recupero de contraseña | Por comando, igual que el alta: contraseña temporal. Nunca saltea el segundo factor | ASVS 6.4.3 |
 | Recomendado a futuro | Llaves de acceso (passkeys), resistentes al phishing | NIST 2.2.2 |
 | Secreto TOTP en la base | {{CONFIRMAR}} si se cifra la columna con una clave aparte (variable `PANEL_CLAVE_CIFRADO`, distinta de `DJANGO_SECRET_KEY`) | |
 
@@ -67,7 +67,7 @@ Este documento está completo a propósito: no hay que ir a buscar nada afuera. 
 | Salir | Botón «Salir» visible en toda pantalla. Borra la sesión en la base, no solo la cookie | ASVS 7.4.1 y 7.4.4 |
 | Dar de baja | `activo=false` cierra todas las sesiones de esa persona (se borran sus filas de `django_session`) | ASVS 7.4.2 |
 | Cambiar contraseña o factor | Se ofrece cerrar las otras sesiones | ASVS 7.4.3 |
-| Un `admin` puede | Cerrar todas las sesiones de un usuario | ASVS 7.4.5 |
+| Cerrar las sesiones de otro | Por comando (`baja_usuario_panel` y `reiniciar_segundo_factor_panel` las cierran) | ASVS 7.4.5 |
 | Cada pedido | Se vuelve a leer el `Perfil` (rol y `activo`) de la base: un cambio de rol o una baja vale desde el próximo pedido | |
 | CSRF | Toda escritura (POST, PUT, PATCH, DELETE) lleva el token CSRF de Django en el encabezado `X-CSRFToken` | |
 
@@ -96,41 +96,41 @@ La etapa 1 se hace y se prueba solo en el backend; el puente se arma en la etapa
 | Límite de escrituras | 120 escrituras por minuto por usuario → 429 | |
 | Por escrito | La matriz de abajo es la regla; si el código no coincide, el código está mal | ASVS 8.1.1 |
 
-### Matriz rol × acción
+### Quién puede qué
 
-| Acción | `admin` | `operador` |
-|---|---|---|
-| Ver inicio | Sí | Sí |
-| Ver y filtrar consultas | Sí | Sí |
-| Cambiar estado de una consulta | Sí | Sí |
-| Ver órdenes | Sí | Sí |
-| Ver DNI completo de un comprador | Sí | {{CONFIRMAR}} |
-| Marcar orden como cumplida / escribir notas | Sí | Sí |
-| Ver inscripciones | Sí | Sí |
-| Exportar inscripciones o consultas | Sí | No {{CONFIRMAR}} |
-| Crear y editar cursos y fechas | Sí | No {{CONFIRMAR}} |
-| Ver, crear, dar de baja usuarios; cambiar roles; reiniciar segundo factor; cerrar sesiones de otro | Sí | No |
-| Ver auditoría | Sí | No |
-| Mi cuenta (contraseña, códigos de respaldo, mis sesiones) | Sí | Sí |
+Hay un solo usuario, el de Laura, con rol `admin` (decisión 2 de `10-PENDIENTES.md`). Toda acción del panel exige: sesión completa (contraseña + código), segundo factor confirmado, `Perfil` activo y rol `admin`. Si algún día se suma un rol, se escribe acá su matriz antes de programarlo.
+
+| Acción | `admin` |
+|---|---|
+| Ver inicio, consultas, órdenes, inscripciones, cursos | Sí |
+| Cambiar estado de una consulta; marcar orden como cumplida; escribir notas | Sí |
+| Ver DNI completo de un comprador (queda en la auditoría) | Sí |
+| Exportar inscripciones o consultas (queda en la auditoría) | Sí |
+| Crear y editar cursos y fechas | Sí |
+| Ver auditoría | Sí |
+| Mi cuenta (contraseña, códigos de respaldo, mis sesiones) | Sí |
+| Alta, baja, reinicio del segundo factor, cierre de sesiones de otro | No desde el panel: comandos de Django en el backend |
 
 ### La prueba que lo demuestra
 
 Sin esta prueba, «los permisos están bien» es una opinión. Vive en `tests/panel/test_permisos.py` y corre en cada PR.
 
-1. Crear un `admin` y un `operador`, los dos con segundo factor confirmado, y datos propios de prueba (una consulta, una orden, un usuario).
+1. Crear: una usuaria `admin` con segundo factor confirmado; otra con contraseña pero sin factor confirmado; otra dada de baja (`activo=false`); y un usuario de Django **sin** `Perfil` (como el superusuario del admin de Django). Más datos de prueba: una consulta y una orden.
 2. Armar una lista con **cada** ruta de `/api/v1/panel/` y el método.
 3. Sin sesión: todas responden 401.
-4. Con sesión del `operador`: cada ruta que la matriz le niega responde 403 y deja un `permiso.denegado`.
-5. Con sesión de contraseña correcta pero sin código: todas responden 401 o 403, salvo las del paso del código.
-6. Con un `id` o `public_id` que no existe: 404.
-7. Una prueba aparte falla si aparece una ruta en `panel/urls.py` que no está en la lista del paso 2 (así nadie agrega una ruta sin probarla).
+4. A medio ingresar (contraseña correcta, sin código): todas responden 401, salvo la del código.
+5. Sin factor confirmado: todas responden 403, salvo `primer-ingreso/`, `yo/` y `salida/`.
+6. Dada de baja: todas responden 401, aunque tenga una sesión vieja abierta.
+7. Usuario de Django sin `Perfil`: todas responden 403 y dejan un `permiso.denegado`.
+8. Con un `id` o `public_id` que no existe: 404.
+9. Una prueba aparte falla si aparece una ruta en `panel/urls.py` que no está en la lista del paso 2 (así nadie agrega una ruta sin probarla).
 
 ## 6. Auditoría
 
 - Tabla `panel.EventoAuditoria` (ver `04-DATOS.md`): de solo agregado, con disparador en Postgres que rechaza `UPDATE` y `DELETE`.
 - Se escribe con una sola función, `panel.auditoria.registrar(actor, accion, entidad, entidad_id, detalle, request)`, **dentro de la misma transacción** que el cambio.
 - El actor sale de `request.user` de la sesión verificada; nunca de un campo del pedido.
-- Qué se registra: ingresos (correctos, fallidos, bloqueados), códigos fallidos, salidas y vencimientos, todo cambio de estado, altas, bajas y cambios de rol, reinicios de segundo factor, cierres de sesión de otro, cada «ver DNI», cada exportación con la cantidad de filas, cada 403.
+- Qué se registra: ingresos (correctos, fallidos, bloqueados), códigos fallidos, salidas y vencimientos, todo cambio de estado, altas, bajas y reinicios de segundo factor hechos por comando (con `actor` vacío y `detalle` que diga qué comando), cada «ver DNI», cada exportación con la cantidad de filas, cada 403.
 - Qué no se guarda en el detalle: contraseñas, códigos, tokens, ni datos personales enteros.
 
 ## 7. Datos personales
@@ -191,7 +191,7 @@ Sin esta prueba, «los permisos están bien» es una opinión. Vive en `tests/pa
 10. Copia de seguridad de la base programada y **una restauración probada**, con la fecha anotada {{CONFIRMAR}} cómo se hace en Railway.
 11. Monitoreo de errores activo y sin datos personales.
 12. Plan para un incidente (sección 12) leído por quien publica.
-13. Laura tiene su usuario con segundo factor; no queda ninguna cuenta de prueba en producción.
+13. Laura tiene su usuario con segundo factor y es la única cuenta del panel en producción.
 
 ## 12. Si pasa algo (incidente)
 

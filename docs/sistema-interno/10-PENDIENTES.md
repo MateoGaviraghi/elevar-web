@@ -5,11 +5,11 @@ Todo lo marcado `{{CONFIRMAR}}` en estos documentos está acá, con quién lo de
 | # | Qué falta decidir | Opción recomendada | Decide | Bloquea |
 |---|---|---|---|---|
 | 1 | Cómo viaja la sesión entre el sitio (Vercel) y el backend (Railway), que están en dominios distintos | **Decidido 2026-11-17 (Mateo: «sesión por el puente de Next»):** puente en Next (`app/api/panel/[...ruta]/route.ts`) hacia Django, con la cookie en el dominio del sitio (`07-SEGURIDAD.md`, sección 4) | Mateo | — |
-| 2 | Cuántas personas usan el panel y qué puede el rol `operador`: ver DNI completo, exportar, editar cursos | `operador` sin ver DNI completo, sin exportar y sin editar cursos; lo amplía Laura si hace falta | Laura (vía Mateo) | Matriz de `07-SEGURIDAD.md`; etapas 4 a 7 |
+| 2 | Cuántas personas usan el panel y con qué permisos | **Decidido 2026-11-17 (Mateo: «solamente va a haber un usuario para ella en el admin»):** un solo usuario, el de Laura, rol `admin`. Sin rol `operador` ni pantalla de usuarios; soporte por comandos de Django | Mateo | — |
 | 3 | Qué pasa con el admin de Django (`/admin/` del backend) cuando exista el panel | Dejarlo solo para un superusuario técnico, con el mismo segundo factor (`django-otp` trae una versión del admin que lo exige) y límite de intentos. Hoy no tiene ninguna de las dos cosas | Mateo | Etapa 8 |
 | 4 | Promociones y cupones editables desde el panel | Afuera de la primera versión: siguen en el código del frontend | Mateo | — |
 | 5 | Subir archivos desde el panel (portadas, PDF de cursos) | Afuera de la primera versión | Mateo y Laura | Etapa 6 |
-| 6 | Alta de usuario: contraseña temporal mostrada una vez, o link por mail | Contraseña temporal mostrada una vez (no depende del mail) | Mateo | Etapa 4 |
+| 6 | Alta de usuario: contraseña temporal mostrada una vez, o link por mail | **Ya no aplica (2026-11-17):** el alta la hace el comando `crear_usuario_panel`, con contraseña temporal mostrada una vez | — | — |
 | 7 | Cifrar en la base el secreto del segundo factor, con una clave aparte (`PANEL_CLAVE_CIFRADO`) | Sí | Mateo | Etapa 1 (se puede hacer sin cifrar y agregarlo antes de la etapa 8) |
 | 8 | Qué encabezado de IP es confiable detrás del proxy de Railway | Verificarlo en un despliegue de prueba antes de contar intentos por IP en producción | Quien construye el panel, mostrándole la evidencia a Mateo | Etapa 8 (en local la IP es la directa) |
 | 9 | Dónde corre la tarea que borra `IntentoIngreso` de más de 90 días | Un comando de Django corrido por una tarea programada de Railway | Mateo | Etapa 8 |
