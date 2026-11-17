@@ -39,8 +39,9 @@ const EMPTY_NOTE: Record<string, string> = pegarTodo({
 });
 
 export async function ModalitiesSection() {
-  const data = await getCourses().catch(() => null);
-  const courses = data?.results ?? [];
+  // Sin catch: si la API falla, falla el build (Vercel deja el despliegue anterior) o la
+  // revalidación (Next deja la última página buena). Nunca se publica una lista vacía.
+  const { results: courses } = await getCourses();
   const items: PanelItem[] = MODALITIES.map((m) => {
     const list = courses.filter((c) => c.modality === m.modality);
     return {

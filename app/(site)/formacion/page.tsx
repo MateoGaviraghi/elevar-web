@@ -16,6 +16,8 @@ export const metadata: Metadata = {
  * GO-AHEAD"). Sin la franja de promoción hasta rediseñar /promociones.
  */
 export default async function FormacionPage() {
-  const data = await getCourses().catch(() => null);
-  return <FormacionPortada courses={data?.results ?? []} />;
+  // Sin catch: si la API falla, falla el build (Vercel deja el despliegue anterior) o la
+  // revalidación (Next deja la última página buena). Nunca se publica una lista vacía.
+  const data = await getCourses();
+  return <FormacionPortada courses={data.results} />;
 }

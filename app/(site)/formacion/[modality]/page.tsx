@@ -41,9 +41,11 @@ export default async function ModalityPage(
   const info = getModalityBySlug(params.modality);
   if (!info) notFound();
 
-  const data = await getCourses().catch(() => null);
+  // Sin catch: si la API falla, falla el build (Vercel deja el despliegue anterior) o la
+  // revalidación (Next deja la última página buena). Nunca se publica una lista vacía.
+  const data = await getCourses();
 
   return (
-    <CourseCatalog courses={data?.results ?? []} initial={info.slug} />
+    <CourseCatalog courses={data.results} initial={info.slug} />
   );
 }

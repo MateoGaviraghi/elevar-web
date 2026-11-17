@@ -16,6 +16,8 @@ export const metadata: Metadata = {
  * NumberFlow, "1 próximo 2 sí GO-AHEAD"). Calculadora con los cursos reales.
  */
 export default async function PromocionesPage() {
-  const data = await getCourses().catch(() => null);
-  return <Promociones courses={data?.results ?? []} />;
+  // Sin catch: si la API falla, falla el build (Vercel deja el despliegue anterior) o la
+  // revalidación (Next deja la última página buena). Nunca se publica una lista vacía.
+  const data = await getCourses();
+  return <Promociones courses={data.results} />;
 }
