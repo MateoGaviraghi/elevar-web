@@ -100,7 +100,6 @@ export function CheckoutPase({ co }: { co: Checkout }) {
 
             <section ref={datos} className="mt-5 scroll-mt-6 [@media(min-width:1024px)_and_(max-height:820px)]:mt-2" onFocus={alEnfocar} onKeyDown={alTeclear}>
               <h1 className="pase-in font-display text-3xl font-semibold tracking-tight text-ink-900">Tus datos</h1>
-              <p className="pase-in mt-1.5 text-[15px] text-neutral-700 [@media(min-width:1024px)_and_(max-height:820px)]:hidden">{pegar("A tu correo llegan la confirmación y el acceso.")}</p>
 
               <div className="mt-5 grid gap-x-5 gap-y-4 sm:grid-cols-2 [@media(min-width:1024px)_and_(max-height:820px)]:mt-3 [@media(min-width:1024px)_and_(max-height:820px)]:gap-y-3">
                 <div data-paso className="pase-in">
