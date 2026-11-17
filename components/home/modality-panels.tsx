@@ -85,7 +85,7 @@ function PanelBody({ item, compact = false }: { item: PanelItem; compact?: boole
           href={`/formacion/${item.slug}`}
           className="mp-in group mt-5 inline-flex items-center gap-2 text-sm font-semibold"
         >
-          {item.count > 0 ? `Ver los ${item.count} ${label}` : `Ver ${item.short}`}
+          {item.count > 1 ? `Ver los ${item.count} ${label}` : item.count === 1 ? `Ver el ${label}` : `Ver ${item.short}`}
           <Arrow className="transition-transform duration-500 group-hover:translate-x-1" />
         </Link>
       </div>

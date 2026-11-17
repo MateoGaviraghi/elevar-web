@@ -79,6 +79,16 @@ function alDia(c: Course): Course {
   return { ...c, sessions, is_featured: upcoming ? c.is_featured : false };
 }
 
+/** En vivo o webinar cuyas fechas ya pasaron todas: ya se dio y no se muestra en el sitio
+ * (Agu, KAN-10, 2026-11-17: "no se para que quisieran ver cursos finalizados"). Vuelve solo
+ * cuando se le carga una fecha nueva. El admin y las órdenes viejas lo siguen viendo. */
+export function finalizado(c: Course): boolean {
+  if (c.modality !== "LIVE" && c.modality !== "WEBINAR") return false;
+  const sesiones = c.sessions ?? [];
+  // Sin ninguna fecha cargada todavía no es "ya realizado": se sigue mostrando.
+  return sesiones.length > 0 && !sesiones.some((s) => s.status === "SCHEDULED");
+}
+
 function promos(): Promo[] {
   return listPromos();
 }
@@ -96,7 +106,7 @@ export async function getCourses(params?: {
   featured?: boolean;
   page?: number;
 }): Promise<Paginated<Course>> {
-  let list = catalog().filter((c) => c.is_published !== false);
+  let list = catalog().filter((c) => c.is_published !== false && !finalizado(c));
   if (params?.modality) list = list.filter((c) => c.modality === params.modality);
   if (params?.category) list = list.filter((c) => c.category?.slug === params.category);
   if (params?.featured !== undefined) list = list.filter((c) => c.is_featured === params.featured);

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { RelatedCourses } from "@/components/catalog/related-courses";
 import { CourseFicha } from "@/components/curso/ficha";
 import { MODALITY_TEMPLATES } from "@/lib/formacion-templates";
-import { ApiError, getCourse, getCourses } from "@/lib/api";
+import { ApiError, finalizado, getCourse, getCourses } from "@/lib/api";
 import type { Course } from "@/types";
 
 // Fase 0 (mockup sobre next dev): se renderiza on-demand. En Fase 1 (export estático)
@@ -62,6 +62,9 @@ export default async function CourseDetailPage(
     if (current && current !== params.slug) permanentRedirect(`/cursos/${current}`);
     notFound();
   }
+  // Ya realizado (sin fecha por venir): no se muestra; lleva a la lista de su modalidad.
+  // Temporal (307): si se le carga una fecha nueva, la ficha vuelve sola.
+  if (finalizado(course)) redirect(`/formacion/${MODALITY_PATH[course.modality].slug}`);
 
   const data = {
     course,

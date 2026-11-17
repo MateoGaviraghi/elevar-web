@@ -4,7 +4,8 @@
  * Elegida por Mateo el 2026-10-19 ("tu elección" → referencia 1, Dennis Snellenberg ·
  * Work): píldoras de filtro con la cantidad, tabla de filas finas y una vista previa que
  * sigue al mouse mientras las demás filas se apagan. Con sus respuestas: E-Books en
- * todos lados, asincrónicos agrupados por tema, webinars hechos abajo en "Finalizados".
+ * todos lados, asincrónicos agrupados por tema. Los cursos y webinars ya realizados no se
+ * muestran (Agu, KAN-10, 2026-11-17; reemplaza el grupo "Finalizados").
  * Reglas de la ficha: encabezado en tinta con resumen y botones, fondos tinta / blanco,
  * sin tarjetas en grilla, movimiento propio por sección (GSAP), lo flotante invierte el
  * color de lo que tiene detrás.
@@ -31,10 +32,15 @@ interface Group {
 }
 
 const startsAt = (c: Course) => (c.sessions[0] ? new Date(c.sessions[0].starts_at).getTime() : 0);
-const isPast = (c: Course) => c.sessions[0]?.status === "FINISHED";
 const dated = (m: Modality) => m === "LIVE" || m === "WEBINAR";
 
-/** Asincrónicos por tema; en vivo y webinars, próximos por fecha y los hechos abajo. */
+/** «Ver los 11 cursos» / «Ver el webinar»: con uno solo no va «los 1». */
+function verLista(m: Modality, n: number): string {
+  const [uno, varios] = m === "WEBINAR" ? ["webinar", "webinars"] : ["curso", "cursos"];
+  return n === 1 ? `Ver el ${uno}` : `Ver los ${n} ${varios}`;
+}
+
+/** Asincrónicos por tema; en vivo y webinars, próximos por fecha. */
 function groupsOf(modality: Modality, list: Course[]): Group[] {
   if (modality === "ASYNC") {
     const byCat = new Map<string, Group>();
@@ -46,12 +52,9 @@ function groupsOf(modality: Modality, list: Course[]): Group[] {
     return Array.from(byCat.values());
   }
   if (dated(modality)) {
-    const next = list.filter((c) => !isPast(c)).sort((a, b) => startsAt(a) - startsAt(b));
-    const done = list.filter(isPast).sort((a, b) => startsAt(b) - startsAt(a));
-    const g: Group[] = [];
-    if (next.length) g.push({ key: "proximos", title: done.length ? "Próximos" : null, items: next });
-    if (done.length) g.push({ key: "finalizados", title: "Finalizados", muted: true, items: done });
-    return g;
+    // Los ya realizados no llegan acá (lib/api.ts `finalizado`, 2026-11-17): solo próximos, por fecha.
+    const next = [...list].sort((a, b) => startsAt(a) - startsAt(b));
+    return next.length ? [{ key: "proximos", title: null, items: next }] : [];
   }
   return list.length ? [{ key: "todos", title: null, items: list }] : [];
 }
@@ -73,7 +76,7 @@ function heroFacts(m: ModalityInfo, list: Course[]): string[] {
   const noun = m.modality === "WEBINAR" ? (list.length === 1 ? "webinar" : "webinars") : list.length === 1 ? "curso" : "cursos";
   facts.push(`${list.length} ${noun}`);
   if (dated(m.modality)) {
-    const next = list.filter((c) => !isPast(c)).sort((a, b) => startsAt(a) - startsAt(b))[0];
+    const next = [...list].sort((a, b) => startsAt(a) - startsAt(b))[0];
     const s = next && sessionInfo(next);
     if (s) facts.push(`Próximo: ${s.short}`);
   } else {
@@ -488,7 +491,7 @@ function Hero({ info, items, onSeeList }: { info: ModalityInfo; items: Course[];
               <button
                 type="button"
                 onClick={onSeeList}
-                aria-label={`Ver los ${items.length} cursos`}
+                aria-label={verLista(info.modality, items.length)}
                 className="group grid h-10 w-10 place-items-center text-brand-400 md:h-14 md:w-14"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:translate-x-1 group-hover:translate-y-1 md:h-12 md:w-12" aria-hidden>
@@ -516,7 +519,7 @@ function Hero({ info, items, onSeeList }: { info: ModalityInfo; items: Course[];
             <div className="hero-in flex flex-col gap-3 sm:flex-row">
               {items.length > 0 && (
                 <button type="button" className={BTN.primary} onClick={onSeeList}>
-                  {info.modality === "WEBINAR" ? `Ver los ${items.length} webinars` : `Ver los ${items.length} cursos`}
+                  {verLista(info.modality, items.length)}
                 </button>
               )}
               <Link href="/contacto" className={BTN.ghostDark}>Hablar con ELEVAR</Link>
