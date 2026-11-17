@@ -55,12 +55,58 @@ const isSessionBased = (m: Course["modality"]) => m === "LIVE" || m === "WEBINAR
 const money = (n: number) => n.toFixed(2);
 
 /** Un curso del catálogo por id (la página de la orden completa con esto las órdenes viejas). */
-export function courseById(id: number): Course | undefined {
-  return catalog().find((c) => c.id === id);
+export async function courseById(id: number): Promise<Course | undefined> {
+  return (await catalog()).find((c) => c.id === id);
 }
 
-function catalog(): Course[] {
-  return (typeof window === "undefined" ? COURSES : listCourses()).map(alDia);
+/**
+ * Catálogo de cursos. Desde la tanda 2 (2026-11-17) sale de la base del backend
+ * (`GET /api/v1/courses/`, cargada con `importar_cursos` desde este mismo catálogo: mismos
+ * ids, slugs y fechas). Sin `NEXT_PUBLIC_API_URL` (desarrollo sin backend) sigue usando
+ * `lib/mock-catalog.ts` y, en el navegador, la base local del panel de demostración.
+ */
+async function catalog(): Promise<Course[]> {
+  if (!API_URL) return (typeof window === "undefined" ? COURSES : listCourses()).map(alDia);
+  return (await catalogoDelServidor()).map(alDia);
+}
+
+/** El catálogo cambia poco: se vuelve a pedir cada 5 minutos. */
+const CATALOGO_TTL = 300;
+let enMemoria: { at: number; cursos: Promise<Course[]> } | null = null;
+
+function catalogoDelServidor(): Promise<Course[]> {
+  // En el servidor cachea Next (`revalidate`); en el navegador, esta variable.
+  if (typeof window === "undefined") return pedirCatalogo();
+  if (!enMemoria || Date.now() - enMemoria.at > CATALOGO_TTL * 1000) {
+    const cursos = pedirCatalogo().catch((err) => {
+      enMemoria = null; // un error no queda guardado: el próximo pedido reintenta
+      throw err;
+    });
+    enMemoria = { at: Date.now(), cursos };
+  }
+  return enMemoria.cursos;
+}
+
+/** Trae todas las páginas (de a 100, el máximo de la API). */
+async function pedirCatalogo(): Promise<Course[]> {
+  const cursos: Course[] = [];
+  // Se pide página por página con el número, sin seguir el `next` de la API: ese link lo arma
+  // el backend detrás del proxy de Railway y podría venir con http://.
+  for (let pagina = 1, hayMas = true; hayMas; pagina++) {
+    const url = `${API_URL}/api/v1/courses/?page_size=100&page=${pagina}`;
+    let res: Response;
+    try {
+      res = await fetch(url, { next: { revalidate: CATALOGO_TTL } });
+    } catch {
+      throw new ApiError("No pudimos cargar los cursos. Revisá tu conexión.", "NETWORK", 0);
+    }
+    if (!res.ok) throw new ApiError("No pudimos cargar los cursos.", "SERVER_ERROR", res.status);
+    const page = (await res.json()) as Paginated<Course & { position?: number }>;
+    // La lista no trae `description`: la ficha usa los objetivos, como hacía el catálogo local.
+    cursos.push(...page.results.map((c) => ({ ...c, description: c.description ?? c.objectives, is_published: true })));
+    hayMas = page.next != null;
+  }
+  return cursos;
 }
 
 /** Estado de las fechas contra este momento, no contra cuando se cargó el catálogo: una
@@ -106,7 +152,7 @@ export async function getCourses(params?: {
   featured?: boolean;
   page?: number;
 }): Promise<Paginated<Course>> {
-  let list = catalog().filter((c) => c.is_published !== false && !finalizado(c));
+  let list = (await catalog()).filter((c) => c.is_published !== false && !finalizado(c));
   if (params?.modality) list = list.filter((c) => c.modality === params.modality);
   if (params?.category) list = list.filter((c) => c.category?.slug === params.category);
   if (params?.featured !== undefined) list = list.filter((c) => c.is_featured === params.featured);
@@ -120,7 +166,7 @@ export async function getCourses(params?: {
 }
 
 export async function getCourse(slug: string): Promise<Course> {
-  const course = catalog().find((c) => c.slug === slug);
+  const course = (await catalog()).find((c) => c.slug === slug);
   if (!course) throw new ApiError("Curso no encontrado.", "NOT_FOUND", 404);
   return paraMostrar(course);
 }
@@ -160,7 +206,7 @@ export async function validateCart(
   items: CartItem[],
   couponCode?: string | null
 ): Promise<CartValidateResult> {
-  const list = catalog();
+  const list = await catalog();
   const resultItems: CartValidateResult["items"] = [];
 
   // Una línea que ya no se puede comprar (curso borrado del catálogo, fecha que cambió o
@@ -247,7 +293,7 @@ export interface CheckoutPayload {
 }
 
 export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult> {
-  const list = catalog();
+  const list = await catalog();
   const orderItems: OrderItem[] = [];
 
   payload.items.forEach((item, i) => {

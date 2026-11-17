@@ -39,9 +39,9 @@ const hora = (iso: string) =>
   new Date(iso).toLocaleTimeString("es-AR", { timeZone: TZ, hour: "2-digit", minute: "2-digit", hour12: false });
 
 /** Completa con el catálogo lo que las órdenes anteriores al rediseño no guardaron. */
-function completar(it: OrderItem): OrderItem {
+async function completar(it: OrderItem): Promise<OrderItem> {
   if (it.code && it.modality) return it;
-  const c = it.course_id != null ? courseById(it.course_id) : undefined;
+  const c = it.course_id != null ? await courseById(it.course_id).catch(() => undefined) : undefined;
   if (!c) return it;
   const s = c.sessions[0];
   return {
@@ -70,9 +70,10 @@ export function OrderStatusClient({ publicId }: { publicId: string }) {
         : Promise.resolve();
     confirmar
       .then(() => getOrder(publicId))
+      .then(async (o) => ({ ...o, items: await Promise.all(o.items.map(completar)) }))
       .then((o) => {
         if (!cancelled) {
-          setOrder({ ...o, items: o.items.map(completar) });
+          setOrder(o);
           setState("ready");
         }
       })
