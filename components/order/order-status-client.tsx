@@ -237,7 +237,7 @@ ${formatDate(order.paid_at)}` : ""}`;
     ...(first.starts_at && agenda
       ? [{ n: "01", titulo: "Agendá la fecha", texto: `${fecha(first.starts_at)}, ${hora(first.starts_at)} h.`, accion: "Agregar a Google Calendar", href: agenda }]
       : []),
-    { n: first.starts_at ? "02" : "01", titulo: "Guardá tu pase", texto: "Es tu comprobante de inscripción.", accion: "Imprimir o guardar PDF", onClick: () => window.print() },
+    { n: first.starts_at ? "02" : "01", titulo: "Tu comprobante", texto: "Con el detalle de la compra, para ver o descargar en PDF.", accion: "Ver comprobante", interno: `/orden/${order.public_id}/comprobante` },
     { n: first.starts_at ? "03" : "02", titulo: "¿Dudas?", texto: "Te respondemos por WhatsApp.", accion: "Escribinos", href: CONTACT.whatsappUrl },
   ];
 
@@ -288,14 +288,16 @@ ${formatDate(order.paid_at)}` : ""}`;
                 "group grid w-full grid-cols-[2.25rem_minmax(0,1fr)_auto] items-center gap-4 py-5 text-left transition-[padding] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:pl-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-500";
               return (
                 <li key={p.n} className="im-paso border-b border-neutral-0/15">
-                  {"href" in p && p.href ? (
+                  {"interno" in p && p.interno ? (
+                    <Link href={p.interno} className={cls} aria-label={`${p.titulo}: ${p.accion}`}>
+                      {contenido}
+                    </Link>
+                  ) : "href" in p && p.href ? (
                     <a href={p.href} target="_blank" rel="noopener noreferrer" className={cls} aria-label={`${p.titulo} ${p.accion}`}>
                       {contenido}
                     </a>
                   ) : (
-                    <button type="button" onClick={p.onClick} className={cls} aria-label={`${p.titulo}: ${p.accion}`}>
-                      {contenido}
-                    </button>
+                    <span className={cls}>{contenido}</span>
                   )}
                 </li>
               );
