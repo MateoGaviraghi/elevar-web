@@ -33,7 +33,7 @@ Este documento está completo a propósito: no hay que ir a buscar nada afuera. 
 | Pegar y gestores de contraseñas | Permitidos | ASVS 6.2.7 |
 | Sin recortes | Se verifica tal como llega: sin recortar espacios ni cambiar mayúsculas | ASVS 6.2.8 |
 | Preguntas secretas | No se usan | ASVS 6.4.2 |
-| Cómo se guardan | **Argon2id** con `django.contrib.auth.hashers.Argon2PasswordHasher` primero en `PASSWORD_HASHERS` (requiere `argon2-cffi`). Piso: memoria 19 MiB, 2 vueltas, 1 hilo; los valores por defecto de Django cumplen {{CONFIRMAR}} al instalar mirando `Argon2PasswordHasher.memory_cost`, `time_cost` y `parallelism`. Las contraseñas viejas en PBKDF2 se actualizan solas al próximo ingreso | Hoja de OWASP de contraseñas |
+| Cómo se guardan | **Argon2id** con `django.contrib.auth.hashers.Argon2PasswordHasher` primero en `PASSWORD_HASHERS` (requiere `argon2-cffi`). Piso: memoria 19 MiB, 2 vueltas, 1 hilo. Django 5.2.19 usa 100 MiB, 2 vueltas y 8 hilos: cumple (verificado el 2026-11-18). Ojo: 100 MiB de memoria por cada ingreso en Railway. Las contraseñas viejas en PBKDF2 se actualizan solas al próximo ingreso | Hoja de OWASP de contraseñas |
 | Contraseña temporal (alta de usuario) | Generada con `secrets`, mostrada una sola vez, obliga a cambiarla en el primer ingreso y vence a las 72 horas | |
 
 ## 3. Segundo factor
@@ -43,7 +43,7 @@ Este documento está completo a propósito: no hay que ir a buscar nada afuera. 
 | Obligatorio | Para **todos** los usuarios del panel. Sin segundo factor confirmado, la sesión solo puede entrar a `/admin/primer-ingreso` | ASVS 6.3.3 |
 | Tipo | Código de 6 dígitos de una app autenticadora (TOTP, RFC 6238, 30 s), con `django-otp` | |
 | SMS | **No** | ASVS 6.6.1 |
-| Códigos de respaldo | 10, de un solo uso, generados con azar criptográfico, guardados como hash. Mostrados una sola vez | ASVS 6.5.1 a 6.5.5 |
+| Códigos de respaldo | 10, de un solo uso, de 80 bits de azar criptográfico, guardados como SHA-256 en `panel.CodigoRespaldo`. Mostrados una sola vez | ASVS 6.5.1 a 6.5.5 |
 | Ventana | Se acepta el código actual y uno anterior o siguiente (±30 s). Un código ya usado no se acepta dos veces | |
 | Límite de intentos | 5 códigos fallidos en 15 minutos → bloqueo de 15 minutos, contado en `panel.IntentoIngreso` con `paso='codigo'` | ASVS 6.6.3 |
 | Paso intermedio | Después de la contraseña correcta, la sesión queda «a medio ingresar» por 5 minutos como máximo; si no llega el código, se descarta | |
@@ -61,7 +61,7 @@ Este documento está completo a propósito: no hay que ir a buscar nada afuera. 
 | **Nunca** | Un token en `localStorage` o `sessionStorage`, ni en la dirección | |
 | Al entrar | Identificador nuevo (`request.session.cycle_key()`, lo hace `django.contrib.auth.login`) | ASVS 7.2.4 |
 | Corte por inactividad | **30 minutos** sin pedidos | ASVS 7.3.1; NIST 2.3.3 (S3: 15 a 30 min) |
-| Duración máxima | **12 horas** desde el ingreso, se use o no | ASVS 7.3.2 |
+| Duración máxima | **12 horas** desde el ingreso, se use o no. `SESSION_COOKIE_AGE` de producción pasó de 8 h a 12 h (2026-11-18) | ASVS 7.3.2 |
 | Cómo se controlan los dos tiempos | Un middleware de la app `panel` guarda en la sesión `ingreso_en` y `ultimo_uso_en`; en cada pedido a `/api/v1/panel/` compara contra `timezone.now()` y, si venció, hace `logout()` y responde 401. Variables: `PANEL_SESION_HORAS=12`, `PANEL_INACTIVIDAD_MINUTOS=30` | |
 | Por escrito | Los dos tiempos y su motivo (datos de compradores y pagos) quedan en este documento | ASVS 7.1.1 |
 | Salir | Botón «Salir» visible en toda pantalla. Borra la sesión en la base, no solo la cookie | ASVS 7.4.1 y 7.4.4 |
@@ -69,7 +69,7 @@ Este documento está completo a propósito: no hay que ir a buscar nada afuera. 
 | Cambiar contraseña o factor | Se ofrece cerrar las otras sesiones | ASVS 7.4.3 |
 | Cerrar las sesiones de otro | Por comando (`baja_usuario_panel` y `reiniciar_segundo_factor_panel` las cierran) | ASVS 7.4.5 |
 | Cada pedido | Se vuelve a leer el `Perfil` (rol y `activo`) de la base: un cambio de rol o una baja vale desde el próximo pedido | |
-| CSRF | Toda escritura (POST, PUT, PATCH, DELETE) lleva el token CSRF de Django en el encabezado `X-CSRFToken` | |
+| CSRF | Toda escritura (POST, PUT, PATCH, DELETE) lleva el token CSRF de Django en el encabezado `X-CSRFToken`. En producción la cookie del token es `HttpOnly`: el frontend lo toma del cuerpo de `GET csrf/` (`{"csrf_token": ...}`), decidido 2026-11-18. `ingreso/` también lo exige | |
 
 ### Cómo viaja la sesión (decidido el 2026-11-17: puente en Next)
 

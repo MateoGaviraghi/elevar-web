@@ -22,7 +22,7 @@ Las etapas 3 y 4 se pueden hacer en cualquier orden. Las 5, 6 y 7 esperan trabaj
 Rama: `panel/etapa-1-login`. Repo: `elevar-backend`.
 
 **Qué se hace**
-1. Instalar `django-otp` y `argon2-cffi` (versiones anotadas en `02-TECNOLOGIAS.md` en el mismo PR, después de revisar alertas publicadas). Agregar `django_otp`, `django_otp.plugins.otp_totp`, `django_otp.plugins.otp_static` a `INSTALLED_APPS` y `django_otp.middleware.OTPMiddleware` después de `AuthenticationMiddleware`.
+1. Instalar `django-otp` y `argon2-cffi` (versiones anotadas en `02-TECNOLOGIAS.md` en el mismo PR, después de revisar alertas publicadas). Agregar `django_otp` y `django_otp.plugins.otp_totp` a `INSTALLED_APPS` (sin `otp_static`: los códigos de respaldo van en `panel.CodigoRespaldo`, con hash) y `django_otp.middleware.OTPMiddleware` después de `AuthenticationMiddleware`.
 2. Poner `Argon2PasswordHasher` primero en `PASSWORD_HASHERS`.
 3. Crear la app `panel` con `Perfil`, `IntentoIngreso` y `EventoAuditoria` (`04-DATOS.md`) y sus migraciones, incluida la del disparador que rechaza `UPDATE` y `DELETE` en la auditoría.
 4. `panel/auditoria.py` con `registrar(...)` y la lista cerrada de acciones.
@@ -32,7 +32,7 @@ Rama: `panel/etapa-1-login`. Repo: `elevar-backend`.
    - `GET csrf/` → pone la cookie del token CSRF.
    - `POST ingreso/` (correo, contraseña) → «a medio ingresar» o error; con los límites por cuenta e IP.
    - `POST ingreso/codigo/` (código o código de respaldo) → sesión completa.
-   - `GET primer-ingreso/` → datos para el QR; `POST primer-ingreso/` (código) → confirma el factor y devuelve los 10 códigos de respaldo una sola vez.
+   - `GET primer-ingreso/` → datos para el QR (`otpauth_url` y la clave en texto; el dibujo del QR es de la etapa 2); `POST primer-ingreso/` (código, y `clave_nueva` si entró con la contraseña temporal) → confirma el factor y devuelve los 10 códigos de respaldo una sola vez.
    - `POST salida/` → cierra la sesión en el servidor.
    - `GET yo/` → nombre, correo, rol y si tiene el factor listo.
 8. La cookie de sesión del panel con los valores de `07-SEGURIDAD.md` (nombre `__Host-elevar_panel` en producción; en desarrollo sin el prefijo `__Host-`, porque exige HTTPS).

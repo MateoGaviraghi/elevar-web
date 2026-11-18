@@ -70,13 +70,16 @@ Uno por cada usuario del panel. Atado a `auth.User`.
 | `user` | OneToOne → `auth.User` (CASCADE) | |
 | `rol` | texto con una sola opción hoy: `admin` | Obligatorio. Sin rol, no entra. Se deja el campo para poder sumar un rol más adelante sin migrar datos |
 | `activo` | booleano, default `true` | Dar de baja = `activo=false` y cerrar todas sus sesiones. No se borra el usuario (la auditoría lo referencia) |
+| `email` | texto, en minúsculas | Identificador del panel. Único entre usuarios del panel: `UniqueConstraint(Lower("email"))` (decidido 2026-11-18) |
 | `segundo_factor_listo` | booleano, default `false` | `true` recién cuando confirmó un código de su app |
+| `debe_cambiar_clave` | booleano, default `false` | `true` con la contraseña temporal del alta: se cambia en el primer ingreso |
+| `clave_temporal_vence` | fecha y hora, opcional | 72 h después del alta. Vencida, no entra |
 | `created_at`, `updated_at` | fecha y hora | |
 
-El correo del `User` se guarda en minúsculas y es único entre usuarios del panel (restricción en la base sobre `lower(email)`).
+El correo del panel vive en `Perfil.email`, en minúsculas y único entre usuarios del panel (restricción en la base sobre `lower(email)`). No se pone un índice único en `auth_user`: valdría para todos los usuarios de Django (decidido 2026-11-18).
 
 ### Segundo factor — Nuevo (panel, tablas de `django-otp`)
-`otp_totp.TOTPDevice` (la app autenticadora) y `otp_static.StaticDevice` + `StaticToken` (10 códigos de respaldo de un solo uso). Las crea la librería con sus migraciones. Lo que se guarda en la base para la app autenticadora es un secreto: {{CONFIRMAR}} si se cifra la columna (ver `07-SEGURIDAD.md`).
+`otp_totp.TOTPDevice` (la app autenticadora), con las migraciones de la librería. Los 10 códigos de respaldo de un solo uso van en `panel.CodigoRespaldo` (`user`, `hash` SHA-256, `usado_en`, `created_at`, `updated_at`): `otp_static` los guarda en texto plano y 07 pide hash (decidido 2026-11-18). Lo que se guarda en la base para la app autenticadora es un secreto: {{CONFIRMAR}} si se cifra la columna (ver `07-SEGURIDAD.md`).
 
 ### `panel.IntentoIngreso` — Nuevo (panel)
 Para el límite de intentos por cuenta.
@@ -117,7 +120,8 @@ Las de Django (`django_session`, ya existe la tabla). El panel guarda en la sesi
 ```
 auth.User 1──1 panel.Perfil
 auth.User 1──* panel.EventoAuditoria (actor)
-auth.User 1──* otp TOTPDevice / StaticDevice
+auth.User 1──* otp TOTPDevice
+auth.User 1──* panel.CodigoRespaldo
 catalog.Category 1──* catalog.Course 1──* catalog.CourseSession 1──* catalog.WebinarRegistration
 orders.Order 1──* orders.OrderItem *──1 catalog.Course
 orders.OrderItem *──1 catalog.CourseSession (opcional)

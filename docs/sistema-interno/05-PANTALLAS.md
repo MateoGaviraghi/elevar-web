@@ -53,7 +53,7 @@ Las rutas de la demo `/admin/blog/**`, `/admin/promociones/**`, `/admin/contacto
 
 ### `/admin/primer-ingreso`
 1. Paso 1: el código QR para escanear con la app (Google Authenticator, Microsoft Authenticator, 1Password u otra) y la clave en texto para cargarla a mano.
-2. Paso 2: campo para el primer código. Hasta que no confirma, no entra.
+2. Paso 2: campo para el primer código y, si entró con la contraseña temporal del alta, «Contraseña nueva» (`autocomplete=new-password`). Hasta que no confirma, no entra.
 3. Paso 3: los 10 códigos de respaldo, una sola vez, con «Descargar» y «Ya los guardé». No se vuelven a mostrar.
 
 ### `/admin` (inicio)
