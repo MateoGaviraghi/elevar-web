@@ -2,9 +2,21 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { AvisoError, BotonEnvio, CampoIngreso, IngresoMarco } from "@/components/admin/ingreso";
+import {
+  AvisoError,
+  BotonEnvio,
+  BotonSecundario,
+  CampoCodigo,
+  CampoIngreso,
+  IndicadorPasos,
+  IngresoMarco,
+  Oraciones,
+  esperar,
+  useIngreso,
+} from "@/components/admin/ingreso";
 import { ApiError, confirmarPrimerIngreso, datosPrimerIngreso } from "@/lib/admin/api";
 import { textoDeError } from "@/lib/admin/formato";
+import { pegar } from "@/lib/texto";
 import type { PrimerIngresoDatos } from "@/lib/admin/tipos";
 
 type Estado =
@@ -18,6 +30,7 @@ type Estado =
 export default function PrimerIngresoPage() {
   const router = useRouter();
   const [estado, setEstado] = useState<Estado>({ tipo: "cargando" });
+  const { salir } = useIngreso();
 
   const cargar = useCallback(async () => {
     setEstado({ tipo: "cargando" });
@@ -36,8 +49,18 @@ export default function PrimerIngresoPage() {
 
   if (estado.tipo === "codigos") {
     return (
-      <IngresoMarco titulo="Guardá tus códigos de respaldo">
-        <CodigosRespaldo codigos={estado.codigos} onListo={() => router.replace("/admin")} />
+      <IngresoMarco
+        titulo="Guardá tus códigos de respaldo"
+        ancho="ancho"
+        encabezado={<IndicadorPasos actual={2} total={2} nombre="Códigos de respaldo" />}
+      >
+        <CodigosRespaldo
+          codigos={estado.codigos}
+          onListo={async () => {
+            await salir();
+            router.replace("/admin");
+          }}
+        />
       </IngresoMarco>
     );
   }
@@ -46,24 +69,23 @@ export default function PrimerIngresoPage() {
     <IngresoMarco
       titulo="Configurá el segundo factor"
       bajada="Vas a necesitar una app autenticadora en el celular: Google Authenticator, Microsoft Authenticator, 1Password u otra."
+      ancho="ancho"
+      encabezado={<IndicadorPasos actual={1} total={2} nombre="App autenticadora" />}
     >
       {estado.tipo === "cargando" && (
-        <div aria-busy="true" className="space-y-3">
-          <div className="mx-auto h-48 w-48 bg-neutral-200" />
-          <div className="h-4 w-full bg-neutral-200" />
+        <div aria-busy="true" className="flex animate-pulse gap-5">
+          <div className="h-40 w-40 shrink-0 bg-[color:var(--c-borde)]" />
+          <div className="flex-1 space-y-3 pt-2">
+            <div className="h-4 w-3/4 bg-[color:var(--c-borde)]" />
+            <div className="h-10 w-full bg-[color:var(--c-borde)]" />
+          </div>
           <span className="sr-only">Cargando…</span>
         </div>
       )}
       {estado.tipo === "error" && (
         <div className="flex flex-col gap-4">
           <AvisoError mensaje={estado.mensaje} />
-          <button
-            type="button"
-            onClick={() => void cargar()}
-            className="inline-flex min-h-[44px] items-center justify-center border border-neutral-200 bg-neutral-0 px-4 py-2.5 text-sm font-semibold text-ink-900 hover:border-ink-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-          >
-            Reintentar
-          </button>
+          <BotonSecundario onClick={() => void cargar()}>Reintentar</BotonSecundario>
         </div>
       )}
       {estado.tipo === "configurar" && (
@@ -80,6 +102,8 @@ function Configurar({ datos, onListo }: ConfigurarProps) {
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errorClave, setErrorClave] = useState<string | undefined>();
+  const [sacudir, setSacudir] = useState(0);
+  const [correcto, setCorrecto] = useState(false);
 
   async function enviar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
@@ -88,6 +112,9 @@ function Configurar({ datos, onListo }: ConfigurarProps) {
     setErrorClave(undefined);
     try {
       const { codigos_respaldo } = await confirmarPrimerIngreso(codigo, datos.cambiar_clave ? claveNueva : undefined);
+      setEnviando(false);
+      setCorrecto(true);
+      await esperar(1050);
       onListo(codigos_respaldo);
     } catch (e) {
       if (e instanceof ApiError && e.sinSesion) return router.replace("/admin/ingresar");
@@ -96,34 +123,39 @@ function Configurar({ datos, onListo }: ConfigurarProps) {
       } else {
         const code = e instanceof ApiError ? e.code : undefined;
         setError(code === "VALIDATION_ERROR" ? textoDeError("CODIGO_INCORRECTO") : textoDeError(code));
+        setCodigo("");
+        setSacudir((n) => n + 1);
       }
       setEnviando(false);
     }
   }
 
   return (
-    <form onSubmit={enviar} className="flex flex-col gap-6" noValidate>
+    <form onSubmit={enviar} className="flex flex-col gap-8" noValidate>
       <section>
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">1. Escaneá el código</h2>
-        {/* eslint-disable-next-line @next/next/no-img-element -- imagen data: generada por el backend */}
-        <img src={datos.qr} alt="Código QR para la app autenticadora" width={192} height={192} className="mx-auto mt-3 h-48 w-48" />
-        <p className="mt-3 text-sm text-neutral-700">¿No podés escanearlo? Cargá esta clave a mano:</p>
-        <code className="mt-1 block break-all bg-neutral-50 px-3 py-2 font-mono text-sm text-ink-900">{datos.clave}</code>
+        <h2 className="font-display text-lg font-semibold text-[color:var(--t-titulo)]">{pegar("1. Escaneá el código con la app")}</h2>
+        <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-start">
+          {/* eslint-disable-next-line @next/next/no-img-element -- imagen data: generada por el backend */}
+          <img
+            src={datos.qr}
+            alt="Código QR para la app autenticadora"
+            width={160}
+            height={160}
+            className="h-40 w-40 shrink-0 self-center rounded-[14px] border border-[color:var(--c-borde)] bg-neutral-0 p-2 sm:self-start"
+          />
+          <p className="text-sm text-[color:var(--t-texto)] sm:pt-2">
+            <Oraciones texto="Abrí la app, tocá «Agregar» o «+» y elegí escanear un código QR. Apuntá la cámara a este código." />
+          </p>
+        </div>
+        <p className="mt-5 text-sm text-[color:var(--t-texto)]"><Oraciones texto="¿No podés escanearlo? Cargá esta clave a mano en la app:" /></p>
+        <code className="mt-2 block break-all rounded-[12px] border border-[color:var(--c-borde)] bg-[color:var(--c-fondo)] px-3 py-2.5 font-mono text-[13px] tracking-wide text-[color:var(--c-texto)]">
+          {datos.clave}
+        </code>
       </section>
-      <section className="flex flex-col gap-5">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">2. Confirmá con el primer código</h2>
+      <section className="flex flex-col gap-5 border-t border-[color:var(--pie-borde)] pt-8">
+        <h2 className="font-display text-lg font-semibold text-[color:var(--t-titulo)]">{pegar("2. Confirmá con el primer código")}</h2>
         <AvisoError mensaje={error} />
-        <CampoIngreso
-          etiqueta="Código de la app"
-          id="codigo"
-          type="text"
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          maxLength={6}
-          required
-          value={codigo}
-          onChange={(e) => setCodigo(e.target.value.replace(/\D/g, ""))}
-        />
+        <CampoCodigo etiqueta="Código de la app" id="codigo" valor={codigo} alCambiar={setCodigo} deshabilitado={enviando || correcto} sacudir={sacudir} correcto={correcto} />
         {datos.cambiar_clave && (
           <CampoIngreso
             etiqueta="Contraseña nueva"
@@ -138,7 +170,7 @@ function Configurar({ datos, onListo }: ConfigurarProps) {
             error={errorClave}
           />
         )}
-        <BotonEnvio enviando={enviando} texto="Confirmar" textoEnviando="Confirmando…" />
+        <BotonEnvio enviando={enviando} texto="Confirmar" textoEnviando="Confirmando…" exito={correcto} textoExito="Código correcto" />
       </section>
     </form>
   );
@@ -150,6 +182,7 @@ interface ConfigurarProps {
 }
 
 function CodigosRespaldo({ codigos, onListo }: CodigosRespaldoProps) {
+  const [saliendo, setSaliendo] = useState(false);
   function descargar() {
     const texto = `Códigos de respaldo del panel de ELEVAR\nCada uno sirve una sola vez.\n\n${codigos.join("\n")}\n`;
     const url = URL.createObjectURL(new Blob([texto], { type: "text/plain;charset=utf-8" }));
@@ -162,29 +195,28 @@ function CodigosRespaldo({ codigos, onListo }: CodigosRespaldoProps) {
 
   return (
     <div className="flex flex-col gap-5">
-      <p className="text-sm text-neutral-700">
-        Si perdés el celular, cada uno de estos códigos te deja entrar una vez. Guardalos en un lugar seguro: no se
-        vuelven a mostrar.
+      <p className="text-base text-[color:var(--t-texto)]">
+        <Oraciones texto="Si perdés el celular, cada uno de estos códigos te deja entrar una vez. Guardalos en un lugar seguro: no se vuelven a mostrar." />
       </p>
-      <ul className="grid grid-cols-1 gap-2 bg-neutral-50 p-4 font-mono text-sm text-ink-900 sm:grid-cols-2">
-        {codigos.map((c) => (
-          <li key={c}>{c}</li>
+      <ol className="grid grid-cols-1 gap-x-4 gap-y-2 rounded-[16px] border border-[color:var(--c-borde)] bg-[color:var(--c-fondo)] p-5 font-mono text-base text-[color:var(--c-texto)] sm:grid-cols-2 sm:text-sm">
+        {codigos.map((c, i) => (
+          <li key={c} className="flex gap-3 whitespace-nowrap">
+            <span aria-hidden className="w-5 select-none text-right text-[color:var(--t-etiqueta)] tabular-nums">{i + 1}</span>
+            {c}
+          </li>
         ))}
-      </ul>
-      <button
-        type="button"
-        onClick={descargar}
-        className="inline-flex min-h-[44px] items-center justify-center border border-neutral-200 bg-neutral-0 px-4 py-2.5 text-sm font-semibold text-ink-900 hover:border-ink-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+      </ol>
+      <form
+        className="grid gap-3 sm:grid-cols-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          setSaliendo(true);
+          onListo();
+        }}
       >
-        Descargar
-      </button>
-      <button
-        type="button"
-        onClick={onListo}
-        className="inline-flex min-h-[44px] items-center justify-center bg-ink-900 px-4 py-2.5 text-sm font-semibold text-neutral-0 hover:bg-ink-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-      >
-        Ya los guardé
-      </button>
+        <BotonSecundario onClick={descargar}>Descargar</BotonSecundario>
+        <BotonEnvio enviando={saliendo} texto="Ya los guardé" textoEnviando="Entrando…" />
+      </form>
     </div>
   );
 }

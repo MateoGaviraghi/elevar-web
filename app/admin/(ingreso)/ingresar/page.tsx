@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
-import { AvisoError, BotonEnvio, CampoIngreso, IngresoMarco } from "@/components/admin/ingreso";
+import { AYUDA_ACCESO, AvisoError, BotonEnvio, BotonOjo, CampoIngreso, IngresoMarco, esperar } from "@/components/admin/ingreso";
 import { ApiError, ingresar, rutaDeVuelta } from "@/lib/admin/api";
 import { textoDeError } from "@/lib/admin/formato";
 
@@ -13,6 +13,7 @@ function FormularioIngreso() {
   const [clave, setClave] = useState("");
   const [verClave, setVerClave] = useState(false);
   const [enviando, setEnviando] = useState(false);
+  const [exito, setExito] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function enviar(evento: FormEvent<HTMLFormElement>) {
@@ -21,6 +22,10 @@ function FormularioIngreso() {
     setError(null);
     try {
       const { paso } = await ingresar(correo, clave);
+      // Contraseña correcta: el botón se pone verde con el tilde y recién después se sigue.
+      setEnviando(false);
+      setExito(true);
+      await esperar(950);
       if (paso === "primer-ingreso") {
         router.replace("/admin/primer-ingreso");
       } else {
@@ -40,11 +45,13 @@ function FormularioIngreso() {
       <CampoIngreso
         etiqueta="Correo"
         id="correo"
+        alEnter={() => document.getElementById("clave")?.focus()}
         type="email"
         autoComplete="username"
         required
         value={correo}
         onChange={(e) => setCorreo(e.target.value)}
+        ok={/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo)}
       />
       <CampoIngreso
         etiqueta="Contraseña"
@@ -55,25 +62,20 @@ function FormularioIngreso() {
         maxLength={128}
         value={clave}
         onChange={(e) => setClave(e.target.value)}
-        accesorio={
-          <button
-            type="button"
-            onClick={() => setVerClave((v) => !v)}
-            aria-pressed={verClave}
-            className="min-h-[44px] px-4 text-sm font-semibold text-neutral-700 hover:text-ink-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-          >
-            {verClave ? "Ocultar" : "Mostrar"}
-          </button>
-        }
+        accesorio={<BotonOjo visible={verClave} alCambiar={() => setVerClave((v) => !v)} />}
       />
-      <BotonEnvio enviando={enviando} texto="Continuar" textoEnviando="Verificando…" />
+      <BotonEnvio enviando={enviando} texto="Continuar" textoEnviando="Verificando…" exito={exito} textoExito="Contraseña correcta" />
     </form>
   );
 }
 
 export default function IngresarPage() {
   return (
-    <IngresoMarco titulo="Ingresar al panel">
+    <IngresoMarco
+      titulo="Ingresar al panel"
+      bajada="Entrá con tu correo y tu contraseña. Después te pedimos el código de la app."
+      pie={AYUDA_ACCESO}
+    >
       <Suspense>
         <FormularioIngreso />
       </Suspense>
