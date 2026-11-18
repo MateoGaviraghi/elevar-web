@@ -6,7 +6,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "saltos": "node scripts/saltos-de-linea.mjs"
+    "saltos": "node scripts/saltos-de-linea.mjs",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@gsap/react": "^2.1.1",
@@ -22,6 +23,7 @@
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.65.1",
     "@types/big.js": "^6.2.2",
     "@types/node": "^20.16.0",
     "@types/react": "^19.3.0",

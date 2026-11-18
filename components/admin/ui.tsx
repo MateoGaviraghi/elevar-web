@@ -10,13 +10,13 @@ type Tone = "primary" | "secondary" | "ghost" | "danger";
 
 const TONES: Record<Tone, string> = {
   primary: "bg-ink-900 text-neutral-0 hover:bg-ink-800",
-  secondary: "border border-neutral-300 bg-neutral-0 text-ink-900 hover:border-ink-900",
-  ghost: "text-neutral-500 hover:text-ink-900",
-  danger: "border border-red-300 bg-neutral-0 text-red-700 hover:bg-red-50",
+  secondary: "border border-neutral-200 bg-neutral-0 text-ink-900 hover:border-ink-900",
+  ghost: "text-neutral-700 hover:text-ink-900",
+  danger: "border border-status-error/40 bg-neutral-0 text-status-error hover:bg-status-error/10",
 };
 
 export function adminButtonClasses(tone: Tone = "primary", className = "") {
-  return `inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 disabled:pointer-events-none ${TONES[tone]} ${className}`.trim();
+  return `inline-flex min-h-[44px] items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ${TONES[tone]} ${className}`.trim();
 }
 
 export function AdminButton({
@@ -110,7 +110,7 @@ export function CardSection({
         <h2 className="text-xs font-semibold uppercase tracking-widest text-neutral-500">
           {title}
         </h2>
-        {description && <p className="mt-1 text-xs text-neutral-400">{description}</p>}
+        {description && <p className="mt-1 text-xs text-neutral-500">{description}</p>}
       </div>
       <div className="space-y-5 p-6">{children}</div>
     </section>
@@ -134,7 +134,7 @@ export function StatCard({
       <p className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink-900">
         {value}
       </p>
-      {hint && <p className="mt-1 text-xs text-neutral-400">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-neutral-500">{hint}</p>}
     </div>
   );
   return href ? <Link href={href}>{body}</Link> : body;
@@ -150,7 +150,7 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="border border-dashed border-neutral-300 bg-neutral-50 px-6 py-16 text-center">
+    <div className="border border-dashed border-neutral-200 bg-neutral-50 px-6 py-16 text-center">
       <p className="font-display text-base font-semibold text-ink-900">{title}</p>
       {description && (
         <p className="mx-auto mt-2 max-w-md text-sm text-neutral-500">{description}</p>
@@ -181,15 +181,15 @@ export function Field({
         {label}
       </span>
       {children}
-      {hint && !error && <span className="mt-1 block text-xs text-neutral-400">{hint}</span>}
-      {error && <span className="mt-1 block text-xs text-red-600">{error}</span>}
+      {hint && !error && <span className="mt-1 block text-xs text-neutral-500">{hint}</span>}
+      {error && <span className="mt-1 block text-xs text-status-error">{error}</span>}
     </label>
   );
 }
 
 export const inputClasses = (error?: string) =>
-  `w-full rounded-none border bg-neutral-0 px-3.5 py-2.5 text-sm text-ink-900 outline-none transition-colors placeholder:text-neutral-400 ${
-    error ? "border-red-500" : "border-neutral-300 focus:border-ink-900"
+  `w-full rounded-none border bg-neutral-0 px-3.5 py-2.5 text-sm text-ink-900 outline-none transition-colors placeholder:text-neutral-500 ${
+    error ? "border-status-error" : "border-neutral-200 focus:border-ink-900"
   }`;
 
 export function Input({
@@ -296,7 +296,7 @@ export function Toggle({
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className="flex w-full items-start justify-between gap-4 border border-neutral-200 p-4 text-left transition-colors hover:border-neutral-300"
+      className="flex w-full items-start justify-between gap-4 border border-neutral-200 p-4 text-left transition-colors hover:border-neutral-200"
     >
       <span className="min-w-0">
         <span className="block text-sm font-medium text-ink-900">{label}</span>
@@ -334,7 +334,7 @@ export function SearchInput({
   return (
     <div className="relative min-w-[220px] flex-1">
       <svg
-        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500"
         width="16"
         height="16"
         viewBox="0 0 24 24"
@@ -351,7 +351,7 @@ export function SearchInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-none border border-neutral-300 bg-neutral-0 py-2.5 pl-9 pr-3 text-sm text-ink-900 outline-none transition-colors placeholder:text-neutral-400 focus:border-ink-900"
+        className="w-full rounded-none border border-neutral-200 bg-neutral-0 py-2.5 pl-9 pr-3 text-sm text-ink-900 outline-none transition-colors placeholder:text-neutral-500 focus:border-ink-900"
       />
     </div>
   );
@@ -376,12 +376,12 @@ export function FilterTabs<T extends string>({
           className={`border px-3.5 py-2 text-xs font-semibold transition-colors ${
             value === o.value
               ? "border-ink-900 bg-ink-900 text-neutral-0"
-              : "border-neutral-300 bg-neutral-0 text-neutral-600 hover:border-ink-900 hover:text-ink-900"
+              : "border-neutral-200 bg-neutral-0 text-neutral-700 hover:border-ink-900 hover:text-ink-900"
           }`}
         >
           {o.label}
           {o.count != null && (
-            <span className={value === o.value ? "ml-1.5 text-neutral-400" : "ml-1.5 text-neutral-400"}>
+            <span className={value === o.value ? "ml-1.5 text-neutral-500" : "ml-1.5 text-neutral-500"}>
               {o.count}
             </span>
           )}
@@ -422,10 +422,10 @@ export function Td({ children, className = "" }: { children: ReactNode; classNam
 /* ── Chips de estado ─────────────────────────────────────────────────────── */
 
 const CHIP_TONES: Record<string, string> = {
-  neutral: "bg-neutral-100 text-neutral-600",
-  ok: "bg-emerald-50 text-emerald-700",
-  warn: "bg-amber-50 text-amber-700",
-  bad: "bg-red-50 text-red-700",
+  neutral: "bg-neutral-50 text-neutral-700",
+  ok: "bg-status-success/10 text-status-success",
+  warn: "bg-status-warning/10 text-status-warning",
+  bad: "bg-status-error/10 text-status-error",
   brand: "bg-brand-50 text-brand-700",
   ink: "bg-ink-900 text-neutral-0",
 };

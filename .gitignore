@@ -6,3 +6,8 @@ next-env.d.ts
 .env*.local
 .vercel
 .DS_Store
+
+# Playwright (tiene cookies de sesión y datos de prueba)
+playwright/.auth/
+test-results/
+playwright-report/
