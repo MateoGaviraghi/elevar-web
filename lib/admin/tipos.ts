@@ -42,3 +42,227 @@ export interface ErrorApi {
     field_errors?: Record<string, string[]>;
   };
 }
+
+// --- Listas paginadas (core/pagination.py y CursorPagination de la auditoría) ----------------
+
+export interface Pagina<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+export interface PaginaCursor<T> {
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+export interface EventoHistorial {
+  fecha: string;
+  persona: string;
+  accion: string;
+  detalle: Record<string, unknown>;
+}
+
+// --- Inicio --------------------------------------------------------------------------------
+
+export interface Inicio {
+  consultas_nuevas: number;
+  ordenes_sin_cumplir: number;
+  proxima_fecha: {
+    id: number;
+    curso: string;
+    modalidad: Modalidad;
+    inicio: string;
+    inscriptos: number;
+    cupo: number | null;
+  } | null;
+  consultas_viejas: Pick<ConsultaFila, "id" | "created_at" | "name" | "company" | "source" | "subject">[];
+}
+
+// --- Consultas (etapa 3) -------------------------------------------------------------------
+
+export type EstadoConsulta = "NEW" | "CONTACTED" | "CLOSED";
+export type OrigenConsulta = "CONTACTO" | "COMUNIDAD" | "WEBINAR";
+
+/** ConsultaListaSerializer: sin mensaje, correo ni teléfono. */
+export interface ConsultaFila {
+  id: number;
+  created_at: string;
+  name: string;
+  company: string;
+  source: OrigenConsulta;
+  subject: string;
+  status: EstadoConsulta;
+}
+
+export interface ConsultaDetalle extends ConsultaFila {
+  updated_at: string;
+  email: string;
+  phone: string;
+  message: string;
+  historial: EventoHistorial[];
+}
+
+// --- Auditoría y Mi cuenta (etapa 4) -------------------------------------------------------
+
+export interface Evento {
+  id: number;
+  created_at: string;
+  persona: string;
+  accion: string;
+  entidad: string;
+  entidad_id: string;
+  detalle: Record<string, unknown>;
+  ip: string | null;
+}
+
+export interface SesionAbierta {
+  id: string;
+  dispositivo: string;
+  ingreso_en: string | null;
+  ultimo_uso_en: string | null;
+  actual: boolean;
+}
+
+// --- Inscripciones (etapa 5) ---------------------------------------------------------------
+
+export type Modalidad = "ASYNC" | "LIVE" | "WEBINAR" | "WORKSHOP";
+export type EstadoFecha = "SCHEDULED" | "CANCELLED" | "FINISHED";
+
+export interface FechaInscripciones {
+  id: number;
+  curso: string;
+  codigo: string;
+  modalidad: Modalidad;
+  starts_at: string;
+  ends_at: string;
+  capacity: number | null;
+  seats_taken: number;
+  status: EstadoFecha;
+  inscriptos: number;
+}
+
+export interface Inscripto {
+  id: number;
+  name: string;
+  email: string;
+  created_at: string;
+}
+
+// --- Cursos (etapa 6) ----------------------------------------------------------------------
+
+export interface CursoFila {
+  id: number;
+  code: string;
+  title: string;
+  modality: Modalidad;
+  /** Plata: texto con dos decimales («48000.00»). */
+  price: string;
+  currency: string;
+  is_published: boolean;
+  proxima_fecha: string | null;
+}
+
+export interface CursoDatos {
+  code: string;
+  title: string;
+  slug: string;
+  summary: string;
+  lead: string;
+  description: string;
+  objectives: string;
+  syllabus: string[];
+  category: number;
+  modality: Modalidad;
+  price: string;
+  price_usd: string | null;
+  currency: string;
+  level: string;
+  duration_hours: number | null;
+  instructor_names: string;
+  instructor_role: string;
+  pdf_url: string;
+  code_suffix: string;
+  position: number;
+  is_published: boolean;
+  is_featured: boolean;
+  badge: "" | "NUEVO" | "PROXIMO";
+}
+
+export interface Fecha {
+  id: number;
+  starts_at: string;
+  ends_at: string;
+  timezone: string;
+  capacity: number | null;
+  seats_taken: number;
+  status: EstadoFecha;
+  inscriptos: number;
+  compras: number;
+}
+
+export interface CursoDetalle extends CursoDatos {
+  id: number;
+  category_nombre: string;
+  created_at: string;
+  updated_at: string;
+  fechas: Fecha[];
+  historial: EventoHistorial[];
+}
+
+export interface Categoria {
+  id: number;
+  name: string;
+}
+
+// --- Órdenes (etapa 7) ---------------------------------------------------------------------
+
+export type EstadoOrden = "PENDING" | "PAID" | "FAILED" | "CANCELLED" | "FULFILLED";
+
+export interface OrdenFila {
+  public_id: string;
+  created_at: string;
+  buyer_name: string;
+  cursos: string[];
+  total: string;
+  currency: string;
+  status: EstadoOrden;
+}
+
+export interface Totales {
+  cantidad: number;
+  por_moneda: { moneda: string; cantidad: number; suma: string }[];
+}
+
+export interface OrdenDetalle {
+  public_id: string;
+  status: EstadoOrden;
+  created_at: string;
+  paid_at: string | null;
+  fulfilled_at: string | null;
+  buyer_name: string;
+  buyer_email: string;
+  buyer_phone: string;
+  buyer_company: string;
+  dni_enmascarado: string;
+  items: {
+    title_snapshot: string;
+    fecha: string | null;
+    quantity: number;
+    unit_price: string;
+    total: string;
+    participantes: number;
+  }[];
+  subtotal: string;
+  discount_total: string;
+  discount_label: string;
+  total: string;
+  currency: string;
+  payment_method: "MERCADOPAGO" | "PAYPAL";
+  mp_payment_id: string;
+  mp_status: string;
+  admin_notes: string;
+  historial: EventoHistorial[];
+}

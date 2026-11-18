@@ -33,6 +33,8 @@ Todo lo marcado `{{CONFIRMAR}}` en estos documentos está acá, con quién lo de
 | 29 | Con qué se dibuja el QR del primer ingreso | **Decidido 2026-11-18:** `segno` en el backend; `GET primer-ingreso/` devuelve `qr` (SVG en una dirección `data:`) | Justo | — |
 | 30 | El puente reenvía el `Origin` del navegador y Django lo compara en cada escritura | En desarrollo `CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]`. En producción, `CSRF_TRUSTED_ORIGINS` (variable de Railway) tiene que incluir la dirección del sitio en Vercel | Mateo | Etapa 8 |
 | 31 | Detrás del puente, Django ve la IP de Vercel, no la del navegador: el límite por IP cuenta a todos juntos | Se resuelve junto con #8 (encabezado confiable) | Quien construye el panel, con Mateo | Etapa 8 |
+| 32 | Una fecha o un curso que se cambia en el panel tarda hasta 5 minutos en verse en el sitio (`lib/api.ts` cachea el catálogo con `revalidate: 300`) | Que el sitio refresque el catálogo cuando el panel guarda (por ejemplo `revalidateTag` desde una ruta que llama el backend), o aceptar los 5 minutos y avisarle a Laura | Mateo (`lib/api.ts`) | Etapa 8 |
+| 33 | Exportar consultas (la matriz de 07 lo permite) | No está en 05-PANTALLAS: no se hizo. Solo se exportan inscripciones | Mateo y Laura | — |
 | 28 | Límite por IP: `django-ratelimit` cuenta en el caché, y no hay `CACHES` (memoria por proceso; 2 workers de gunicorn) | Un caché compartido (`DatabaseCache` en Postgres) antes de producción | Mateo (settings compartidos) | Etapa 8 |
 | 22 | Acceso del compañero a los dos repositorios privados | Invitación de Mateo en GitHub | Mateo | Todo |
 

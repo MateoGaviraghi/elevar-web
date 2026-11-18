@@ -36,7 +36,8 @@ export default defineConfig({
       timeout: 120_000,
     },
     {
-      command: `PANEL_API_URL=http://localhost:${PUERTO_BACKEND} pnpm dev --port ${PUERTO_WEB}`,
+      // La caché de pedidos de Next (catálogo, 5 min) se borra: cada corrida arranca sin datos viejos.
+      command: `rm -rf .next/cache/fetch-cache && PANEL_API_URL=http://localhost:${PUERTO_BACKEND} NEXT_PUBLIC_API_URL=http://localhost:${PUERTO_BACKEND} pnpm dev --port ${PUERTO_WEB}`,
       url: `http://localhost:${PUERTO_WEB}/admin/ingresar`,
       reuseExistingServer: false,
       timeout: 180_000,

@@ -24,8 +24,21 @@ interface GrupoMenu {
   items: ItemMenu[];
 }
 
-// Cada etapa suma acá su pantalla cuando existe (06-DISENO, «Menú»).
-const MENU: GrupoMenu[] = [{ titulo: "Atender", items: [{ href: "/admin", texto: "Inicio" }] }];
+// Agrupado por tarea (06-DISENO, «Menú»). El control de acceso lo hace la API, no el menú.
+const MENU: GrupoMenu[] = [
+  {
+    titulo: "Atender",
+    items: [
+      { href: "/admin", texto: "Inicio" },
+      { href: "/admin/consultas", texto: "Consultas" },
+      { href: "/admin/ordenes", texto: "Órdenes" },
+      { href: "/admin/inscripciones", texto: "Inscripciones" },
+    ],
+  },
+  { titulo: "Catálogo", items: [{ href: "/admin/cursos", texto: "Cursos" }] },
+  { titulo: "Administración", items: [{ href: "/admin/auditoria", texto: "Auditoría" }] },
+  { titulo: "Mi cuenta", items: [{ href: "/admin/cuenta", texto: "Mi cuenta" }] },
+];
 
 const UsuarioContexto = createContext<Yo | null>(null);
 
@@ -162,7 +175,7 @@ export function PanelShell({ children }: PanelShellProps) {
             className={`${menuAbierto ? "block" : "hidden"} border-b border-neutral-200 bg-neutral-0 lg:sticky lg:top-14 lg:block lg:h-[calc(100vh-3.5rem)] lg:w-60 lg:shrink-0 lg:border-b-0 lg:border-r`}
           >
             {MENU.map((grupo) => (
-              <div key={grupo.titulo} className="py-4">
+              <div key={grupo.titulo} className="py-3">
                 <p className="px-4 text-xs font-semibold uppercase tracking-wider text-neutral-500">{grupo.titulo}</p>
                 <ul className="mt-2">
                   {grupo.items.map((item) => {

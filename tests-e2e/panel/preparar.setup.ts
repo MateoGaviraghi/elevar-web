@@ -4,11 +4,12 @@
  * recibe los 10 códigos de respaldo.
  */
 import { expect, test as preparar } from "@playwright/test";
-import { codigoNuevo, crearUsuaria, guardar } from "./ayudas";
+import { cargarDatosDePrueba, codigoNuevo, crearUsuaria, guardar } from "./ayudas";
 
 preparar.setTimeout(120_000);
 
 preparar("primer ingreso completo de la usuaria de prueba", async ({ page }) => {
+  cargarDatosDePrueba();
   const correo = `laura.e2e.${Date.now()}@ejemplo.com`;
   const nombre = "Laura de Prueba";
   const temporal = crearUsuaria(correo, nombre);
@@ -16,7 +17,11 @@ preparar("primer ingreso completo de la usuaria de prueba", async ({ page }) => 
 
   // next dev compila cada pantalla la primera vez que se abre y recarga la pestaña: se abren
   // antes para que el recorrido no se corte a la mitad.
-  for (const ruta of ["/admin", "/admin/primer-ingreso", "/admin/ingresar/codigo", "/admin/ingresar"]) {
+  for (const ruta of [
+    "/admin", "/admin/primer-ingreso", "/admin/ingresar/codigo", "/admin/consultas", "/admin/consultas/1",
+    "/admin/ordenes", "/admin/ordenes/00000000-0000-0000-0000-000000000000", "/admin/inscripciones",
+    "/admin/cursos", "/admin/cursos/1", "/admin/auditoria", "/admin/cuenta", "/admin/ingresar",
+  ]) {
     await page.goto(ruta);
     await page.waitForLoadState("networkidle");
   }

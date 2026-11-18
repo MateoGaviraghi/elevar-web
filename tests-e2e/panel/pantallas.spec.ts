@@ -1,7 +1,7 @@
 /** Las pantallas de la etapa 2 a 360, 375, 412, 1440 y 1920 px (08-CODIGO): nada se sale de la
  * pantalla y no hay errores en la consola. Deja capturas en test-results/ para mirarlas. */
 import { expect, test, type Page } from "@playwright/test";
-import { codigoNuevo, leer } from "./ayudas";
+import { codigoNuevo, datosDePrueba, ingresar, leer } from "./ayudas";
 
 const ANCHOS = [360, 375, 412, 1440, 1920];
 
@@ -48,8 +48,35 @@ test("inicio del panel en los cinco anchos", async ({ page }) => {
   for (const ancho of ANCHOS) {
     await page.setViewportSize({ width: ancho, height: 800 });
     await page.goto("/admin");
-    await expect(page.getByText("Todo al día.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: /^Hola,/ })).toBeVisible();
+    await expect(page.getByText("Consultas nuevas sin contestar")).toBeVisible();
     await revisar(page, "inicio", ancho);
+  }
+  expect(errores).toEqual([]);
+});
+
+test("las pantallas de datos a 360 y 1440 px", async ({ page }) => {
+  const errores = juntarErrores(page);
+  const d = datosDePrueba();
+  await ingresar(page);
+  const rutas: [string, string][] = [
+    ["consultas", "/admin/consultas?estado=TODAS"],
+    ["ordenes", "/admin/ordenes?estado=TODAS"],
+    ["orden", `/admin/ordenes/${d.orden}`],
+    ["inscripciones", "/admin/inscripciones"],
+    ["cursos", "/admin/cursos"],
+    ["curso", `/admin/cursos/${d.curso_id}`],
+    ["auditoria", "/admin/auditoria"],
+    ["cuenta", "/admin/cuenta"],
+  ];
+  for (const ancho of [360, 1440]) {
+    await page.setViewportSize({ width: ancho, height: 900 });
+    for (const [nombre, ruta] of rutas) {
+      await page.goto(ruta);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
+      await revisar(page, nombre, ancho);
+    }
   }
   expect(errores).toEqual([]);
 });

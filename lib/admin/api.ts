@@ -6,7 +6,25 @@
  * Nada se guarda en el almacenamiento del navegador: la sesión es una cookie HttpOnly.
  */
 import type {
+  Categoria,
+  ConsultaDetalle,
+  ConsultaFila,
+  CursoDatos,
+  CursoDetalle,
+  CursoFila,
   ErrorApi,
+  EstadoConsulta,
+  Evento,
+  Fecha,
+  FechaInscripciones,
+  Inicio,
+  Inscripto,
+  OrdenDetalle,
+  OrdenFila,
+  Pagina,
+  PaginaCursor,
+  SesionAbierta,
+  Totales,
   IngresoRespuesta,
   PrimerIngresoDatos,
   PrimerIngresoRespuesta,
@@ -122,6 +140,66 @@ export function salir() {
 
 export function yo() {
   return pedir<Yo>("yo");
+}
+
+// --- Datos del panel (etapas 3 a 7) ----------------------------------------------------------
+
+/** Arma ?a=1&b=2 sin los valores vacíos. Nunca correo, teléfono ni DNI en la dirección (07 §7). */
+function consulta(params: Record<string, string | number | undefined | null>): string {
+  const q = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== null && v !== "") q.set(k, String(v));
+  const texto = q.toString();
+  return texto ? `?${texto}` : "";
+}
+
+type Params = Record<string, string | number | undefined | null>;
+
+export const panel = {
+  inicio: () => pedir<Inicio>("inicio"),
+
+  consultas: (p: Params) => pedir<Pagina<ConsultaFila>>(`consultas${consulta(p)}`),
+  consulta: (id: string) => pedir<ConsultaDetalle>(`consultas/${encodeURIComponent(id)}`),
+  cambiarEstadoConsulta: (id: number, estado: EstadoConsulta) =>
+    escribir<ConsultaDetalle>(`consultas/${id}/estado`, "POST", { estado }),
+
+  auditoria: (p: Params, cursor?: string | null) =>
+    pedir<PaginaCursor<Evento>>(`auditoria${consulta({ ...p, cursor: cursor ?? undefined })}`),
+  cambiarClave: (actual: string, nueva: string, cerrar_otras: boolean) =>
+    escribir<{ otras_sesiones_cerradas: number }>("cuenta/clave", "POST", { actual, nueva, cerrar_otras }),
+  codigosNuevos: () => escribir<{ codigos_respaldo: string[] }>("cuenta/codigos-respaldo", "POST"),
+  sesiones: () => pedir<SesionAbierta[]>("cuenta/sesiones"),
+  cerrarOtrasSesiones: () => escribir<{ cerradas: number }>("cuenta/sesiones/cerrar-otras", "POST"),
+
+  fechasConInscripciones: () => pedir<FechaInscripciones[]>("inscripciones/fechas"),
+  inscriptos: (sesion: number, p: Params) =>
+    pedir<Pagina<Inscripto> & { fecha: FechaInscripciones }>(`inscripciones${consulta({ ...p, sesion })}`),
+  /** La exportación es un archivo: se descarga con un link al puente (GET, con la cookie). */
+  urlExportarInscriptos: (sesion: number) => `${BASE}inscripciones/exportar${consulta({ sesion })}`,
+
+  categorias: () => pedir<Categoria[]>("categorias"),
+  cursos: (p: Params) => pedir<Pagina<CursoFila>>(`cursos${consulta(p)}`),
+  curso: (id: string) => pedir<CursoDetalle>(`cursos/${encodeURIComponent(id)}`),
+  crearCurso: (datos: Partial<CursoDatos>) => escribir<CursoDetalle>("cursos", "POST", datos),
+  editarCurso: (id: number, datos: Partial<CursoDatos>) => escribir<CursoDetalle>(`cursos/${id}`, "PATCH", datos),
+  agregarFecha: (cursoId: number, datos: Partial<Fecha>) => escribir<Fecha>(`cursos/${cursoId}/fechas`, "POST", datos),
+  editarFecha: (id: number, datos: Partial<Fecha>) => escribir<Fecha>(`fechas/${id}`, "PATCH", datos),
+  cancelarFecha: (id: number) => escribir<Fecha>(`fechas/${id}/cancelar`, "POST"),
+
+  ordenes: (p: Params) => pedir<Pagina<OrdenFila> & { totales: Totales }>(`ordenes${consulta(p)}`),
+  orden: (publicId: string) => pedir<OrdenDetalle>(`ordenes/${encodeURIComponent(publicId)}`),
+  verDni: (publicId: string) => escribir<{ dni: string }>(`ordenes/${publicId}/dni`, "POST"),
+  marcarCumplida: (publicId: string) => escribir<OrdenDetalle>(`ordenes/${publicId}/cumplida`, "POST"),
+  guardarNota: (publicId: string, nota: string) => escribir<OrdenDetalle>(`ordenes/${publicId}/nota`, "POST", { nota }),
+};
+
+/** El cursor de la auditoría viene como URL completa del backend: se usa solo el parámetro. */
+export function cursorDe(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    return new URL(url).searchParams.get("cursor");
+  } catch {
+    return null;
+  }
 }
 
 // --- Ayudas para las pantallas -------------------------------------------------------------

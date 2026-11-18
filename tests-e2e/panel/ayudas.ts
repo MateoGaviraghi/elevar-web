@@ -81,3 +81,49 @@ export function guardar(datos: UsuariaDePrueba) {
 export function leer(): UsuariaDePrueba {
   return JSON.parse(fs.readFileSync(DATOS, "utf8")) as UsuariaDePrueba;
 }
+
+export interface DatosDePrueba {
+  consulta: string;
+  webinar: string;
+  inscriptos: number;
+  curso_id: number;
+  curso_slug: string;
+  orden: string;
+}
+
+const DATOS_PRUEBA = path.resolve(__dirname, "../../playwright/.auth/datos.json");
+
+/** Carga el catálogo y datos inventados en la base elevar_e2e (una tanda nueva por corrida). */
+export function cargarDatosDePrueba(): DatosDePrueba {
+  const python = path.join(BACKEND_DIR, ".venv/bin/python");
+  const env = { ...process.env, DB_PORT: process.env.DB_PORT ?? "5434", DB_NAME: "elevar_e2e", RUN_ID: String(Date.now()) };
+  execFileSync(python, ["manage.py", "importar_cursos"], { cwd: BACKEND_DIR, env, encoding: "utf8" });
+  const salida = execFileSync(python, ["manage.py", "shell"], {
+    cwd: BACKEND_DIR,
+    env,
+    encoding: "utf8",
+    input: fs.readFileSync(path.resolve(__dirname, "datos_prueba.py"), "utf8"),
+  });
+  const linea = salida.split("\n").find((l) => l.startsWith("DATOS "));
+  if (!linea) throw new Error("No se cargaron los datos de prueba");
+  const datos = JSON.parse(linea.slice(6)) as DatosDePrueba;
+  fs.writeFileSync(DATOS_PRUEBA, JSON.stringify(datos));
+  return datos;
+}
+
+export function datosDePrueba(): DatosDePrueba {
+  return JSON.parse(fs.readFileSync(DATOS_PRUEBA, "utf8")) as DatosDePrueba;
+}
+
+/** Ingresa con la usuaria de prueba (contraseña + código de la app). */
+export async function ingresar(page: import("@playwright/test").Page) {
+  const u = leer();
+  await page.goto("/admin/ingresar");
+  await page.getByLabel("Correo").fill(u.correo);
+  await page.getByLabel("Contraseña").fill(u.clave);
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await page.waitForURL(/\/admin\/ingresar\/codigo/);
+  await page.getByLabel("Código").fill(await codigoNuevo(u.secreto));
+  await page.getByRole("button", { name: "Ingresar" }).click();
+  await page.waitForURL(/\/admin(\?|$)/);
+}

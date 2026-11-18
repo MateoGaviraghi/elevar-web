@@ -140,4 +140,6 @@ leads.Lead (sola)
 | `orders.PaymentEvent`, `catalog.WebinarRegistration` | Solo leer | `admin` |
 | `panel.EventoAuditoria` | Solo leer | `admin` |
 
+Rutas del panel en `/api/v1/panel/` (etapas 3 a 7): `inicio/`, `consultas/`, `consultas/<id>/`, `consultas/<id>/estado/`, `auditoria/` (cursor), `cuenta/clave/`, `cuenta/codigos-respaldo/`, `cuenta/sesiones/`, `cuenta/sesiones/cerrar-otras/`, `inscripciones/fechas/`, `inscripciones/?sesion=`, `inscripciones/exportar/?sesion=`, `categorias/`, `cursos/` (GET y POST), `cursos/<id>/` (GET y PATCH), `cursos/<id>/fechas/`, `fechas/<id>/` (PATCH), `fechas/<id>/cancelar/`, `ordenes/`, `ordenes/<public_id>/`, `ordenes/<public_id>/dni/`, `ordenes/<public_id>/cumplida/`, `ordenes/<public_id>/nota/`. Ninguna borra: una fecha se cancela.
+
 Nada se borra desde el panel en la primera versión, salvo lo que diga `10-PENDIENTES.md`.

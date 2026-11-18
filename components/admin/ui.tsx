@@ -455,6 +455,7 @@ export function ConfirmDialog({
   title,
   description,
   confirmLabel = "Eliminar",
+  confirmTone = "danger",
   onConfirm,
   onCancel,
 }: {
@@ -462,6 +463,7 @@ export function ConfirmDialog({
   title: string;
   description?: string;
   confirmLabel?: string;
+  confirmTone?: Tone;
   onConfirm: () => void;
   onCancel: () => void;
 }) {
@@ -491,9 +493,10 @@ export function ConfirmDialog({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 16 }}
             transition={{ duration: 0.18 }}
-            className="relative w-full max-w-sm border border-neutral-200 bg-neutral-0 p-6 shadow-lg"
+            aria-labelledby="dialogo-titulo"
+            className="relative w-full max-w-sm rounded-lg border border-neutral-200 bg-neutral-0 p-6 shadow-lg"
           >
-            <h2 className="font-display text-base font-semibold tracking-tight text-ink-900">
+            <h2 id="dialogo-titulo" className="font-display text-base font-semibold tracking-tight text-ink-900">
               {title}
             </h2>
             {description && (
@@ -503,7 +506,7 @@ export function ConfirmDialog({
               <AdminButton tone="secondary" onClick={onCancel}>
                 Cancelar
               </AdminButton>
-              <AdminButton tone="danger" onClick={onConfirm}>
+              <AdminButton tone={confirmTone} onClick={onConfirm}>
                 {confirmLabel}
               </AdminButton>
             </div>
