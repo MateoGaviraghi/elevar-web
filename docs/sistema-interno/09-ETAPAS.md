@@ -80,7 +80,7 @@ Rama: `panel/etapa-2-ingreso`. Repos: `elevar-web` (y `elevar-backend` si el pue
 7. Agregar `@playwright/test` como dependencia de desarrollo y su configuración.
 
 **Prueba que demuestra que terminó**
-- Playwright (`tests-e2e/panel/ingreso.spec.ts`, contra el backend local con un usuario de prueba creado por el comando de la etapa 1):
+- Playwright (`tests-e2e/panel/ingreso.spec.ts`, contra el backend local con un usuario de prueba creado por el comando de la etapa 1; `pnpm e2e` levanta el backend sobre una base aparte, `elevar_e2e`, y `next dev` con `PANEL_API_URL`):
   - Ingresar con contraseña y código lleva a `/admin` y muestra el nombre.
   - Contraseña mala muestra «Correo o contraseña incorrectos.» y no entra.
   - Abrir `/admin` sin sesión lleva a `/admin/ingresar`.

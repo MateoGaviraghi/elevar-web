@@ -102,14 +102,17 @@ Reglas:
 
 ```
 app/admin/
-├── layout.tsx                 # barra superior + menú; pide /api/panel/yo para saber quién es
-├── ingresar/page.tsx
-├── ingresar/codigo/page.tsx
-├── primer-ingreso/page.tsx
-├── page.tsx                   # inicio
-├── consultas/page.tsx
-├── consultas/[id]/page.tsx
-└── …                          # una carpeta por pantalla de 05-PANTALLAS.md
+├── layout.tsx                 # sin caché, sin indexar
+├── (ingreso)/                 # sin la barra ni el menú
+│   ├── ingresar/page.tsx
+│   ├── ingresar/codigo/page.tsx
+│   └── primer-ingreso/page.tsx
+└── (panel)/
+    ├── layout.tsx             # barra superior + menú; pide /api/panel/yo para saber quién es
+    ├── page.tsx               # inicio
+    ├── consultas/page.tsx
+    ├── consultas/[id]/page.tsx
+    └── …                      # una carpeta por pantalla de 05-PANTALLAS.md
 app/api/panel/[...ruta]/route.ts   # puente hacia Django (decisión 1, 2026-11-17)
 components/admin/              # piezas del panel (tabla, filtros, diálogos, estados)
 lib/admin/

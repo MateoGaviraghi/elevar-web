@@ -65,9 +65,10 @@ Ninguna está instalada. Se agregan **en la etapa que las usa**, con la versión
 |---|---|---|
 | `django-otp` **1.7.5** | Segundo factor con código de una app autenticadora (TOTP). Solo `otp_totp`: los códigos de respaldo van en `panel.CodigoRespaldo` (con hash) | 1 |
 | `argon2-cffi` **25.1.0** | Guardar contraseñas con Argon2id | 1 |
-| `@playwright/test` (frontend, solo desarrollo) | Pruebas de punta a punta del panel | 2 |
+| `@playwright/test` **1.65.1** (frontend, solo desarrollo) | Pruebas de punta a punta del panel (`pnpm e2e`) | 2 |
+| `segno` **1.6.6** (backend) | Dibuja el QR del primer ingreso como SVG. Sin dependencias propias (decidido 2026-11-18) | 2 |
 
-Versiones del backend instaladas el 2026-11-18, revisadas con `pip-audit` y OSV (incluye los avisos de GitHub): sin alertas. `@playwright/test`: {{CONFIRMAR}} al instalar en la etapa 2. Cualquier otra dependencia: se pregunta antes.
+Versiones del backend instaladas el 2026-11-18, revisadas con `pip-audit` y OSV (incluye los avisos de GitHub): sin alertas. `@playwright/test` 1.65.1 y `segno` 1.6.6, el mismo día, también sin alertas. Cualquier otra dependencia: se pregunta antes.
 
 ## Versiones bajo el piso de seguridad
 

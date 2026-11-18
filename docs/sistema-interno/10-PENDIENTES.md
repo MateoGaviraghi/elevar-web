@@ -23,13 +23,16 @@ Todo lo marcado `{{CONFIRMAR}}` en estos documentos está acá, con quién lo de
 | 17 | Quién publica el backend en Railway (hoy solo Mateo, desde su máquina) | Mateo publica; el panel le avisa cuando un PR del backend queda unido | Mateo | Cada publicación |
 | 18 | Versión de Node que usa Vercel; versión y región de Postgres en Railway | Leerlas de los paneles de Vercel y Railway y anotarlas en `02-TECNOLOGIAS.md` | Mateo | — |
 | 19 | Columnas que faltan en `catalog.Course` (objetivos, temario, rol del disertante, precio en dólares, gratuito, PDF) y en `orders.Order` (`buyer_dni`, `buyer_company`): nombres y tipos | Las define Mateo al pasar cursos y órdenes a la base | Mateo | Etapas 6 y 7 |
-| 20 | Versiones exactas de `django-otp`, `argon2-cffi` y `@playwright/test` | **Backend decidido 2026-11-18:** `django-otp` 1.7.5 y `argon2-cffi` 25.1.0, sin alertas. Falta `@playwright/test` | Quien construye el panel | Etapa 2 |
+| 20 | Versiones exactas de `django-otp`, `argon2-cffi` y `@playwright/test` | **Backend decidido 2026-11-18:** `django-otp` 1.7.5 y `argon2-cffi` 25.1.0, sin alertas. `@playwright/test` 1.65.1, sin alertas | Quien construye el panel | — |
 | 21 | Parámetros de Argon2 que usa Django por defecto (memoria, vueltas, hilos) | **Verificado 2026-11-18:** 100 MiB, 2, 8; cumple el piso (19 MiB, 2, 1) | Quien construye el panel | — |
 | 23 | Sesión en producción: 8 h (`production.py`) o 12 h (07) | **Decidido 2026-11-18:** 12 h | Justo | — |
 | 24 | Token CSRF con la cookie `HttpOnly` de producción | **Decidido 2026-11-18:** `GET csrf/` lo devuelve en el cuerpo | Justo | — |
 | 25 | Correo único entre usuarios del panel | **Decidido 2026-11-18:** columna `Perfil.email` con restricción sobre `lower(email)` | Justo | — |
 | 26 | Contraseña temporal (vence a las 72 h, se cambia en el primer ingreso) | **Decidido 2026-11-18:** entra en la etapa 1 | Justo | — |
 | 27 | Códigos de respaldo: `otp_static` (en claro) o tabla propia con hash | **Decidido 2026-11-18:** `panel.CodigoRespaldo` con SHA-256 | Justo | — |
+| 29 | Con qué se dibuja el QR del primer ingreso | **Decidido 2026-11-18:** `segno` en el backend; `GET primer-ingreso/` devuelve `qr` (SVG en una dirección `data:`) | Justo | — |
+| 30 | El puente reenvía el `Origin` del navegador y Django lo compara en cada escritura | En desarrollo `CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]`. En producción, `CSRF_TRUSTED_ORIGINS` (variable de Railway) tiene que incluir la dirección del sitio en Vercel | Mateo | Etapa 8 |
+| 31 | Detrás del puente, Django ve la IP de Vercel, no la del navegador: el límite por IP cuenta a todos juntos | Se resuelve junto con #8 (encabezado confiable) | Quien construye el panel, con Mateo | Etapa 8 |
 | 28 | Límite por IP: `django-ratelimit` cuenta en el caché, y no hay `CACHES` (memoria por proceso; 2 workers de gunicorn) | Un caché compartido (`DatabaseCache` en Postgres) antes de producción | Mateo (settings compartidos) | Etapa 8 |
 | 22 | Acceso del compañero a los dos repositorios privados | Invitación de Mateo en GitHub | Mateo | Todo |
 
