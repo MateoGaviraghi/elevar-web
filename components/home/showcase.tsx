@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/anim/reveal";
-import { VideoSlot } from "@/components/media/video-slot";
+import { HojasApiladas } from "@/components/media/hojas-apiladas";
 import { pegarTodo, pegar } from "@/lib/texto";
 
 const STATS = pegarTodo([
@@ -9,10 +9,10 @@ const STATS = pegarTodo([
   { value: "ISO/IEC", label: "17025" },
 ]);
 
-/** Banda de presentación con espacio para video (mockup) — refuerza lo visual del home. */
+/** Banda de presentación: cifras a la izquierda y, a la derecha, las hojas que recibe el alumno (KAN-39). */
 export function ShowcaseSection() {
   return (
-    // overflow-x-clip: el video entra desde la derecha (Reveal "right", +24 px) y,
+    // overflow-x-clip: lo que entra desde los costados (Reveal, +24 px) y,
     // antes de revelarse, ensanchaba la página en el celular (scroll de costado).
     <section className="overflow-x-clip bg-ink-900 py-14 text-neutral-0 sm:py-20 md:py-28">
       <Container>
@@ -43,13 +43,9 @@ export function ShowcaseSection() {
             </dl>
           </Reveal>
 
-          <Reveal as="div" variant="right">
-            <VideoSlot
-              poster="/assets/mockup/m7.jpg"
-              label="Presentación · próximamente"
-              aspect="4/3"
-            />
-          </Reveal>
+          <div>
+            <HojasApiladas />
+          </div>
         </div>
       </Container>
     </section>

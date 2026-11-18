@@ -3,7 +3,7 @@
 /* Portada de Formación (/formacion).
  * Elegida por Mateo el 2026-10-20 ("tu elección" → referencia 1, Hyper Island) con
  * "1 sacar 2 dejar GO-AHEAD" (sin la franja de promoción; "Cómo enseñamos" se queda con
- * su espacio de video). Recorrido: encabezado tinta con el título gigante en mayúsculas →
+ * su espacio de video; desde el 2026-11-18 muestra las hojas que recibe el alumno, KAN-39). Recorrido: encabezado tinta con el título gigante en mayúsculas →
  * "Elegí cómo capacitarte" (blanco: una banda por modalidad que se llena de tinta al pasar
  * el mouse) → "Próximos en vivo y webinars" (tinta: el próximo en grande y los siguientes
  * en filas) → "Cómo enseñamos" (blanco) → cierre naranja.
@@ -19,7 +19,7 @@ import { formatARS } from "@/lib/formatters";
 import { gsap } from "@/lib/gsap";
 import { Container } from "@/components/ui/container";
 import { Pictogram } from "@/components/ui/pictogram";
-import { VideoSlot } from "@/components/media/video-slot";
+import { HojasApiladas } from "@/components/media/hojas-apiladas";
 import { scrollPageTo } from "@/components/anim/smooth-scroll";
 import { BTN, isFree, priceARS, sessionInfo, useMotion } from "@/components/curso/ficha-parts";
 import { pegarTodo, pegar } from "@/lib/texto";
@@ -308,13 +308,12 @@ function Upcoming({ courses }: { courses: Course[] }) {
 const TEACH = ["Disertantes con experiencia real", "Material descargable", "Certificado de participación"];
 
 function Teach() {
-  // Al llegar: el título sube, los puntos se dibujan y el video se abre como ventana.
+  // Al llegar: el título sube y los puntos se dibujan; las hojas tienen su propia entrada.
   const ref = useMotion<HTMLElement>((root) => {
     const st = { trigger: root, start: "top 70%", once: true };
     gsap.from(root.querySelectorAll(".pt-title"), { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.1, scrollTrigger: st });
     gsap.from(root.querySelectorAll(".pt-in"), { y: 18, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.08, delay: 0.25, scrollTrigger: st });
     gsap.from(root.querySelectorAll(".pt-rule"), { scaleX: 0, duration: 1.3, ease: "expo.out", stagger: 0.1, delay: 0.3, scrollTrigger: st });
-    gsap.from(root.querySelector(".pt-win"), { clipPath: "inset(18% 18% 18% 18%)", duration: 1.6, ease: "expo.inOut", delay: 0.2, scrollTrigger: st });
   });
   return (
     <section ref={ref} data-tone="light" className="bg-neutral-0 py-20 md:py-28">
@@ -322,11 +321,11 @@ function Teach() {
         <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div>
             <h2 className="font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-[2.5rem]">
-              <span className="block overflow-hidden"><span className="pt-title block">Aprendé viendo,</span></span>
-              <span className="block overflow-hidden"><span className="pt-title block">no solo leyendo</span></span>
+              <span className="block overflow-hidden"><span className="pt-title block">Antes de inscribirte,</span></span>
+              <span className="block overflow-hidden"><span className="pt-title block">mirá lo que recibís</span></span>
             </h2>
             <p className="pt-in mt-5 max-w-md text-lg leading-relaxed text-ink-700">
-              {pegar("Clases prácticas dictadas por profesionales que trabajan en laboratorios bajo ISO/IEC 17025.")}
+              {pegar("La ficha con el temario, el comprobante de tu inscripción y el certificado cuando terminás.")}
             </p>
             <ul className="mt-8">
               {TEACH.map((t) => (
@@ -338,8 +337,8 @@ function Teach() {
               ))}
             </ul>
           </div>
-          <div className="pt-win [clip-path:inset(0)]">
-            <VideoSlot poster="/assets/mockup/m6.jpg" label="Video de muestra · próximamente" />
+          <div>
+            <HojasApiladas />
           </div>
         </div>
       </Container>
