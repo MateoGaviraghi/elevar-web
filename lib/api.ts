@@ -329,6 +329,59 @@ export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult
     couponCode: payload.couponCode,
   });
 
+  // Tanda 4 (2026-11-17): con `NEXT_PUBLIC_API_URL` la orden se crea en el backend, que
+  // fija precios y descuento, guarda la orden y crea el cobro de Mercado Pago (Checkout Pro).
+  // Sin la variable (desarrollo sin backend) sigue el flujo local con el pago simulado.
+  if (API_URL) {
+    const data = await postCompra("/api/v1/checkout/", {
+      buyer: {
+        email: payload.buyer.email,
+        name: payload.buyer.name,
+        phone: payload.buyer.phone ?? "",
+        dni: payload.buyer.dni ?? "",
+        company: payload.buyer.company ?? "",
+      },
+      items: payload.items.map((i) => ({
+        course_id: i.courseId,
+        session_id: i.sessionId,
+        quantity: i.quantity,
+        attendees: normalizeAttendees(i.attendees, i.quantity) ?? [],
+      })),
+    });
+    // Copia en el navegador del comprador: guarda lo que la API pública no devuelve
+    // (DNI, empresa, participantes) para mostrarlo en el pase de su orden.
+    saveOrder({
+      public_id: data.order_public_id,
+      status: "PENDING",
+      buyer_email: payload.buyer.email,
+      buyer_name: payload.buyer.name,
+      buyer_phone: payload.buyer.phone,
+      buyer_company: payload.buyer.company,
+      buyer_dni: payload.buyer.dni,
+      subtotal: data.subtotal,
+      discount_total: data.discount_total,
+      discounts: pricing.discounts,
+      coupon_code: null,
+      total: data.total,
+      currency: "ARS",
+      payment_method: "MERCADOPAGO",
+      total_usd: null,
+      created_at: new Date().toISOString(),
+      paid_at: null,
+      items: orderItems,
+    });
+    return {
+      order_public_id: data.order_public_id,
+      init_point: data.init_point,
+      mp_preference_id: data.mp_preference_id,
+      subtotal: data.subtotal,
+      discount_total: data.discount_total,
+      total: data.total,
+      currency: "ARS",
+      payment_method: "MERCADOPAGO",
+    };
+  }
+
   const publicId = newId("ord").replace("ord-", "");
   const currency: Currency = payload.paymentMethod === "PAYPAL" ? "USD" : "ARS";
 
@@ -354,7 +407,7 @@ export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult
   };
   saveOrder(order);
 
-  // Todo comprador queda registrado como contacto (lo consulta el panel).
+  // Todo comprador queda registrado como contacto (lo consulta el panel de demostración).
   addLead({
     name: payload.buyer.name,
     email: payload.buyer.email,
@@ -365,33 +418,9 @@ export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult
     source: "COMPRA",
   });
 
-  // Mercado Pago: página oficial (Checkout Pro) si el servidor tiene MP_ACCESS_TOKEN;
-  // si no está configurado, la pantalla de prueba propia. PayPal sigue simulado.
-  let initPoint =
+  // Sin backend: pantallas de pago simulado propias.
+  const initPoint =
     payload.paymentMethod === "PAYPAL" ? `/pago-paypal/${publicId}` : `/pago-mp/${publicId}`;
-  if (payload.paymentMethod === "MERCADOPAGO") {
-    const mp = await fetch("/api/mercadopago/orden", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        publicId,
-        email: payload.buyer.email,
-        dni: payload.buyer.dni,
-        total: order.total,
-        items: orderItems.map((i) => ({
-          title: i.title_snapshot,
-          unit_price: i.unit_price,
-          quantity: i.quantity,
-        })),
-      }),
-    }).catch(() => null);
-    if (mp?.ok) {
-      const { checkout_url } = (await mp.json()) as { checkout_url: string };
-      initPoint = checkout_url;
-    } else if (mp && mp.status !== 503) {
-      throw new ApiError("No pudimos iniciar el pago con Mercado Pago. Probá de nuevo.", "MP_ERROR", 502);
-    }
-  }
 
   return {
     order_public_id: publicId,
@@ -405,6 +434,50 @@ export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult
   };
 }
 
+/** Respuesta del backend al crear la orden. */
+interface CompraCreada {
+  order_public_id: string;
+  init_point: string;
+  mp_preference_id: string;
+  subtotal: string;
+  discount_total: string;
+  total: string;
+}
+
+/** POST de compra al backend. Si falla, tira ApiError con un mensaje para mostrar. */
+async function postCompra(path: string, body: unknown): Promise<CompraCreada> {
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new ApiError("No pudimos conectar para iniciar el pago. Revisá tu conexión y probá de nuevo.", "NETWORK", 0);
+  }
+  if (res.ok) return (await res.json()) as CompraCreada;
+  const data = (await res.json().catch(() => null)) as
+    | { error?: { code?: string; message?: string; field_errors?: Record<string, string[]> } }
+    | null;
+  const err = data?.error;
+  if (res.status === 409) {
+    throw new ApiError("No quedan cupos suficientes para esa fecha. Revisá tu carrito.", "NO_SEATS", 409);
+  }
+  if (res.status === 429) {
+    throw new ApiError("Hiciste varios intentos seguidos. Probá de nuevo en unos minutos.", "RATE_LIMITED", 429);
+  }
+  if (res.status === 422 || res.status === 400) {
+    throw new ApiError(
+      err?.message ?? "Revisá los datos y el carrito.",
+      err?.code ?? "VALIDATION_ERROR",
+      res.status,
+      err?.field_errors ?? null
+    );
+  }
+  throw new ApiError("No pudimos iniciar el pago con Mercado Pago. Probá de nuevo en unos minutos.", "MP_ERROR", res.status);
+}
+
 function normalizeAttendees(
   attendees: Attendee[] | undefined,
   quantity: number
@@ -416,6 +489,7 @@ function normalizeAttendees(
     .map((a) => ({ name: a.name.trim(), email: a.email.trim() }));
 }
 
+/** Pago simulado (desarrollo sin backend, o backend local sin clave de Mercado Pago). */
 export async function simulatePayment(payload: {
   order_public_id: string;
   outcome: "approved" | "rejected" | "pending";
@@ -426,6 +500,15 @@ export async function simulatePayment(payload: {
     pending: "PENDING",
   } as const;
   const status = map[payload.outcome] as Order["status"];
+  if (API_URL && payload.outcome !== "pending") {
+    // Solo responde si el backend está en modo simulado (nunca en producción).
+    const res = await fetch(`${API_URL}/api/v1/checkout/simulate/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ order_public_id: payload.order_public_id, outcome: payload.outcome }),
+    }).catch(() => null);
+    if (!res?.ok) throw new ApiError("No pudimos simular el pago.", "SIMULATE_ERROR", res?.status ?? 0);
+  }
   setOrderStatus(
     payload.order_public_id,
     status,
@@ -439,28 +522,107 @@ export async function simulatePayment(payload: {
 }
 
 /**
- * Al volver de Mercado Pago con `payment_id`: consulta el pago en Mercado Pago (vía
- * /api/mercadopago/pago) y deja la orden con ese estado. Devuelve null si no se pudo.
+ * Al volver de Mercado Pago con `payment_id`: el backend consulta el pago en Mercado Pago,
+ * comprueba que sea de esta orden y del mismo monto, y la deja con ese estado.
+ * Devuelve el estado de la orden, o null si no se pudo confirmar.
  */
 export async function confirmMercadoPago(
   publicId: string,
   paymentId: string
 ): Promise<Order["status"] | null> {
-  const res = await fetch(`/api/mercadopago/pago/${encodeURIComponent(paymentId)}`).catch(() => null);
+  if (!API_URL) return null;
+  const res = await fetch(`${API_URL}/api/v1/orders/${encodeURIComponent(publicId)}/confirm/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ payment_id: paymentId }),
+  }).catch(() => null);
   if (!res?.ok) return null;
-  const pago = (await res.json()) as { status: string; external_reference: string | null; date_approved: string | null };
-  if (pago.external_reference !== publicId) return null;
-  const status: Order["status"] =
-    pago.status === "approved" ? "PAID" : pago.status === "rejected" || pago.status === "cancelled" ? "FAILED" : "PENDING";
-  setOrderStatus(publicId, status, status === "PAID" ? pago.date_approved ?? new Date().toISOString() : null);
-  return status;
+  const data = (await res.json()) as { status: Order["status"]; paid_at: string | null };
+  setOrderStatus(publicId, data.status, data.paid_at);
+  return data.status;
 }
 
-export async function getOrder(publicId: string): Promise<Order> {
-  const order = getStoredOrder(publicId);
-  if (!order) throw new ApiError("Orden no encontrada.", "NOT_FOUND", 404);
-  return order;
+/** Orden tal como la devuelve el backend (sin DNI, teléfono ni empresa a propósito). */
+interface OrdenDelServidor {
+  public_id: string;
+  status: Order["status"];
+  buyer_email: string;
+  buyer_name: string;
+  subtotal: string;
+  discount_total: string;
+  discount_label: string;
+  total: string;
+  currency: Currency;
+  payment_method: PaymentMethod;
+  created_at: string;
+  paid_at: string | null;
+  items: {
+    course_id: number;
+    code: string;
+    modality: Course["modality"];
+    session_id: number | null;
+    starts_at: string | null;
+    ends_at: string | null;
+    title_snapshot: string;
+    unit_price: string;
+    quantity: number;
+  }[];
 }
+
+/**
+ * La orden: el estado y los montos los dice el backend; la copia del navegador del
+ * comprador agrega lo que la API no devuelve (DNI, empresa, participantes, descuentos).
+ * Las órdenes anteriores a la tanda 4 existen solo en el navegador.
+ */
+export async function getOrder(publicId: string): Promise<Order> {
+  const local = getStoredOrder(publicId);
+  const esUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(publicId);
+  if (API_URL && esUuid) {
+    const res = await fetch(`${API_URL}/api/v1/orders/${publicId}/`, { cache: "no-store" }).catch(() => null);
+    if (res?.ok) {
+      const s = (await res.json()) as OrdenDelServidor;
+      const items: OrderItem[] = s.items.map((it, i) => ({
+        course_id: it.course_id,
+        title_snapshot: it.title_snapshot,
+        unit_price: it.unit_price,
+        quantity: it.quantity,
+        code: it.code,
+        modality: it.modality,
+        starts_at: it.starts_at,
+        ends_at: it.ends_at,
+        session_label: local?.items[i]?.session_label ?? null,
+        attendees: local?.items[i]?.attendees,
+      }));
+      const order: Order = {
+        ...(local ?? {}),
+        public_id: s.public_id,
+        status: s.status,
+        buyer_email: s.buyer_email,
+        buyer_name: s.buyer_name,
+        subtotal: s.subtotal,
+        discount_total: s.discount_total,
+        discounts:
+          local?.discounts ??
+          (Number(s.discount_total) > 0
+            ? [{ promoId: "servidor", code: "GRUPO", label: s.discount_label, amount: Number(s.discount_total) }]
+            : []),
+        total: s.total,
+        currency: s.currency,
+        payment_method: s.payment_method,
+        total_usd: null,
+        created_at: s.created_at,
+        paid_at: s.paid_at,
+        items,
+      };
+      if (local) saveOrder(order);
+      return order;
+    }
+    if (res && res.status !== 404) throw new ApiError("No pudimos cargar la orden.", "SERVER_ERROR", res.status);
+  }
+  if (!local) throw new ApiError("Orden no encontrada.", "NOT_FOUND", 404);
+  return local;
+}
+
 
 // ── Leads / webinars ──────────────────────────────────────────────────────────
 

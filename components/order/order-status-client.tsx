@@ -85,6 +85,26 @@ export function OrderStatusClient({ publicId }: { publicId: string }) {
     };
   }, [publicId]);
 
+  // Pago en curso: el aviso de Mercado Pago puede llegar unos segundos después de la vuelta.
+  // Se le vuelve a preguntar al servidor cada 5 segundos, hasta 2 minutos.
+  const pendiente = order?.status === "PENDING";
+  useEffect(() => {
+    if (!pendiente) return;
+    let vueltas = 0;
+    const id = window.setInterval(() => {
+      vueltas += 1;
+      getOrder(publicId)
+        .then(async (o) => {
+          if (o.status === "PENDING") return;
+          if (o.status === "PAID") clearCart();
+          setOrder({ ...o, items: await Promise.all(o.items.map(completar)) });
+        })
+        .catch(() => undefined);
+      if (vueltas >= 24) window.clearInterval(id);
+    }, 5000);
+    return () => window.clearInterval(id);
+  }, [pendiente, publicId]);
+
   if (state === "loading") {
     return (
       <Fondo>

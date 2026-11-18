@@ -24,7 +24,9 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  * PayPal (USD) queda contemplado en el alcance pero su implementación efectiva
  * la confirma Elevar durante el proyecto: con esta bandera se muestra u oculta.
  */
-export const PAYPAL_ENABLED = process.env.NEXT_PUBLIC_PAYPAL_ENABLED !== "false";
+// Oculto hasta que ELEVAR tenga la cuenta real de PayPal (Mateo, 2026-11-17: «Sí, ocultalo»).
+// Se muestra solo con NEXT_PUBLIC_PAYPAL_ENABLED=true.
+export const PAYPAL_ENABLED = process.env.NEXT_PUBLIC_PAYPAL_ENABLED === "true";
 
 export function lineKey(courseId: number, sessionId: number | null) {
   return `${courseId}:${sessionId ?? "x"}`;
