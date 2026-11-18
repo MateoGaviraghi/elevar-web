@@ -7,6 +7,12 @@
  * - Solo pasan la cookie de sesión del panel y la del token CSRF; el resto de las cookies del
  *   sitio no salen hacia el backend.
  * - Devuelve la respuesta tal cual, incluidas sus Set-Cookie.
+ * - Le pasa a Django la IP real de la persona (la que pone Vercel en x-real-ip) junto con la
+ *   clave compartida PANEL_PUENTE_CLAVE (variable del servidor, sensible). Django solo cree esa IP
+ *   si la clave coincide (backend panel/auditoria.py, decidido 2026-11-18): sin ella, todos
+ *   llegaban con la IP del proxy de Railway y el límite de intentos era uno solo para todos.
+ *   Los encabezados del pedido no pasan salvo la lista de abajo, así que nadie puede mandar los
+ *   suyos desde el navegador.
  */
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -21,6 +27,14 @@ const ESPERA_MS = 15_000;
 
 function errorPuente(status: number, code: string, message: string) {
   return NextResponse.json({ error: { code, message } }, { status, headers: { "Cache-Control": "no-store" } });
+}
+
+/** La IP de la persona según Vercel: x-real-ip, o el primer valor de x-forwarded-for (Vercel
+ * los pisa con lo que ve; no son los que manda el navegador). En local no vienen: queda vacía. */
+function ipDeLaPersona(request: NextRequest): string {
+  const real = request.headers.get("x-real-ip")?.trim();
+  if (real) return real;
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "";
 }
 
 function cookiesFiltradas(encabezado: string | null): string {
@@ -49,6 +63,12 @@ async function reenviar(request: NextRequest, ruta: string[]): Promise<NextRespo
   }
   const cookies = cookiesFiltradas(request.headers.get("cookie"));
   if (cookies) encabezados.set("cookie", cookies);
+  const clavePuente = process.env.PANEL_PUENTE_CLAVE?.trim();
+  const ip = ipDeLaPersona(request);
+  if (clavePuente && ip) {
+    encabezados.set("x-elevar-puente", clavePuente);
+    encabezados.set("x-elevar-cliente-ip", ip);
+  }
 
   const conCuerpo = !["GET", "HEAD"].includes(request.method);
   let respuesta: Response;
