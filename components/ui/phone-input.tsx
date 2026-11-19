@@ -84,6 +84,7 @@ export function PhoneInput({
           id={id}
           type="tel"
           inputMode="tel"
+          name="tel-national"
           autoComplete="tel-national"
           value={local}
           placeholder={pais.ejemplo}

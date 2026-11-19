@@ -101,6 +101,8 @@ export function CheckoutPase({ co }: { co: Checkout }) {
             <section ref={datos} className="mt-5 scroll-mt-6 [@media(min-width:1024px)_and_(max-height:820px)]:mt-2" onFocus={alEnfocar} onKeyDown={alTeclear}>
               <h1 className="pase-in font-display text-3xl font-semibold tracking-tight text-ink-900">Tus datos</h1>
 
+              {/* Un form de verdad para que el navegador ofrezca autocompletar todos los datos juntos (2026-11-19). No se envía: el pago va por startPayment. */}
+              <form autoComplete="on" onSubmit={(e) => e.preventDefault()}>
               <div className="mt-5 grid gap-x-5 gap-y-4 sm:grid-cols-2 [@media(min-width:1024px)_and_(max-height:820px)]:mt-3 [@media(min-width:1024px)_and_(max-height:820px)]:gap-y-3">
                 <div data-paso className="pase-in">
                   <BoxField label="Nombre" placeholder="Tu nombre" autoComplete="given-name" enterKeyHint="next" value={co.buyer.firstName} onChange={(v) => co.set("firstName", v)} error={co.errors.firstName} ok={ok("firstName")} />
@@ -124,6 +126,7 @@ export function CheckoutPase({ co }: { co: Checkout }) {
                   <BoxField label="Laboratorio o empresa (opcional)" placeholder="Nombre del laboratorio" autoComplete="organization" enterKeyHint="done" value={co.buyer.company} onChange={(v) => co.set("company", v)} ok={co.buyer.company.trim().length > 0} />
                 </div>
               </div>
+              </form>
 
               {co.multiLines.length > 0 && (
                 <div className="mt-8">

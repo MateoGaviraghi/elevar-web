@@ -128,6 +128,8 @@ export function BoxField({
         <input
           type={type}
           value={value}
+          // name + autocomplete: Chrome y Safari ofrecen los datos guardados (2026-11-19).
+          name={autoComplete && autoComplete !== "off" ? autoComplete : undefined}
           autoComplete={autoComplete}
           inputMode={inputMode}
           placeholder={placeholder}
