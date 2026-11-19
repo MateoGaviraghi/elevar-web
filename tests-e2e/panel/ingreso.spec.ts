@@ -10,7 +10,7 @@ async function ingresar(page: Page) {
   await page.getByRole("button", { name: "Continuar" }).click();
   await expect(page).toHaveURL(/\/admin\/ingresar\/codigo/);
   await page.getByLabel("Código").fill(await codigoNuevo(u.secreto));
-  await page.getByRole("button", { name: "Ingresar" }).click();
+  // El código se envía solo al completar los 6 dígitos (pedido de Mateo, 2026-11-18): sin clic en «Ingresar».
 }
 
 test("ingresar con contraseña y código lleva a /admin y muestra el nombre", async ({ page }) => {
