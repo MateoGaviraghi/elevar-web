@@ -5,7 +5,7 @@
  * con el trazo naranja que se dibuja al enfocar (referencia Codrops · Hoshi), medios de pago,
  * botón de pago, cupón, participantes, avisos e íconos. Cada pieza acepta tono claro u oscuro.
  */
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { PaymentMethod } from "@/types";
 import { formatARS, formatUSD, USD_RATE } from "@/lib/formatters";
@@ -15,6 +15,7 @@ import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { MercadoPagoLogo, CardBrands, MP_BLUE, MP_BLUE_DARK } from "./mercado-pago";
 import { PayPalLogo, PAYPAL_BLUE, PAYPAL_YELLOW, PAYPAL_YELLOW_DARK } from "./paypal";
 import { lineKey, PAYPAL_ENABLED, type Checkout } from "./use-checkout";
+import { Casilla } from "@/components/legal/casilla";
 
 export type Tono = "claro" | "oscuro";
 
@@ -196,6 +197,8 @@ export function Participantes({ co, tono = "claro" }: { co: Checkout; tono?: Ton
 /** Medios de pago, transferencia por WhatsApp, errores y el botón de pagar. */
 export function Pago({ co, tono = "claro", onPay, compacto = false }: { co: Checkout; tono?: Tono; onPay?: () => void; compacto?: boolean }) {
   const dark = tono === "oscuro";
+  const [faltaAcepta, setFaltaAcepta] = useState(false);
+  const linkLegal = `font-semibold underline underline-offset-2 transition-colors ${dark ? "text-neutral-0 hover:text-brand-300" : "text-ink-900 hover:text-brand-600"}`;
   // Compacto: las dos opciones lado a lado y la nota de PayPal abajo, para que todo entre en una pantalla.
   const notaPaypal = (
     <p className={`mt-2 text-[11px] leading-relaxed ${dark ? "text-neutral-0/55" : "text-neutral-700"}`}>
@@ -261,13 +264,35 @@ export function Pago({ co, tono = "claro", onPay, compacto = false }: { co: Chec
 
       {co.payError && <Aviso tono={tono}>{co.payError}</Aviso>}
 
+      <Casilla
+        className={compacto ? "mt-4" : "mt-6"}
+        tono={tono}
+        checked={co.acepta}
+        onChange={(v) => {
+          co.setAcepta(v);
+          if (v) setFaltaAcepta(false);
+        }}
+        error={faltaAcepta ? "Marcá la casilla para seguir con el pago." : undefined}
+      >
+        Leí y acepto los{" "}
+        <a href="/terminos" target="_blank" rel="noopener" className={linkLegal}>términos de inscripción</a> y la{" "}
+        <a href="/privacidad" target="_blank" rel="noopener" className={linkLegal}>política de privacidad</a>.
+      </Casilla>
+
       <PayButton
         compacto={compacto}
         free={co.isFreeOrder}
         method={co.method}
         processing={co.processing}
         disabled={co.processing || co.blocked}
-        onClick={onPay ?? (() => void co.startPayment())}
+        onClick={() => {
+          if (!co.acepta) {
+            setFaltaAcepta(true);
+            return;
+          }
+          if (onPay) onPay();
+          else void co.startPayment();
+        }}
       />
       <p className={`${compacto ? "mt-3" : "mt-4"} flex items-center justify-center gap-2 text-xs ${dark ? "text-neutral-0/55" : "text-neutral-700"}`}>
         <Lock /> Pago protegido · entorno de prueba

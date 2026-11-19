@@ -7,6 +7,8 @@ import { CONTACT } from "@/lib/contact";
 import { ApiError, joinCommunity } from "@/lib/api";
 import { PAIS_INICIAL, telefonoCompleto, telefonoValido, type Pais } from "@/lib/paises";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { Casilla } from "@/components/legal/casilla";
+import { AvisoDatos } from "@/components/legal/aviso-datos";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -235,6 +237,7 @@ export function CommunityModal({
   anchor?: "center" | "fab";
 }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [acepta, setAcepta] = useState(false);
   const [pais, setPais] = useState<Pais>(PAIS_INICIAL);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [state, setState] = useState<"idle" | "sending" | "done">("idle");
@@ -294,6 +297,7 @@ export function CommunityModal({
     if (!form.name.trim()) e.name = "Ingresá tu nombre.";
     if (!EMAIL_RE.test(form.email.trim())) e.email = "Ingresá un email válido.";
     if (!telefonoValido(form.phone)) e.phone = "Ingresá tu WhatsApp con código de área.";
+    if (!acepta) e.acepta = "Marcá la casilla para sumarte.";
     setErrors(e);
     if (Object.keys(e).length) return;
 
@@ -388,6 +392,17 @@ export function CommunityModal({
             <Field label="Nombre y apellido" autoComplete="name" value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} error={errors.name} />
             <Field label="Correo electrónico" type="email" autoComplete="email" value={form.email} onChange={(v) => setForm((f) => ({ ...f, email: v }))} error={errors.email} />
             <PhoneInput variant="line" label="WhatsApp" pais={pais} onPais={setPais} local={form.phone} onLocal={(v) => setForm((f) => ({ ...f, phone: v }))} error={errors.phone} />
+            <Casilla
+              className="cm-in"
+              checked={acepta}
+              onChange={(v) => {
+                setAcepta(v);
+                setErrors((x) => ({ ...x, acepta: "" }));
+              }}
+              error={errors.acepta}
+            >
+              Quiero que ELEVAR me sume a la comunidad de WhatsApp y me mande novedades. Puedo salir cuando quiera.
+            </Casilla>
             {sendError && (
               <p role="alert" className="border border-red-200 bg-red-50 px-3 py-2.5 text-xs font-medium text-red-700">
                 {sendError}
@@ -412,9 +427,7 @@ export function CommunityModal({
                 </>
               )}
             </button>
-            <p className="cm-in text-center text-[11px] leading-relaxed text-neutral-400">
-              Usamos tus datos solo para enviarte novedades de ELEVAR. Podés salir del grupo cuando quieras.
-            </p>
+            <AvisoDatos className="cm-in text-center" para="sumarte a la comunidad y mandarte novedades" />
           </form>
         )}
       </div>

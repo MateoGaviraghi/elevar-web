@@ -7,6 +7,7 @@ import type { Course, CourseSession } from "@/types";
 import { ApiError, registerWebinar } from "@/lib/api";
 import { formatDate } from "@/lib/formatters";
 import { pegar } from "@/lib/texto";
+import { AvisoDatos } from "@/components/legal/aviso-datos";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -235,6 +236,7 @@ export function WebinarSignupModal({ course, open, onClose, sessionId }: Props) 
                 <p className="text-center text-[11px] leading-relaxed text-neutral-400">
                   La inscripción es gratuita. Te llega el enlace de acceso por correo.
                 </p>
+                <AvisoDatos className="text-center" para="inscribirte y mandarte el enlace del encuentro" />
               </div>
             )}
           </motion.div>

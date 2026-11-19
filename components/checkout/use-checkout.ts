@@ -54,6 +54,8 @@ export function useCheckout() {
   const [processing, setProcessing] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
   const [couponDraft, setCouponDraft] = useState("");
+  // KAN-41: «Leí y acepto los términos y la política de privacidad». Sin marcar no se paga.
+  const [acepta, setAcepta] = useState(false);
 
   useEffect(() => {
     const cart = getCart();
@@ -238,6 +240,8 @@ export function useCheckout() {
     processing,
     payError,
     startPayment,
+    acepta,
+    setAcepta,
   };
 }
 

@@ -96,7 +96,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 border-t border-neutral-0/10 pt-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <p className="text-sm text-neutral-500">
               © 2026 Elevar — Consultoría de Calidad para Laboratorios
             </p>
@@ -104,6 +104,15 @@ export function Footer() {
               <FooterLink href="/promociones">Promociones</FooterLink>
               <FooterLink href="/formacion">Formación</FooterLink>
               <FooterLink href="/contacto">Contacto</FooterLink>
+              <FooterLink href="/terminos">Términos</FooterLink>
+              <FooterLink href="/privacidad">Privacidad</FooterLink>
+              {/* Res. 424/2020: acceso directo y destacado desde el inicio, sin registro (KAN-41). */}
+              <Link
+                href="/arrepentimiento"
+                className="inline-flex min-h-11 items-center whitespace-nowrap border border-brand-500 px-4 text-sm font-semibold text-neutral-0 transition-colors hover:bg-brand-500"
+              >
+                Botón de arrepentimiento
+              </Link>
             </div>
           </div>
         </div>

@@ -11,6 +11,7 @@ import { ChannelGroup, ChannelIcon, ChannelRow } from "@/components/common/chann
 import { CONTACT_CHANNELS, SOCIAL_CHANNELS } from "@/lib/contact";
 import { createLead, ApiError } from "@/lib/api";
 import { AvisoEnviado } from "@/components/common/aviso-enviado";
+import { AvisoDatos } from "@/components/legal/aviso-datos";
 import { pegar, sinViuda } from "@/lib/texto";
 
 interface FormState {
@@ -263,6 +264,7 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
                 >
                   {loading ? "Enviando…" : "Enviar consulta"}
                 </Button>
+                <AvisoDatos para="responder tu consulta" />
               </form>
             </div>
           </div>

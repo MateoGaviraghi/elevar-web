@@ -715,8 +715,8 @@ async function postWebinar(sessionId: number, body: Record<string, string | unde
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/+$/, "");
 
 /** Manda un contacto al servidor. Si falla, tira ApiError con un mensaje para mostrar. */
-async function postLead(body: Record<string, string | undefined>): Promise<void> {
-  if (!API_URL) return;
+async function postLead(body: Record<string, string | undefined>): Promise<Record<string, unknown> | null> {
+  if (!API_URL) return null;
   let res: Response;
   try {
     res = await fetch(`${API_URL}/api/v1/leads/`, {
@@ -727,7 +727,7 @@ async function postLead(body: Record<string, string | undefined>): Promise<void>
   } catch {
     throw new ApiError("No pudimos enviar tus datos. Revisá tu conexión e intentá de nuevo.", "NETWORK", 0);
   }
-  if (res.ok) return;
+  if (res.ok) return (await res.json().catch(() => null)) as Record<string, unknown> | null;
   if (res.status === 429) {
     throw new ApiError("Hiciste varios envíos seguidos. Probá de nuevo en unos minutos.", "RATE_LIMITED", 429);
   }
@@ -755,6 +755,28 @@ export async function createLead(payload: {
   // Copia en el navegador para el panel de demostración (Fase 0).
   const lead = addLead({ ...payload, source: "CONTACTO" });
   return { submitted: true, lead, message: "Consulta enviada." };
+}
+
+/**
+ * Botón de arrepentimiento (KAN-41, Res. 424/2020): sin registro. El servidor devuelve el código
+ * del pedido y se lo manda por mail a la persona. Sin servidor (desarrollo) no hay código.
+ */
+export async function pedirArrepentimiento(payload: {
+  name: string;
+  email: string;
+  orden?: string;
+  motivo?: string;
+}): Promise<{ codigo: string | null }> {
+  const orden = payload.orden?.trim().replace(/^#/, "").toUpperCase();
+  const data = await postLead({
+    name: payload.name,
+    email: payload.email,
+    subject: orden ? `Orden #${orden}` : "Sin número de orden",
+    message: payload.motivo?.trim() || undefined,
+    source: "ARREPENTIMIENTO",
+  });
+  const codigo = data && typeof data.codigo === "string" ? data.codigo : null;
+  return { codigo };
 }
 
 export async function joinCommunity(payload: {
