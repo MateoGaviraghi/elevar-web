@@ -70,7 +70,7 @@ export const PRIVACIDAD: Seccion[] = [
       {
         lista: [
           "Mercado Pago, para cobrar. Los datos de tu tarjeta los cargás en Mercado Pago y nunca pasan por esta web.",
-          "El servicio de correo con el que te mandamos los mails de confirmación, con servidores en Estados Unidos.",
+          "El servicio de correo que manda los mails de confirmación, con servidores en Estados Unidos.",
           "El alojamiento de la web y de la base de datos, también en Estados Unidos.",
         ],
       },
