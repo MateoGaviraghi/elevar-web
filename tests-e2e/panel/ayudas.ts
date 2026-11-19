@@ -124,6 +124,6 @@ export async function ingresar(page: import("@playwright/test").Page) {
   await page.getByRole("button", { name: "Continuar" }).click();
   await page.waitForURL(/\/admin\/ingresar\/codigo/);
   await page.getByLabel("Código").fill(await codigoNuevo(u.secreto));
-  await page.getByRole("button", { name: "Ingresar" }).click();
+  // El código se envía solo al completar los 6 dígitos (pedido de Mateo, 2026-11-18): sin clic en «Ingresar».
   await page.waitForURL(/\/admin(\?|$)/);
 }

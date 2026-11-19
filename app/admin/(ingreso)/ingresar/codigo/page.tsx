@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState, type FormEvent } from "react";
+import { Suspense, useRef, useState, type FormEvent } from "react";
 import {
   AYUDA_ACCESO,
   AvisoError,
@@ -26,9 +26,12 @@ function FormularioCodigo() {
   const [sacudir, setSacudir] = useState(0);
   const [correcto, setCorrecto] = useState(false);
   const { salir } = useIngreso();
+  // Guardia sin esperar a React: el envío automático y el botón no pueden mandar dos veces.
+  const enviandoAhora = useRef(false);
 
   async function enviarCon(valor: string) {
-    if (enviando) return;
+    if (enviandoAhora.current) return;
+    enviandoAhora.current = true;
     setEnviando(true);
     setError(null);
     try {
@@ -52,7 +55,15 @@ function FormularioCodigo() {
       if (!respaldo) setCodigo("");
       setSacudir((n) => n + 1);
       setEnviando(false);
+      enviandoAhora.current = false;
     }
+  }
+
+  /** Con el código de la app, al completar los 6 dígitos se envía solo (pedido de Mateo,
+   * 2026-11-18): sin apretar Enter ni «Ingresar». El de respaldo se confirma con el botón. */
+  function cambiarCodigoApp(valor: string) {
+    setCodigo(valor);
+    if (valor.length === 6) void enviarCon(valor);
   }
 
   function enviar(evento: FormEvent<HTMLFormElement>) {
@@ -82,7 +93,7 @@ function FormularioCodigo() {
           etiqueta="Código"
           id="codigo"
           valor={codigo}
-          alCambiar={setCodigo}
+          alCambiar={cambiarCodigoApp}
           deshabilitado={enviando || correcto}
           sacudir={sacudir}
           correcto={correcto}

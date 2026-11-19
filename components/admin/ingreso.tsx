@@ -265,6 +265,8 @@ export interface CampoIngresoProps extends Omit<React.InputHTMLAttributes<HTMLIn
 }
 
 const LARGO_CODIGO = 6;
+/** Verde de los aciertos (casillas del código y botón): flúor, con texto en azul tinta. */
+const VERDE_ACIERTO = "#34EF8C";
 
 /** Código de 6 dígitos en seis casillas, de a tres. Por dentro es un solo campo (se puede pegar,
  * el celular sugiere el código con one-time-code y las pruebas lo llenan por su etiqueta); las
@@ -273,6 +275,15 @@ const LARGO_CODIGO = 6;
 export function CampoCodigo({ etiqueta, id, valor, alCambiar, deshabilitado, sacudir = 0, correcto = false }: CampoCodigoProps) {
   const [foco, setFoco] = useState(false);
   const fila = useRef<HTMLDivElement>(null);
+  const entrada = useRef<HTMLInputElement>(null);
+  const estabaDeshabilitado = useRef(Boolean(deshabilitado));
+
+  // Cuando termina de verificar un código malo, el foco vuelve a las casillas para escribir el
+  // próximo sin tocarlas (con el código bueno no hace falta: se sale de la pantalla).
+  useEffect(() => {
+    if (estabaDeshabilitado.current && !deshabilitado && !correcto) entrada.current?.focus();
+    estabaDeshabilitado.current = Boolean(deshabilitado);
+  }, [deshabilitado, correcto]);
   const antes = useRef(valor.length);
   const activa = Math.min(valor.length, LARGO_CODIGO - 1);
 
@@ -291,7 +302,9 @@ export function CampoCodigo({ etiqueta, id, valor, alCambiar, deshabilitado, sac
     const el = fila.current;
     if (!correcto || !el) return;
     const cajas = el.querySelectorAll<HTMLElement>(".cc-caja");
-    const verde = { backgroundColor: "#1E7E4A", borderColor: "#1E7E4A", color: "#FFFFFF", boxShadow: "0 0 0 4px rgba(30,126,74,0.18)" };
+    // Verde flúor (pedido de Mateo, 2026-11-18: «más flúor, claro, brillante, no tan opaco»), con
+    // el número en azul tinta: sobre ese verde el blanco no se lee.
+    const verde = { backgroundColor: VERDE_ACIERTO, borderColor: VERDE_ACIERTO, color: "#0B1E33", boxShadow: "0 0 0 5px rgba(52,239,140,0.28), 0 0 22px rgba(52,239,140,0.45)" };
     if (prefersReducedMotion()) {
       gsap.set(cajas, verde);
       return;
@@ -342,6 +355,7 @@ export function CampoCodigo({ etiqueta, id, valor, alCambiar, deshabilitado, sac
           ))}
         </div>
         <input
+          ref={entrada}
           id={id}
           name={id}
           type="text"
@@ -415,12 +429,12 @@ export function BotonEnvio({ enviando, texto, textoEnviando, exito = false, text
       {/* Acierto: una capa verde sube por encima del naranja y se dibuja el tilde. */}
       <span
         aria-hidden
-        className={`absolute inset-0 bg-status-success transition-transform duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] ${
+        className={`absolute inset-0 bg-[#34EF8C] transition-transform duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] ${
           exito ? "translate-y-0" : "translate-y-full"
         }`}
       />
       {exito ? (
-        <span role="status" className="relative flex items-center gap-2.5 text-neutral-0">
+        <span role="status" className="relative flex items-center gap-2.5 text-ink-900">
           <Tilde className="h-5 w-5" />
           {textoExito}
         </span>
