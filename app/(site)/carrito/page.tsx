@@ -17,6 +17,7 @@ import { ModalityThumb } from "@/components/catalog/modality-thumb";
 import { QuantityStepper } from "@/components/catalog/add-to-cart-panel";
 import { buttonClasses } from "@/components/ui/button";
 import { formatARS } from "@/lib/formatters";
+import { STRIPE_ENABLED } from "@/lib/pagos";
 
 function lineKey(courseId: number, sessionId: number | null): string {
   return `${courseId}:${sessionId ?? "x"}`;
@@ -357,7 +358,7 @@ export default function CartPage() {
                         <rect x="3" y="11" width="18" height="11" rx="2" />
                         <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                       </svg>
-                      Pago protegido · Mercado Pago o PayPal
+                      {STRIPE_ENABLED ? "Pago protegido · Mercado Pago o Stripe" : "Pago protegido · Mercado Pago"}
                     </p>
                   </div>
                 </div>

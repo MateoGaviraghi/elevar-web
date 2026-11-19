@@ -10,6 +10,7 @@
 // Lo que falta se le pidió a Laura en su doc de Drive («Preguntas para Laura»).
 
 import { CONTACT } from "@/lib/contact";
+import { STRIPE_ENABLED } from "@/lib/pagos";
 
 /** Quién es el responsable de los datos y quién vende (Ley 25.326 art. 6; Res. AAIP 14/2018 art. 2). */
 export const RESPONSABLE = {
@@ -72,6 +73,12 @@ export const PRIVACIDAD: Seccion[] = [
       {
         lista: [
           "Mercado Pago, para cobrar. Recibe tu nombre, tu correo y tu DNI. Los datos de tu tarjeta los cargás en Mercado Pago y nunca pasan por esta web.",
+          // KAN-42: solo cuando Stripe está activo. El día que se active, VIGENCIA pasa a esa fecha.
+          ...(STRIPE_ENABLED
+            ? [
+                "Stripe, si pagás desde otro país, en dólares. Recibe tu correo y el total de la compra, y sus servidores están en Estados Unidos. Los datos de tu tarjeta los cargás en Stripe y nunca pasan por esta web.",
+              ]
+            : []),
           "El servicio de correo que manda los mails de confirmación, con servidores en Estados Unidos.",
           "El alojamiento de la web y de la base de datos, también en Estados Unidos.",
           "El aula virtual de ELEVAR (aulavirtual.elevar.com.ar), donde cargamos el nombre y el correo de cada participante para darle acceso. Sus servidores están en {{CONFIRMAR: país}}.",
@@ -87,7 +94,7 @@ export const PRIVACIDAD: Seccion[] = [
     id: "fuera-del-pais",
     titulo: "Datos que se guardan fuera de Argentina",
     bloques: [
-      "El correo y el alojamiento de la web guardan tus datos en Estados Unidos. La Agencia de Acceso a la Información Pública no incluye a Estados Unidos entre los países con un nivel de protección igual al de Argentina. Por eso te lo pedimos de forma expresa: al marcar la casilla de cada formulario aceptás que tus datos se guarden ahí.",
+      `${STRIPE_ENABLED ? "El correo, el alojamiento de la web y Stripe, si pagás desde otro país," : "El correo y el alojamiento de la web"} guardan tus datos en Estados Unidos. La Agencia de Acceso a la Información Pública no incluye a Estados Unidos entre los países con un nivel de protección igual al de Argentina. Por eso te lo pedimos de forma expresa: al marcar la casilla de cada formulario aceptás que tus datos se guarden ahí.`,
       `Esos servicios se comprometen por contrato a usarlos solo para prestarnos el servicio y a protegerlos. Si no estás de acuerdo, escribinos a ${MAIL} y te atendemos por otro medio.`,
     ],
   },

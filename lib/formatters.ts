@@ -27,7 +27,7 @@ export function formatDateShort(iso: string): string {
   }).format(new Date(iso));
 }
 
-/** Cotización de referencia para mostrar precios en USD (PayPal). */
+/** Cotización de referencia para mostrar precios en USD (modo sin backend). */
 export const USD_RATE = Number(process.env.NEXT_PUBLIC_USD_RATE ?? 1450);
 
 export function formatUSD(value: string | number): string {

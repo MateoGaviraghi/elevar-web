@@ -1,5 +1,6 @@
 import type { Modality } from "@/types";
 import { pegarTodo } from "@/lib/texto";
+import { STRIPE_ENABLED } from "@/lib/pagos";
 
 /**
  * Bloques de la ficha que son iguales en todos los cursos de una modalidad.
@@ -41,7 +42,11 @@ const CERTIFICADO: ModalityTemplate["certificate"] = {
 
 const PAGO: ModalityTemplate["payment"] = [
   { region: "Para Argentina", methods: ["Mercado Pago", "Transferencia bancaria"] },
-  { region: "Otros países", methods: ["Paypal", "Transferencia bancaria", "Western Union"] },
+  // PayPal se dejó de lado; Stripe aparece cuando está activo (KAN-42).
+  {
+    region: "Otros países",
+    methods: [...(STRIPE_ENABLED ? ["Tarjeta en dólares (Stripe)"] : []), "Transferencia bancaria", "Western Union"],
+  },
 ];
 
 const PROMOS: ModalityTemplate["promos"] = [

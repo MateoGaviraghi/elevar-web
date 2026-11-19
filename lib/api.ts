@@ -6,7 +6,7 @@ import type {
   Order,
   OrderItem,
   Paginated,
-  PaymentMethod,
+  MedioDePago,
   Promo,
   CartItem,
   CartValidateResult,
@@ -268,6 +268,18 @@ export async function validateCart(
   const buyable = items.filter((_, i) => resultItems[i]?.available);
   const pricing = computePricing({ items: buyable, promos: promos(), couponCode });
 
+  // Stripe cobra en dólares con el precio en dólares de cada curso (el servidor hace la
+  // misma cuenta). Si a alguno le falta, no hay total en dólares y Stripe no se ofrece.
+  const usd = buyable.map((item) => {
+    const c = list.find((x) => x.id === item.courseId);
+    const v = c?.price_usd ? parseFloat(c.price_usd) : NaN;
+    return Number.isFinite(v) && v > 0 ? { ...item, unitPrice: v.toFixed(2) } : null;
+  });
+  const usdOk = buyable.length > 0 && usd.every(Boolean);
+  const pricingUsd = usdOk
+    ? computePricing({ items: usd as CartItem[], promos: promos(), couponCode })
+    : null;
+
   return {
     valid: resultItems.every((it) => it.available),
     items: resultItems,
@@ -275,6 +287,8 @@ export async function validateCart(
     discounts: pricing.discounts,
     discount_total: money(pricing.discountTotal),
     total: money(pricing.total),
+    total_usd: pricingUsd ? money(pricingUsd.total) : null,
+    subtotal_usd: pricingUsd ? money(pricingUsd.subtotal) : null,
     coupon_error: pricing.couponError,
   };
 }
@@ -289,7 +303,7 @@ export interface CheckoutPayload {
   };
   items: CartItem[];
   couponCode?: string | null;
-  paymentMethod: PaymentMethod;
+  paymentMethod: MedioDePago;
 }
 
 export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult> {
@@ -347,6 +361,7 @@ export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult
         quantity: i.quantity,
         attendees: normalizeAttendees(i.attendees, i.quantity) ?? [],
       })),
+      payment_method: payload.paymentMethod === "STRIPE" ? "STRIPE" : "MERCADOPAGO",
     });
     // Copia en el navegador del comprador: guarda lo que la API pública no devuelve
     // (DNI, empresa, participantes) para mostrarlo en el pase de su orden.
@@ -363,9 +378,9 @@ export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult
       discounts: pricing.discounts,
       coupon_code: null,
       total: data.total,
-      currency: "ARS",
-      payment_method: "MERCADOPAGO",
-      total_usd: null,
+      currency: data.currency,
+      payment_method: data.payment_method,
+      total_usd: data.currency === "USD" ? data.total : null,
       created_at: new Date().toISOString(),
       paid_at: null,
       items: orderItems,
@@ -377,13 +392,13 @@ export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult
       subtotal: data.subtotal,
       discount_total: data.discount_total,
       total: data.total,
-      currency: "ARS",
-      payment_method: "MERCADOPAGO",
+      currency: data.currency,
+      payment_method: data.payment_method,
     };
   }
 
   const publicId = newId("ord").replace("ord-", "");
-  const currency: Currency = payload.paymentMethod === "PAYPAL" ? "USD" : "ARS";
+  const currency: Currency = payload.paymentMethod === "STRIPE" ? "USD" : "ARS";
 
   const order: Order = {
     public_id: publicId,
@@ -420,7 +435,7 @@ export async function checkout(payload: CheckoutPayload): Promise<CheckoutResult
 
   // Sin backend: pantallas de pago simulado propias.
   const initPoint =
-    payload.paymentMethod === "PAYPAL" ? `/pago-paypal/${publicId}` : `/pago-mp/${publicId}`;
+    payload.paymentMethod === "STRIPE" ? `/pago-stripe/${publicId}` : `/pago-mp/${publicId}`;
 
   return {
     order_public_id: publicId,
@@ -442,6 +457,8 @@ interface CompraCreada {
   subtotal: string;
   discount_total: string;
   total: string;
+  currency: Currency;
+  payment_method: MedioDePago;
 }
 
 /** POST de compra al backend. Si falla, tira ApiError con un mensaje para mostrar. */
@@ -522,19 +539,19 @@ export async function simulatePayment(payload: {
 }
 
 /**
- * Al volver de Mercado Pago con `payment_id`: el backend consulta el pago en Mercado Pago,
- * comprueba que sea de esta orden y del mismo monto, y la deja con ese estado.
- * Devuelve el estado de la orden, o null si no se pudo confirmar.
+ * Al volver del pago: con `payment_id` (Mercado Pago) o `session_id` (Stripe, KAN-42). El
+ * backend consulta el pago en el medio de pago, comprueba que sea de esta orden y del mismo
+ * monto, y la deja con ese estado. Devuelve el estado de la orden, o null si no se pudo.
  */
-export async function confirmMercadoPago(
+export async function confirmarPago(
   publicId: string,
-  paymentId: string
+  ids: { payment_id: string } | { session_id: string }
 ): Promise<Order["status"] | null> {
   if (!API_URL) return null;
   const res = await fetch(`${API_URL}/api/v1/orders/${encodeURIComponent(publicId)}/confirm/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ payment_id: paymentId }),
+    body: JSON.stringify(ids),
   }).catch(() => null);
   if (!res?.ok) return null;
   const data = (await res.json()) as { status: Order["status"]; paid_at: string | null };
@@ -553,7 +570,7 @@ interface OrdenDelServidor {
   discount_label: string;
   total: string;
   currency: Currency;
-  payment_method: PaymentMethod;
+  payment_method: MedioDePago;
   created_at: string;
   paid_at: string | null;
   items: {

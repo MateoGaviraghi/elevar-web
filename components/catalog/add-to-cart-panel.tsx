@@ -11,6 +11,7 @@ import { buttonClasses } from "@/components/ui/button";
 import { formatARS, formatDate } from "@/lib/formatters";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { pegar } from "@/lib/texto";
+import { STRIPE_ENABLED } from "@/lib/pagos";
 import { WebinarSignupModal } from "@/components/formacion/webinar-signup";
 
 function seatsLabel(s: CourseSession): { text: string; soldOut: boolean; low: boolean } {
@@ -309,7 +310,7 @@ export function AddToCartPanel({ course }: { course: Course }) {
         <ul className="mt-5 flex flex-col gap-2 text-xs text-neutral-500">
           {!isFree && (
             <li className="flex items-center gap-2">
-              <Dot /> Pago con Mercado Pago (ARS) o PayPal (USD)
+              <Dot /> {STRIPE_ENABLED ? "Pago con Mercado Pago (pesos) o Stripe (dólares)" : "Pago con Mercado Pago"}
             </li>
           )}
           <li className="flex items-center gap-2">

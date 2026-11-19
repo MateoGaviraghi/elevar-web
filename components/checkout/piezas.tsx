@@ -7,14 +7,13 @@
  */
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import type { PaymentMethod } from "@/types";
-import { formatARS, formatUSD, USD_RATE } from "@/lib/formatters";
+import type { MedioDePago } from "@/types";
+import { formatARS, formatUSD } from "@/lib/formatters";
 import { CONTACT } from "@/lib/contact";
 import { pegar } from "@/lib/texto";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { MercadoPagoLogo, CardBrands, MP_BLUE, MP_BLUE_DARK } from "./mercado-pago";
-import { PayPalLogo, PAYPAL_BLUE, PAYPAL_YELLOW, PAYPAL_YELLOW_DARK } from "./paypal";
-import { lineKey, PAYPAL_ENABLED, type Checkout } from "./use-checkout";
+import { lineKey, STRIPE_ENABLED, type Checkout } from "./use-checkout";
 import { Casilla } from "@/components/legal/casilla";
 
 export type Tono = "claro" | "oscuro";
@@ -199,13 +198,9 @@ export function Pago({ co, tono = "claro", onPay, compacto = false }: { co: Chec
   const dark = tono === "oscuro";
   const [faltaAcepta, setFaltaAcepta] = useState(false);
   const linkLegal = `font-semibold underline underline-offset-2 transition-colors ${dark ? "text-neutral-0 hover:text-brand-300" : "text-ink-900 hover:text-brand-600"}`;
-  // Compacto: las dos opciones lado a lado y la nota de PayPal abajo, para que todo entre en una pantalla.
-  const notaPaypal = (
-    <p className={`mt-2 text-[11px] leading-relaxed ${dark ? "text-neutral-0/55" : "text-neutral-700"}`}>
-      <span className="block">Conversión de referencia: USD 1 = {formatARS(USD_RATE)}.</span>
-      <span className="block">{pegar("El importe final lo define PayPal.")}</span>
-    </p>
-  );
+  // Compacto: las dos opciones lado a lado, para que todo entre en una pantalla.
+  // Stripe necesita el precio en dólares de todos los cursos del carrito (co.totalUsd).
+  const stripeSinPrecio = co.totalUsd == null;
   return (
     <div>
       {co.isFreeOrder ? (
@@ -229,23 +224,20 @@ export function Pago({ co, tono = "claro", onPay, compacto = false }: { co: Chec
             >
               {!compacto && <CardBrands className="mt-2.5" />}
             </PaymentOption>
-            {PAYPAL_ENABLED && (
+            {STRIPE_ENABLED && !stripeSinPrecio && (
               <PaymentOption
                 tono={tono}
                 compacto={compacto}
-                selected={co.method === "PAYPAL"}
-                onSelect={() => co.setMethod("PAYPAL")}
-                logo={<PayPalLogo withWordmark={false} size={32} />}
-                title="PayPal"
-                subtitle={compacto ? "En dólares, con tarjeta o saldo PayPal." : "Pago internacional en dólares, con tarjeta o saldo PayPal."}
+                selected={co.method === "STRIPE"}
+                onSelect={() => co.setMethod("STRIPE")}
+                logo={<IconoTarjeta />}
+                title="Otro país"
+                subtitle={compacto ? "Tarjeta de crédito o débito, en dólares." : "Tarjeta de crédito o débito, en dólares. Pagás en la página segura de Stripe."}
                 amount={co.totalUsd != null ? formatUSD(co.totalUsd) : "…"}
-                accent={PAYPAL_BLUE}
-              >
-                {!compacto && notaPaypal}
-              </PaymentOption>
+                accent={STRIPE_ACCENT}
+              />
             )}
           </div>
-          {compacto && co.method === "PAYPAL" && notaPaypal}
           <p className={`${compacto ? "mt-3" : "mt-4"} text-sm ${dark ? "text-neutral-0/65" : "text-neutral-700"}`}>
             ¿Transferencia o factura a empresa?{" "}
             <a
@@ -351,10 +343,11 @@ function PaymentOption({
         {selected && <span className="h-2 w-2 rounded-full" style={{ background: accent }} />}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="flex items-center justify-between gap-3">
+        {/* Si no entran en una línea, el monto baja entero: el título nunca se parte. */}
+        <span className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
           <span className="flex items-center gap-2.5">
             {logo}
-            <span className={ocultarTitulo ? "sr-only" : `text-[15px] font-semibold ${dark ? "text-neutral-0" : "text-ink-900"}`}>{title}</span>
+            <span className={ocultarTitulo ? "sr-only" : `whitespace-nowrap text-[15px] font-semibold ${dark ? "text-neutral-0" : "text-ink-900"}`}>{title}</span>
           </span>
           <span className={`shrink-0 text-sm font-semibold tabular-nums ${dark ? "text-neutral-0" : "text-ink-900"}`}>{amount}</span>
         </span>
@@ -375,7 +368,7 @@ function PayButton({
 }: {
   compacto?: boolean;
   free: boolean;
-  method: PaymentMethod;
+  method: MedioDePago;
   processing: boolean;
   disabled: boolean;
   onClick: () => void;
@@ -389,22 +382,22 @@ function PayButton({
       </button>
     );
   }
-  const paypal = method === "PAYPAL";
-  const [bg, hover] = paypal ? [PAYPAL_YELLOW, PAYPAL_YELLOW_DARK] : [MP_BLUE, MP_BLUE_DARK];
+  const stripe = method === "STRIPE";
+  const [bg, hover] = stripe ? [STRIPE_ACCENT, STRIPE_ACCENT_DARK] : [MP_BLUE, MP_BLUE_DARK];
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`${base} ${paypal ? "text-ink-900" : "text-neutral-0"}`}
+      className={`${base} text-neutral-0`}
       style={{ background: bg }}
       onMouseEnter={(ev) => (ev.currentTarget.style.background = hover)}
       onMouseLeave={(ev) => (ev.currentTarget.style.background = bg)}
     >
       {processing ? (
         <><Spinner /> Redirigiendo…</>
-      ) : paypal ? (
-        <><PayPalLogo size={18} /> Pagar con PayPal</>
+      ) : stripe ? (
+        <><IconoTarjeta claro /> Pagar en dólares con Stripe</>
       ) : (
         <><span className="grid h-7 w-9 place-items-center rounded-full bg-neutral-0"><MercadoPagoLogo withWordmark={false} size={26} /></span> Pagar con Mercado Pago</>
       )}
@@ -503,25 +496,38 @@ export function LineasOrden({ co, tono = "oscuro" }: { co: Checkout; tono?: Tono
 export function Descuentos({ co, tono = "oscuro" }: { co: Checkout; tono?: Tono }) {
   const dark = tono === "oscuro";
   if (!(co.discounts.length > 0 || (co.subtotal != null && co.subtotal !== co.total))) return null;
+  // En dólares (Stripe) el descuento se muestra en un solo renglón: subtotal menos total.
+  const usd = co.enDolares && co.subtotalUsd != null && co.totalUsd != null;
+  const descUsd = usd ? parseFloat(co.subtotalUsd!) - parseFloat(co.totalUsd!) : 0;
   return (
     <div className="space-y-1.5 text-sm">
       <div className="flex justify-between">
         <span className={dark ? "text-neutral-0/60" : "text-neutral-700"}>Subtotal</span>
-        <span className="tabular-nums">{co.subtotal != null ? formatARS(co.subtotal) : "—"}</span>
+        <span className="tabular-nums">
+          {usd ? formatUSD(co.subtotalUsd!) : co.subtotal != null ? formatARS(co.subtotal) : "—"}
+        </span>
       </div>
-      {co.discounts.map((d) => (
-        <div key={d.promoId} className={`flex justify-between gap-3 ${dark ? "text-emerald-300" : "text-emerald-700"}`}>
-          <span className="min-w-0">{d.label}</span>
-          <span className="shrink-0 tabular-nums">−{formatARS(d.amount)}</span>
-        </div>
-      ))}
+      {usd
+        ? descUsd > 0 && (
+            <div className={`flex justify-between gap-3 ${dark ? "text-emerald-300" : "text-emerald-700"}`}>
+              <span className="min-w-0">{co.discounts.map((d) => d.label).join(" · ") || "Descuento"}</span>
+              <span className="shrink-0 tabular-nums">−{formatUSD(descUsd)}</span>
+            </div>
+          )
+        : co.discounts.map((d) => (
+            <div key={d.promoId} className={`flex justify-between gap-3 ${dark ? "text-emerald-300" : "text-emerald-700"}`}>
+              <span className="min-w-0">{d.label}</span>
+              <span className="shrink-0 tabular-nums">−{formatARS(d.amount)}</span>
+            </div>
+          ))}
     </div>
   );
 }
 
 export function totalTexto(co: Checkout) {
   if (co.total == null) return co.validationError ? "—" : "…";
-  return co.isFreeOrder ? "Gratis" : formatARS(co.total);
+  if (co.isFreeOrder) return "Gratis";
+  return co.enDolares && co.totalUsd != null ? formatUSD(co.totalUsd) : formatARS(co.total);
 }
 
 /** Avisos de la orden: curso que ya no está y total que no se pudo calcular. */
@@ -656,3 +662,19 @@ export const Anillos = ({ className = "" }: { className?: string }) => (
     <circle cx="50" cy="50" r="18" stroke="currentColor" strokeWidth="1" />
   </svg>
 );
+
+/* ───────────── stripe ───────────── */
+
+// Violeta de Stripe para la opción y el botón, como el azul de Mercado Pago (KAN-42).
+const STRIPE_ACCENT = "#635BFF";
+const STRIPE_ACCENT_DARK = "#4B45C6";
+
+/** Tarjeta de crédito, en línea: la opción de pagar desde otro país. */
+function IconoTarjeta({ claro = false }: { claro?: boolean }) {
+  return (
+    <svg width={claro ? 20 : 30} height={claro ? 20 : 30} viewBox="0 0 24 24" fill="none" stroke={claro ? "currentColor" : STRIPE_ACCENT} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <rect x="2.5" y="5" width="19" height="14" rx="2" />
+      <path d="M2.5 10h19M6.5 15h4" />
+    </svg>
+  );
+}

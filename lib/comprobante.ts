@@ -18,7 +18,7 @@ const MODALIDAD: Record<Modality, string> = {
 
 const METODO: Record<Order["payment_method"], string> = {
   MERCADOPAGO: "Mercado Pago",
-  PAYPAL: "PayPal",
+  STRIPE: "Stripe",
   TRANSFER: "Transferencia bancaria",
 };
 
@@ -72,6 +72,11 @@ export function armarComprobante(order: Order, origen: string): Comprobante {
   const pagada = order.status === "PAID" || order.status === "FULFILLED";
   const estado = pagada ? "PAGADO" : order.status === "PENDING" ? "PENDIENTE" : "NO PAGADO";
   const modalidades = new Set(order.items.map((i) => i.modality).filter(Boolean));
+  // Una orden pagada con Stripe está en dólares (KAN-42).
+  const monto = (n: number) =>
+    order.currency === "USD"
+      ? `US$ ${n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+      : pesos(n);
 
   const lineas: LineaComprobante[] = order.items.map((it) => {
     const unit = parseFloat(it.unit_price);
@@ -84,8 +89,8 @@ export function armarComprobante(order: Order, origen: string): Comprobante {
       modalidad: it.modality ? MODALIDAD[it.modality] : "",
       cuando,
       cantidad: it.quantity,
-      unitario: pesos(unit),
-      importe: pesos(unit * it.quantity),
+      unitario: monto(unit),
+      importe: monto(unit * it.quantity),
       participantes: (it.attendees ?? [])
         .filter((a) => a.name || a.email)
         .map((a) => ({ nombre: a.name, correo: a.email })),
@@ -132,9 +137,9 @@ export function armarComprobante(order: Order, origen: string): Comprobante {
     ],
     emisor: ["ELEVAR · Consultoría de calidad para laboratorios", CONTACT.address, CONTACT.email, `WhatsApp ${CONTACT.phoneShort}`],
     lineas,
-    subtotal: pesos(parseFloat(order.subtotal)),
-    descuento: descuentoNum > 0 ? { etiqueta: etiquetaDescuento, importe: `− ${pesos(descuentoNum)}` } : null,
-    total: pesos(parseFloat(order.total)),
+    subtotal: monto(parseFloat(order.subtotal)),
+    descuento: descuentoNum > 0 ? { etiqueta: etiquetaDescuento, importe: `− ${monto(descuentoNum)}` } : null,
+    total: monto(parseFloat(order.total)),
     pago: [
       { etiqueta: "Medio de pago", valor: METODO[order.payment_method] ?? "Mercado Pago" },
       { etiqueta: "Estado", valor: pagada ? "Aprobado" : order.status === "PENDING" ? "Pendiente de acreditación" : "No se cobró" },

@@ -6,7 +6,7 @@
  */
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Attendee, CartItem, CartValidateResult, PaymentMethod } from "@/types";
+import type { Attendee, CartItem, CartValidateResult, MedioDePago } from "@/types";
 import {
   getCart,
   clearCart,
@@ -15,18 +15,12 @@ import {
   setCoupon as persistCoupon,
 } from "@/lib/cart";
 import { validateCart, checkout, simulatePayment, ApiError } from "@/lib/api";
-import { arsToUsd } from "@/lib/formatters";
 import { PAIS_INICIAL, telefonoCompleto, telefonoValido, type Pais } from "@/lib/paises";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/**
- * PayPal (USD) queda contemplado en el alcance pero su implementación efectiva
- * la confirma Elevar durante el proyecto: con esta bandera se muestra u oculta.
- */
-// Oculto hasta que ELEVAR tenga la cuenta real de PayPal (Mateo, 2026-11-17: «Sí, ocultalo»).
-// Se muestra solo con NEXT_PUBLIC_PAYPAL_ENABLED=true.
-export const PAYPAL_ENABLED = process.env.NEXT_PUBLIC_PAYPAL_ENABLED === "true";
+// Pagos desde el exterior: Stripe, en dólares (KAN-42). La bandera vive en lib/pagos.ts.
+export { STRIPE_ENABLED } from "@/lib/pagos";
 
 export function lineKey(courseId: number, sessionId: number | null) {
   return `${courseId}:${sessionId ?? "x"}`;
@@ -49,7 +43,7 @@ export function useCheckout() {
   const [buyer, setBuyer] = useState<Buyer>({ email: "", firstName: "", lastName: "", phone: "", dni: "", company: "" });
   const [pais, setPais] = useState<Pais>(PAIS_INICIAL);
   const [attendees, setAttendeesState] = useState<Record<string, Attendee[]>>({});
-  const [method, setMethod] = useState<PaymentMethod>("MERCADOPAGO");
+  const [method, setMethod] = useState<MedioDePago>("MERCADOPAGO");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [processing, setProcessing] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
@@ -193,7 +187,7 @@ export function useCheckout() {
         clearCart();
         router.push(`/orden/${order.order_public_id}?status=success`);
       } else {
-        // Checkout Pro / PayPal: se redirige al proveedor. El carrito se limpia
+        // Checkout Pro de Mercado Pago o Checkout de Stripe: se redirige al proveedor. El carrito se limpia
         // al confirmarse el pago.
         router.push(order.init_point);
       }
@@ -220,7 +214,10 @@ export function useCheckout() {
     subtotal: validation?.subtotal ?? null,
     discounts: validation?.discounts ?? [],
     total,
-    totalUsd: total != null ? arsToUsd(total) : null,
+    totalUsd: validation?.total_usd ?? null,
+    subtotalUsd: validation?.subtotal_usd ?? null,
+    // Con Stripe todo se muestra en dólares: el pase, el resumen y el total (KAN-42).
+    enDolares: method === "STRIPE" && validation?.total_usd != null,
     isFreeOrder,
     blocked: !validation || !validation.valid,
     units: items.reduce((acc, i) => acc + i.quantity, 0),

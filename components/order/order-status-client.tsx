@@ -15,7 +15,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
-import { confirmMercadoPago, courseById, getOrder } from "@/lib/api";
+import { confirmarPago, courseById, getOrder } from "@/lib/api";
 import { clearCart } from "@/lib/cart";
 import { formatARS, formatDate, formatUSD } from "@/lib/formatters";
 import { CONTACT } from "@/lib/contact";
@@ -24,11 +24,11 @@ import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
 import { enlaceGoogleCalendar } from "@/lib/calendario";
 import { MODALIDAD } from "@/components/checkout/pase";
 import { PaseImpreso, type DatosPase } from "./pase-impreso";
-import type { Order, OrderItem, PaymentMethod } from "@/types";
+import type { Order, OrderItem, MedioDePago } from "@/types";
 
-const METODO: Record<PaymentMethod, string> = {
+const METODO: Record<MedioDePago, string> = {
   MERCADOPAGO: "Mercado Pago",
-  PAYPAL: "PayPal",
+  STRIPE: "Stripe",
   TRANSFER: "Transferencia",
 };
 
@@ -59,15 +59,22 @@ export function OrderStatusClient({ publicId }: { publicId: string }) {
 
   useEffect(() => {
     let cancelled = false;
-    // Vuelta de Mercado Pago (Checkout Pro): trae payment_id. El estado se confirma con
-    // Mercado Pago antes de mostrar la orden; si se aprobó, se vacía el carrito.
-    const paymentId = new URLSearchParams(window.location.search).get("payment_id");
-    const confirmar =
-      paymentId && paymentId !== "null"
-        ? confirmMercadoPago(publicId, paymentId).then((s) => {
-            if (s === "PAID") clearCart();
-          })
-        : Promise.resolve();
+    // Vuelta del pago: Mercado Pago trae payment_id y Stripe session_id (KAN-42). El estado
+    // se confirma con el medio de pago antes de mostrar la orden; si se aprobó, se vacía el carrito.
+    const q = new URLSearchParams(window.location.search);
+    const paymentId = q.get("payment_id");
+    const sessionId = q.get("session_id");
+    const ids =
+      sessionId && sessionId.startsWith("cs_")
+        ? { session_id: sessionId }
+        : paymentId && paymentId !== "null"
+          ? { payment_id: paymentId }
+          : null;
+    const confirmar = ids
+      ? confirmarPago(publicId, ids).then((s) => {
+          if (s === "PAID") clearCart();
+        })
+      : Promise.resolve();
     confirmar
       .then(() => getOrder(publicId))
       .then(async (o) => ({ ...o, items: await Promise.all(o.items.map(completar)) }))
@@ -185,8 +192,8 @@ function Confirmada({ order }: { order: Order }) {
 ${formatDate(order.paid_at)}` : ""}`;
   const total = gratis
     ? "Gratis"
-    : order.payment_method === "PAYPAL" && order.total_usd
-      ? formatUSD(order.total_usd)
+    : order.currency === "USD"
+      ? formatUSD(order.total)
       : formatARS(order.total);
 
   const datos: DatosPase = {

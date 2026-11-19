@@ -10,6 +10,10 @@ export type OrderStatus =
   | "FULFILLED";
 
 /** Medios de pago contemplados en el alcance (PayPal queda sujeto a definición). */
+/** Medios de pago del sitio: Mercado Pago (pesos) y Stripe (dólares, desde el exterior; KAN-42). */
+export type MedioDePago = "MERCADOPAGO" | "STRIPE" | "TRANSFER";
+/** Nombre viejo, con PayPal: solo lo usa components/admin/order-status.ts (de Justo, sin uso en el
+ *  sitio). Se borra cuando él actualice ese archivo; el sitio usa MedioDePago. */
 export type PaymentMethod = "MERCADOPAGO" | "PAYPAL" | "TRANSFER";
 
 export type Currency = "ARS" | "USD";
@@ -172,6 +176,11 @@ export interface CartValidateResult {
   discounts: DiscountLine[];
   discount_total: string;
   total: string;
+  /** Total en dólares para pagar con Stripe (precio en dólares de cada curso, mismo descuento).
+   *  null si algún curso del carrito no tiene precio en dólares. */
+  total_usd: string | null;
+  /** Subtotal en dólares (antes del descuento), con la misma regla que total_usd. */
+  subtotal_usd: string | null;
   /** Código de cupón inválido/no aplicable, si se envió uno. */
   coupon_error: string | null;
 }
@@ -184,7 +193,7 @@ export interface CheckoutResult {
   discount_total: string;
   total: string;
   currency: Currency;
-  payment_method: PaymentMethod;
+  payment_method: MedioDePago;
 }
 
 export interface OrderItem {
@@ -216,7 +225,7 @@ export interface Order {
   coupon_code?: string | null;
   total: string;
   currency: Currency;
-  payment_method: PaymentMethod;
+  payment_method: MedioDePago;
   /** Total en USD cuando se paga por PayPal. */
   total_usd?: string | null;
   created_at: string;
