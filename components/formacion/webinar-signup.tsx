@@ -8,6 +8,7 @@ import { ApiError, registerWebinar } from "@/lib/api";
 import { formatDate } from "@/lib/formatters";
 import { pegar } from "@/lib/texto";
 import { AvisoDatos } from "@/components/legal/aviso-datos";
+import { Casilla } from "@/components/legal/casilla";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -35,12 +36,14 @@ export function WebinarSignupModal({ course, open, onClose, sessionId }: Props) 
   const [selected, setSelected] = useState<number | null>(sessionId ?? sessions[0]?.id ?? null);
   const [form, setForm] = useState({ name: "", email: "", phone: "", company: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [acepta, setAcepta] = useState(false);
   const [state, setState] = useState<"idle" | "sending" | "done">("idle");
 
   useEffect(() => {
     if (!open) return;
     setState("idle");
     setErrors({});
+    setAcepta(false);
     setSelected(sessionId ?? sessions[0]?.id ?? null);
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
@@ -54,6 +57,7 @@ export function WebinarSignupModal({ course, open, onClose, sessionId }: Props) 
     if (!form.name.trim()) e.name = "Ingresá tu nombre y apellido.";
     if (!EMAIL_RE.test(form.email.trim())) e.email = "Ingresá un email válido.";
     if (sessions.length > 0 && selected == null) e.session = "Elegí un encuentro.";
+    if (!acepta) e.acepta = "Marcá la casilla para inscribirte.";
     setErrors(e);
     if (Object.keys(e).length) return;
 
@@ -218,6 +222,18 @@ export function WebinarSignupModal({ course, open, onClose, sessionId }: Props) 
                     onChange={(v) => setForm((f) => ({ ...f, company: v }))}
                   />
                 </div>
+
+                <Casilla
+                  checked={acepta}
+                  onChange={(v) => {
+                    setAcepta(v);
+                    if (v) setErrors((x) => ({ ...x, acepta: "" }));
+                  }}
+                  error={errors.acepta || undefined}
+                >
+                  Acepto la{" "}
+                  <a href="/privacidad" target="_blank" rel="noopener" className="font-semibold text-ink-900 underline underline-offset-2 hover:text-brand-600">política de privacidad</a>, incluido que mis datos se guarden en Estados Unidos.
+                </Casilla>
 
                 {errors.form && (
                   <p role="alert" className="text-sm leading-relaxed text-red-600">

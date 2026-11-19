@@ -401,7 +401,8 @@ export function CommunityModal({
               }}
               error={errors.acepta}
             >
-              Quiero que ELEVAR me sume a la comunidad de WhatsApp y me mande novedades. Puedo salir cuando quiera.
+              Quiero que ELEVAR me sume a la comunidad de WhatsApp y me mande novedades. Sé que en el grupo los demás ven mi número y que puedo salir cuando quiera. Acepto la{" "}
+              <a href="/privacidad" target="_blank" rel="noopener" className="font-semibold text-ink-900 underline underline-offset-2 hover:text-brand-600">política de privacidad</a>, incluido que mis datos se guarden en Estados Unidos.
             </Casilla>
             {sendError && (
               <p role="alert" className="border border-red-200 bg-red-50 px-3 py-2.5 text-xs font-medium text-red-700">

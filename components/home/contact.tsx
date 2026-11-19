@@ -12,6 +12,7 @@ import { CONTACT_CHANNELS, SOCIAL_CHANNELS } from "@/lib/contact";
 import { createLead, ApiError } from "@/lib/api";
 import { AvisoEnviado } from "@/components/common/aviso-enviado";
 import { AvisoDatos } from "@/components/legal/aviso-datos";
+import { Casilla } from "@/components/legal/casilla";
 import { pegar, sinViuda } from "@/lib/texto";
 
 interface FormState {
@@ -39,6 +40,8 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
   const [success, setSuccess] = useState(false);
   const [enviadoA, setEnviadoA] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [acepta, setAcepta] = useState(false);
+  const [faltaAcepta, setFaltaAcepta] = useState(false);
 
   function set(key: keyof FormState) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -80,6 +83,10 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!acepta) {
+      setFaltaAcepta(true);
+      return;
+    }
     setLoading(true);
     setErrorMsg(null);
     setFieldErrors({});
@@ -96,6 +103,7 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
       setEnviadoA(fields.email.trim());
       setSuccess(true);
       setFields(EMPTY);
+      setAcepta(false);
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.fieldErrors) {
@@ -254,6 +262,18 @@ export function ContactSection({ showHeading = true }: { showHeading?: boolean }
                   onChange={set("message")}
                   error={fieldErrors.message}
                 />
+
+                <Casilla
+                  checked={acepta}
+                  onChange={(v) => {
+                    setAcepta(v);
+                    if (v) setFaltaAcepta(false);
+                  }}
+                  error={faltaAcepta ? "Marcá la casilla para enviar la consulta." : undefined}
+                >
+                  Acepto la{" "}
+                  <a href="/privacidad" target="_blank" rel="noopener" className="font-semibold text-ink-900 underline underline-offset-2 hover:text-brand-600">política de privacidad</a>, incluido que mis datos se guarden en Estados Unidos.
+                </Casilla>
 
                 <Button
                   type="submit"

@@ -276,7 +276,7 @@ export function Pago({ co, tono = "claro", onPay, compacto = false }: { co: Chec
       >
         Leí y acepto los{" "}
         <a href="/terminos" target="_blank" rel="noopener" className={linkLegal}>términos de inscripción</a> y la{" "}
-        <a href="/privacidad" target="_blank" rel="noopener" className={linkLegal}>política de privacidad</a>.
+        <a href="/privacidad" target="_blank" rel="noopener" className={linkLegal}>política de privacidad</a>, incluido que mis datos se guarden en Estados Unidos.
       </Casilla>
 
       <PayButton
