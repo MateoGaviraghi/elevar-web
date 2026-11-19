@@ -13,6 +13,7 @@ import { CONTACT } from "@/lib/contact";
 import { pegar } from "@/lib/texto";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { MercadoPagoLogo, CardBrands, MP_BLUE, MP_BLUE_DARK } from "./mercado-pago";
+import { StripeLogo, STRIPE_ACCENT, STRIPE_ACCENT_DARK } from "./stripe";
 import { lineKey, STRIPE_ENABLED, type Checkout } from "./use-checkout";
 import { Casilla } from "@/components/legal/casilla";
 
@@ -230,12 +231,15 @@ export function Pago({ co, tono = "claro", onPay, compacto = false }: { co: Chec
                 compacto={compacto}
                 selected={co.method === "STRIPE"}
                 onSelect={() => co.setMethod("STRIPE")}
-                logo={<IconoTarjeta />}
-                title="Otro país"
-                subtitle={compacto ? "Tarjeta de crédito o débito, en dólares." : "Tarjeta de crédito o débito, en dólares. Pagás en la página segura de Stripe."}
+                logo={<StripeLogo blanco={tono === "oscuro"} size={compacto ? 26 : 30} />}
+                title="Stripe"
+                ocultarTitulo
+                subtitle={compacto ? "Desde otro país, con tarjeta, en dólares." : "Desde otro país, con tarjeta de crédito o débito, en dólares."}
                 amount={co.totalUsd != null ? formatUSD(co.totalUsd) : "…"}
                 accent={STRIPE_ACCENT}
-              />
+              >
+                {!compacto && <CardBrands className="mt-2.5" brands={["VISA", "Mastercard", "Amex"]} />}
+              </PaymentOption>
             )}
           </div>
           <p className={`${compacto ? "mt-3" : "mt-4"} text-sm ${dark ? "text-neutral-0/65" : "text-neutral-700"}`}>
@@ -397,7 +401,7 @@ function PayButton({
       {processing ? (
         <><Spinner /> Redirigiendo…</>
       ) : stripe ? (
-        <><IconoTarjeta claro /> Pagar en dólares con Stripe</>
+        <>Pagar con <StripeLogo blanco size={22} /></>
       ) : (
         <><span className="grid h-7 w-9 place-items-center rounded-full bg-neutral-0"><MercadoPagoLogo withWordmark={false} size={26} /></span> Pagar con Mercado Pago</>
       )}
@@ -662,19 +666,3 @@ export const Anillos = ({ className = "" }: { className?: string }) => (
     <circle cx="50" cy="50" r="18" stroke="currentColor" strokeWidth="1" />
   </svg>
 );
-
-/* ───────────── stripe ───────────── */
-
-// Violeta de Stripe para la opción y el botón, como el azul de Mercado Pago (KAN-42).
-const STRIPE_ACCENT = "#635BFF";
-const STRIPE_ACCENT_DARK = "#4B45C6";
-
-/** Tarjeta de crédito, en línea: la opción de pagar desde otro país. */
-function IconoTarjeta({ claro = false }: { claro?: boolean }) {
-  return (
-    <svg width={claro ? 20 : 30} height={claro ? 20 : 30} viewBox="0 0 24 24" fill="none" stroke={claro ? "currentColor" : STRIPE_ACCENT} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <rect x="2.5" y="5" width="19" height="14" rx="2" />
-      <path d="M2.5 10h19M6.5 15h4" />
-    </svg>
-  );
-}

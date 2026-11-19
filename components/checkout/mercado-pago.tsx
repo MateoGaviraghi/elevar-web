@@ -22,8 +22,14 @@ export function MercadoPagoLogo({
 }
 
 /** Fila de medios de pago aceptados (chips monocromáticos sobrios). */
-export function CardBrands({ className = "" }: { className?: string }) {
-  const brands = ["VISA", "Mastercard", "Amex", "Naranja"];
+export function CardBrands({
+  className = "",
+  brands = ["VISA", "Mastercard", "Amex", "Naranja"],
+}: {
+  className?: string;
+  /** Las tarjetas a mostrar. Stripe (exterior) va sin Naranja, que es solo de Argentina. */
+  brands?: string[];
+}) {
   return (
     <span className={`flex flex-wrap items-center gap-1.5 ${className}`} aria-hidden>
       {brands.map((b) => (
