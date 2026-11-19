@@ -240,6 +240,15 @@ ${formatDate(order.paid_at)}` : ""}`;
     { scope }
   );
 
+  // Sin pagar: el texto depende del medio y de si el pago se rechazó (2026-11-19: una orden de
+  // Stripe sin pagar decía «Mercado Pago todavía no acreditó el pago»).
+  const fallida = order.status === "FAILED" || order.status === "CANCELLED";
+  const textoSinPagar = fallida
+    ? "El pago no se aprobó y no se cobró nada. Podés volver a intentarlo desde el carrito, con otra tarjeta u otro medio."
+    : order.payment_method === "STRIPE"
+      ? "Todavía no se completó el pago con Stripe. Si lo cancelaste, podés volver a intentarlo desde el carrito."
+      : "Mercado Pago todavía no acreditó el pago. Si pagaste en efectivo, puede tardar hasta 48 h.";
+
   const pasos = [
     ...(first.starts_at && agenda
       ? [{ n: "01", titulo: "Agendá la fecha", texto: `${fecha(first.starts_at)}, ${hora(first.starts_at)} h.`, accion: "Agregar a Google Calendar", href: agenda }]
@@ -255,7 +264,7 @@ ${formatDate(order.paid_at)}` : ""}`;
         <div className="min-w-0">
           <p className="im-bajada flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.18em] text-neutral-0/70">
             <span className={`h-2 w-2 rounded-full ${pagada ? "bg-emerald-400" : "bg-amber-400"}`} aria-hidden />
-            Orden #{orden} · {pagada ? (gratis ? "Inscripción confirmada" : "Pago aprobado") : "Pago pendiente"}
+            Orden #{orden} · {pagada ? (gratis ? "Inscripción confirmada" : "Pago aprobado") : fallida ? "Pago no aprobado" : "Pago pendiente"}
           </p>
           <h1 className="mt-5 font-display font-semibold leading-[1.02] tracking-tight">
             <span className="block overflow-hidden pb-[0.08em]">
@@ -268,7 +277,7 @@ ${formatDate(order.paid_at)}` : ""}`;
           <p className="im-bajada mt-6 max-w-[34rem] text-pretty text-[17px] leading-relaxed text-neutral-0/75">
             {pagada
               ? pegar(`Este pase es tu comprobante de inscripción${first.code ? ` a ${first.code}` : ""}.`)
-              : pegar("Mercado Pago todavía no acreditó el pago. Si pagaste en efectivo, puede tardar hasta 48 h.")}
+              : pegar(textoSinPagar)}
           </p>
 
           {/* En el teléfono el pase va después del título */}
