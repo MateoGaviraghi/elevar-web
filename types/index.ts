@@ -198,6 +198,8 @@ export interface CheckoutResult {
 
 export interface OrderItem {
   course_id?: number;
+  /** Sesión del curso en vivo o webinar; para rearmar el carrito al reintentar un pago. */
+  session_id?: number | null;
   title_snapshot: string;
   unit_price: string;
   quantity: number;

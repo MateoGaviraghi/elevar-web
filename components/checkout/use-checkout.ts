@@ -16,11 +16,12 @@ import {
 } from "@/lib/cart";
 import { validateCart, checkout, simulatePayment, ApiError } from "@/lib/api";
 import { PAIS_INICIAL, telefonoCompleto, telefonoValido, type Pais } from "@/lib/paises";
+import { STRIPE_ENABLED } from "@/lib/pagos";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Pagos desde el exterior: Stripe, en dólares (KAN-42). La bandera vive en lib/pagos.ts.
-export { STRIPE_ENABLED } from "@/lib/pagos";
+export { STRIPE_ENABLED };
 
 export function lineKey(courseId: number, sessionId: number | null) {
   return `${courseId}:${sessionId ?? "x"}`;
@@ -52,6 +53,10 @@ export function useCheckout() {
   const [acepta, setAcepta] = useState(false);
 
   useEffect(() => {
+    // Reintento desde una orden rechazada: el medio de pago viene en el link (2026-11-24).
+    const medio = new URLSearchParams(window.location.search).get("medio");
+    if (medio === "STRIPE" && STRIPE_ENABLED) setMethod("STRIPE");
+    else if (medio === "MERCADOPAGO") setMethod("MERCADOPAGO");
     const cart = getCart();
     setItems(cart.items);
     setCoupon(cart.coupon);

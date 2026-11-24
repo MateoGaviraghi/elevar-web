@@ -600,6 +600,7 @@ export async function getOrder(publicId: string): Promise<Order> {
       const s = (await res.json()) as OrdenDelServidor;
       const items: OrderItem[] = s.items.map((it, i) => ({
         course_id: it.course_id,
+        session_id: it.session_id,
         title_snapshot: it.title_snapshot,
         unit_price: it.unit_price,
         quantity: it.quantity,

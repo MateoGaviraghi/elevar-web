@@ -14,17 +14,21 @@
  */
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { confirmarPago, courseById, getOrder } from "@/lib/api";
-import { clearCart } from "@/lib/cart";
+import { clearCart, saveCart } from "@/lib/cart";
 import { formatARS, formatDate, formatUSD } from "@/lib/formatters";
 import { CONTACT } from "@/lib/contact";
 import { pegar } from "@/lib/texto";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
 import { enlaceGoogleCalendar } from "@/lib/calendario";
 import { MODALIDAD } from "@/components/checkout/pase";
+import { MercadoPagoLogo } from "@/components/checkout/mercado-pago";
+import { StripeLogo } from "@/components/checkout/stripe";
+import { STRIPE_ENABLED } from "@/lib/pagos";
 import { PaseImpreso, type DatosPase } from "./pase-impreso";
-import type { Order, OrderItem, MedioDePago } from "@/types";
+import type { CartItem, Order, OrderItem, MedioDePago } from "@/types";
 
 const METODO: Record<MedioDePago, string> = {
   MERCADOPAGO: "Mercado Pago",
@@ -141,7 +145,6 @@ export function OrderStatusClient({ publicId }: { publicId: string }) {
     );
   }
 
-  if (order.status === "FAILED" || order.status === "CANCELLED") return <Fallida order={order} />;
   return <Confirmada order={order} />;
 }
 
@@ -161,7 +164,13 @@ function Fondo({ children }: { children: React.ReactNode }) {
 
 function Confirmada({ order }: { order: Order }) {
   const scope = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   const pagada = order.status === "PAID" || order.status === "FULFILLED";
+  // Rechazada o cancelada: la misma pantalla, con el sello «Sin cobrar» y las formas de
+  // reintentar en lugar de los próximos pasos (2026-11-24, Mateo: «La 1» con las filas de la 3).
+  const fallida = order.status === "FAILED" || order.status === "CANCELLED";
+  const cancelada = order.status === "CANCELLED";
+  const [rearmando, setRearmando] = useState<MedioDePago | null>(null);
   const first = order.items[0];
   const resto = order.items.length - 1;
   const units = order.items.reduce((acc, i) => acc + i.quantity, 0);
@@ -189,7 +198,7 @@ function Confirmada({ order }: { order: Order }) {
   const pago = gratis
     ? "Inscripción sin costo"
     : `${METODO[order.payment_method]}${order.paid_at ? `
-${formatDate(order.paid_at)}` : ""}`;
+${formatDate(order.paid_at).replace(", ", ", ")}` : ""}`;
   const total = gratis
     ? "Gratis"
     : order.currency === "USD"
@@ -205,8 +214,8 @@ ${formatDate(order.paid_at)}` : ""}`;
     orden,
     pago,
     total,
-    sello: pagada ? "Pagado" : "Pendiente",
-    selloTono: pagada ? "ok" : "wait",
+    sello: pagada ? "Pagado" : fallida ? "Sin cobrar" : "Pendiente",
+    selloTono: pagada ? "ok" : fallida ? "void" : "wait",
   };
 
   // Google Calendar con el evento ya cargado (sin DNI ni correo en el enlace).
@@ -242,12 +251,49 @@ ${formatDate(order.paid_at)}` : ""}`;
 
   // Sin pagar: el texto depende del medio y de si el pago se rechazó (2026-11-19: una orden de
   // Stripe sin pagar decía «Mercado Pago todavía no acreditó el pago»).
-  const fallida = order.status === "FAILED" || order.status === "CANCELLED";
-  const textoSinPagar = fallida
-    ? "El pago no se aprobó y no se cobró nada. Podés volver a intentarlo desde el carrito, con otra tarjeta u otro medio."
-    : order.payment_method === "STRIPE"
+  const textoSinPagar = cancelada
+    ? "La orden se canceló y no se cobró nada. Si fue un error, la podés pagar de nuevo."
+    : fallida
+      ? `${order.payment_method === "STRIPE" ? "Stripe" : "Mercado Pago"} no aprobó la tarjeta. Podés pagar de nuevo con otra tarjeta u otro medio.`
+      : order.payment_method === "STRIPE"
       ? "Todavía no se completó el pago con Stripe. Si lo cancelaste, podés volver a intentarlo desde el carrito."
       : "Mercado Pago todavía no acreditó el pago. Si pagaste en efectivo, puede tardar hasta 48 h.";
+
+  // Reintentar: el carrito se vuelve a armar con los cursos de la orden (anda aunque el link se
+  // abra en otro navegador) y el pago abre con ese medio ya elegido.
+  async function reintentar(medio: MedioDePago) {
+    setRearmando(medio);
+    const items: CartItem[] = [];
+    for (const it of order.items) {
+      const c = it.course_id != null ? await courseById(it.course_id).catch(() => undefined) : undefined;
+      if (!c) continue;
+      items.push({
+        courseId: c.id,
+        sessionId: it.session_id ?? null,
+        titleSnapshot: c.title,
+        unitPrice: c.price,
+        currency: "ARS",
+        modality: c.modality,
+        code: c.code,
+        sessionLabel: it.session_label ?? undefined,
+        quantity: it.quantity,
+        attendees: it.attendees,
+      });
+    }
+    if (items.length > 0) saveCart(items);
+    router.push(items.length > 0 ? `/checkout?medio=${medio}` : "/formacion");
+  }
+
+  const reintentos = [
+    { id: "MERCADOPAGO" as const, logo: (
+        <span className="grid h-9 w-12 place-items-center rounded-full bg-neutral-0">
+          <MercadoPagoLogo withWordmark={false} size={30} />
+        </span>
+      ), titulo: "Pagar con Mercado Pago", texto: "Otra tarjeta, débito, efectivo o dinero en cuenta.", accion: "Reintentar" },
+    ...(STRIPE_ENABLED
+      ? [{ id: "STRIPE" as const, logo: <StripeLogo blanco size={20} />, titulo: "Pagar en dólares con Stripe", texto: "Si estás fuera de Argentina.", accion: "Reintentar" }]
+      : []),
+  ];
 
   const pasos = [
     ...(first.starts_at && agenda
@@ -263,18 +309,30 @@ ${formatDate(order.paid_at)}` : ""}`;
       <Container className="grid gap-12 py-12 sm:py-16 lg:min-h-[calc(100vh-6.5rem)] lg:grid-cols-[minmax(0,1fr)_minmax(440px,42%)] lg:items-center lg:gap-16 lg:py-10">
         <div className="min-w-0">
           <p className="im-bajada flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.18em] text-neutral-0/70">
-            <span className={`h-2 w-2 rounded-full ${pagada ? "bg-emerald-400" : "bg-amber-400"}`} aria-hidden />
-            Orden #{orden} · {pagada ? (gratis ? "Inscripción confirmada" : "Pago aprobado") : fallida ? "Pago no aprobado" : "Pago pendiente"}
+            <span className={`h-2 w-2 rounded-full ${pagada ? "bg-emerald-400" : fallida ? "bg-red-400" : "bg-amber-400"}`} aria-hidden />
+            <span>
+              <span className="whitespace-nowrap">Orden #{orden} ·</span>{" "}
+              <span className="whitespace-nowrap">{pagada ? (gratis ? "Inscripción confirmada" : "Pago aprobado") : fallida ? "Pago no aprobado" : "Pago pendiente"}</span>
+            </span>
           </p>
           <h1 className="mt-5 font-display font-semibold leading-[1.02] tracking-tight">
             <span className="block overflow-hidden pb-[0.08em]">
-              <span className="im-linea block whitespace-nowrap text-[44px] sm:text-6xl xl:text-7xl">{pagada ? "¡Listo" : "¡Gracias"}, {nombre}!</span>
+              {fallida ? (
+                // Más largo que «¡Listo, Mateo!»: un escalón menos y el corte después de la coma.
+                <span className="im-linea block text-[40px] sm:text-5xl xl:text-6xl">
+                  <span className="whitespace-nowrap">{nombre},</span> <span className="whitespace-nowrap">el pago no pasó.</span>
+                </span>
+              ) : (
+                <span className="im-linea block whitespace-nowrap text-[44px] sm:text-6xl xl:text-7xl">
+                  {pagada ? "¡Listo" : "¡Gracias"}, {nombre}!
+                </span>
+              )}
             </span>
             <span className="block overflow-hidden pb-[0.08em]">
-              <span className="im-linea mt-2 block text-balance text-[26px] leading-[1.1] text-brand-500 sm:whitespace-nowrap sm:text-4xl xl:text-5xl">{pagada ? pegar("Tu lugar está reservado.") : pegar("Tu lugar te espera.")}</span>
+              <span className="im-linea mt-2 block text-balance text-[26px] leading-[1.1] text-brand-500 sm:whitespace-nowrap sm:text-4xl xl:text-5xl">{pagada ? pegar("Tu lugar está reservado.") : fallida ? pegar("No se cobró nada.") : pegar("Tu lugar te espera.")}</span>
             </span>
           </h1>
-          <p className="im-bajada mt-6 max-w-[34rem] text-pretty text-[17px] leading-relaxed text-neutral-0/75">
+          <p className="im-bajada mt-6 text-pretty text-[17px] leading-relaxed text-neutral-0/75">
             {pagada
               ? pegar(`Este pase es tu comprobante de inscripción${first.code ? ` a ${first.code}` : ""}.`)
               : pegar(textoSinPagar)}
@@ -285,6 +343,49 @@ ${formatDate(order.paid_at)}` : ""}`;
             <PaseImpreso d={datos} />
           </div>
 
+          {fallida ? (
+            <ul className="mt-12 border-t border-neutral-0/15 lg:mt-14">
+              {reintentos.map((r) => (
+                <li key={r.id} className="im-paso border-b border-neutral-0/15">
+                  <button
+                    type="button"
+                    onClick={() => reintentar(r.id)}
+                    disabled={rearmando != null}
+                    className="group grid w-full grid-cols-[3.25rem_minmax(0,1fr)_auto] sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] items-center gap-4 py-5 text-left transition-[padding] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:pl-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-500 disabled:opacity-60"
+                  >
+                    <span className="flex h-10 items-center">{r.logo}</span>
+                    <span className="min-w-0">
+                      <span className="block font-display text-lg font-semibold">{r.titulo}</span>
+                      <span className="block text-[15px] text-neutral-0/65">{pegar(r.texto)}</span>
+                    </span>
+                    <span className="flex items-center gap-2 justify-self-end whitespace-nowrap text-sm font-semibold text-neutral-0 transition-colors duration-500 group-hover:text-brand-500">
+                      <span className="hidden sm:inline">{rearmando === r.id ? "Abriendo…" : r.accion}</span>
+                      <Flecha />
+                    </span>
+                  </button>
+                </li>
+              ))}
+              <li className="im-paso border-b border-neutral-0/15">
+                <a
+                  href={CONTACT.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Transferencia o factura a empresa: escribinos por WhatsApp"
+                  className="group grid w-full grid-cols-[3.25rem_minmax(0,1fr)_auto] sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] items-center gap-4 py-5 text-left transition-[padding] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:pl-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-500"
+                >
+                  <span className="flex h-10 items-center text-neutral-0/80"><IconoWhatsApp /></span>
+                  <span className="min-w-0">
+                    <span className="block font-display text-lg font-semibold">{pegar("Transferencia o factura a empresa")}</span>
+                    <span className="block text-[15px] text-neutral-0/65">{pegar("Lo coordinamos por WhatsApp.")}</span>
+                  </span>
+                  <span className="flex items-center gap-2 justify-self-end whitespace-nowrap text-sm font-semibold text-neutral-0 transition-colors duration-500 group-hover:text-brand-500">
+                    <span className="hidden sm:inline">Escribinos</span>
+                    <Flecha />
+                  </span>
+                </a>
+              </li>
+            </ul>
+          ) : (
           <ol className="mt-12 border-t border-neutral-0/15 lg:mt-14">
             {pasos.map((p) => {
               const contenido = (
@@ -319,6 +420,7 @@ ${formatDate(order.paid_at)}` : ""}`;
               );
             })}
           </ol>
+          )}
 
           <div className="im-paso mt-10 flex flex-wrap gap-4">
             <Link href="/formacion" className={BTN_LINEA}>Volver a formación</Link>
@@ -333,37 +435,15 @@ ${formatDate(order.paid_at)}` : ""}`;
   );
 }
 
-function Fallida({ order }: { order: Order }) {
-  const orden = order.public_id.slice(0, 8).toUpperCase();
-  const cancelada = order.status === "CANCELLED";
-  return (
-    <Fondo>
-      <div className="max-w-2xl py-20 sm:py-28">
-        <p className="flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.18em] text-neutral-0/70">
-          <span className="h-2 w-2 rounded-full bg-red-400" aria-hidden />
-          Orden #{orden}
-        </p>
-        <h1 className="mt-5 text-balance font-display text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl">
-          {cancelada ? "La orden fue cancelada." : "El pago no se completó."}
-        </h1>
-        <p className="mt-6 text-pretty text-[17px] leading-relaxed text-neutral-0/75">
-          {cancelada
-            ? pegar("Esta orden ya no está activa. Si fue un error, volvé a iniciar la compra.")
-            : pegar("No se cobró nada. Podés intentarlo de nuevo o coordinar otro medio de pago con nosotros.")}
-        </p>
-        <div className="mt-10 flex flex-wrap gap-4">
-          <Link href="/carrito" className={BTN_PRIMARIO}>Reintentar compra</Link>
-          <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className={BTN_LINEA}>
-            Coordinar por WhatsApp
-          </a>
-        </div>
-      </div>
-    </Fondo>
-  );
-}
-
 const Flecha = () => (
   <svg viewBox="0 0 24 24" className="h-4 w-4 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
     <path d="M5 12h14M13 6l6 6-6 6" />
+  </svg>
+);
+
+/** WhatsApp en línea, para la fila de transferencia o factura. */
+const IconoWhatsApp = () => (
+  <svg viewBox="0 0 24 24" className="h-7 w-7" fill="currentColor" aria-hidden>
+    <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91A9.85 9.85 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.23 8.23 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24a8.2 8.2 0 0 1 8.24 8.25c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.13-.56-1.35-.76-1.85-.2-.48-.41-.42-.56-.42h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z" />
   </svg>
 );

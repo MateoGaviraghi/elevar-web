@@ -17,7 +17,8 @@ export type DatosPase = {
   pago: string;
   total: string;
   sello: string;
-  selloTono: "ok" | "wait";
+  /** ok: pagado (borde lleno) · wait: pendiente (punteado) · void: sin cobrar (doble borde, 2026-11-24). */
+  selloTono: "ok" | "wait" | "void";
 };
 
 /** ¿La última fila de datos deja libre la columna derecha? (grilla de 2 columnas; `ancho` ocupa la fila entera) */
@@ -68,7 +69,11 @@ export function PaseImpreso({ d }: { d: DatosPase }) {
               <div className={huecoFinal(d.filas) ? "absolute bottom-0 right-0 flex w-1/2 translate-y-1/3 justify-end pr-1" : "mt-5 flex justify-end pr-1 lg:mt-6"}>
                 <div
                   className={`im-sello pointer-events-none -rotate-[8deg] border-[3px] px-3 py-1 font-display text-lg font-bold uppercase tracking-[0.2em] outline outline-[1.5px] outline-offset-[3px] sm:text-2xl lg:px-4 lg:py-1.5 lg:text-3xl ${
-                    d.selloTono === "ok" ? "border-ink-900 text-ink-900 outline-ink-900" : "border-dashed border-ink-900 text-ink-900 outline-transparent"
+                    d.selloTono === "ok"
+                      ? "border-ink-900 text-ink-900 outline-ink-900"
+                      : d.selloTono === "void"
+                        ? "border-double border-[5px] border-ink-900 text-ink-900 outline-transparent"
+                        : "border-dashed border-ink-900 text-ink-900 outline-transparent"
                   }`}
                 >
                   {d.sello}
