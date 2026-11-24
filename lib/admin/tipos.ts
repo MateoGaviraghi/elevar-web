@@ -79,6 +79,23 @@ export interface Inicio {
     cupo: number | null;
   } | null;
   consultas_viejas: Pick<ConsultaFila, "id" | "created_at" | "name" | "company" | "source" | "subject">[];
+  // Los gráficos del Inicio (2026-11-24): solo lo que tiene historia, todo de la base.
+  consultas_dias: { dia: string; n: number }[]; // últimos 30 días, hoy al final
+  consultas_dias_antes: { dia: string; n: number }[]; // los 30 anteriores
+  compras_meses: { mes: string; cantidad: number; montos: Record<string, string> }[]; // 12 meses, por moneda
+  cursos_mas_vendidos: { cursos: { id: number; codigo: string; curso: string; lugares: number }[]; resto: number };
+  proximas_fechas: NonNullable<Inicio["proxima_fecha"]>[];
+  // Los tres pisos (2026-11-24, segunda pasada).
+  arrepentimientos: { id: number; name: string; created_at: string; vence: string }[]; // sin contestar, vencen a las 24 h
+  sin_acceso_desde: string | null; // cuándo pagó la compra sin acceso al aula más vieja
+  compras_sin_completar: {
+    cantidad: number;
+    ordenes: { public_id: string; created_at: string; buyer_name: string; total: string; currency: string; status: string; payment_method: string }[];
+  };
+  ritmo_inscripcion: { dia: string; n: number }[]; // inscriptos acumulados de la próxima fecha (solo webinars)
+  consultas_por_origen: { origen: OrigenConsulta; n: number }[]; // últimos 90 días
+  webinar_a_compra: { inscriptos: number; compraron: number }; // últimos 12 meses, cruzado por correo
+  tiempo_respuesta: { mediana_horas: number | null; medidas: number; mediana_horas_antes: number | null; medidas_antes: number };
 }
 
 // --- Consultas (etapa 3) -------------------------------------------------------------------

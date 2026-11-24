@@ -5,13 +5,15 @@ const config: Config = {
     extend: {
       colors: {
         brand: { 50:"#FEF3EF",100:"#FDDDD4",200:"#FAB99E",300:"#F79268",400:"#F37040",500:"#E94E1B",600:"#C43E12",700:"#9A2F0C",800:"#6F2009",900:"#451305" },
-        ink: { 600:"#1A3247",700:"#112130",800:"#0B2C3D",900:"#0B1E33" },
+        ink: { 50:"#F2F5F8",100:"#DCE4EC",200:"#B9C7D5",500:"#2A4560",600:"#1A3247",700:"#112130",800:"#0B2C3D",900:"#0B1E33" },
         neutral: { 0:"#FFFFFF",50:"#F9F8FB",200:"#E5EAEE",500:"#929292",700:"#706F6F",900:"#333333" },
         status: { success:"#1E7E4A",warning:"#C47D0E",error:"#B91C1C",info:"#1D4ED8" },
       },
       fontFamily: {
         display: ["var(--font-dm-sans)","ui-sans-serif","system-ui","sans-serif"],
         sans: ["var(--font-inter)","ui-sans-serif","system-ui","sans-serif"],
+        // Solo en el panel (cargada en app/admin/(panel)/layout.tsx): subtítulos, etiquetas y cifras.
+        sub: ["var(--font-space-grotesk)","var(--font-dm-sans)","ui-sans-serif","system-ui","sans-serif"],
       },
       fontSize: {
         xs:["0.75rem",{lineHeight:"1.5"}], sm:["0.875rem",{lineHeight:"1.5"}], base:["1rem",{lineHeight:"1.7"}],
