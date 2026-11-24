@@ -1,10 +1,12 @@
 # Inicio (`/admin`)
 
-Elegido el 2026-11-24. Tres pisos: «Para hacer hoy», «Lo que viene», «Cómo va el negocio». Todo sale de `GET /api/v1/panel/inicio/`.
+Elegido el 2026-11-24. Una banda baja con la pila de urgencias y tres pestañas: «Hoy», «Lo que viene» y «Negocio» (`?vista=viene|negocio`). Todo sale de `GET /api/v1/panel/inicio/`.
 
 ## Qué comprobar
 
-- **Recorrido:** `--rutas /admin` a los cinco anchos, con 0 saltos, 0 desborde y consola limpia. Con los datos de la siembra la página mide unos 4500 px a 1440.
+- **Recorrido:** `--rutas "/admin,/admin?vista=viene,/admin?vista=negocio"` a los cinco anchos, con 0 saltos, 0 desborde y consola limpia.
+- **Entra en pantalla (regla de Mateo, 2026-11-24):** en la computadora cada pestaña entra entera sin scrollear a 1366×650, 1440×900 y 1920×1080, y ninguna tarjeta se desborda por dentro. Se mide: `document.documentElement.scrollHeight - innerHeight` tiene que dar ≤ 0, y ningún hijo de un `[data-tarjeta]` puede terminar más abajo que la tarjeta (sin contar lo que recorta un contenedor de adentro, lo `aria-hidden` ni el `role=tooltip`). Ojo: un elemento escondido con `invisible` igual suma alto; los tooltips van con `hidden`.
+- **Pestañas:** flecha derecha/izquierda, Inicio y Fin cambian de pestaña y mueven el foco; la pestaña queda en la dirección y sobrevive a recargar; en el celular la barra queda pegada arriba (debajo del encabezado de 56 px) al scrollear.
 - **Pila de urgencias (en la banda azul):** cerrada muestra la más grave, dos asomando y «Ver las N». Un click en `button[aria-haspopup=dialog]` abre `div[role=dialog][aria-label=Urgente]` (montada en `body`), con los grupos Urgente / Para mirar; los números cuentan desde 0 (esperar ~900 ms). Esc, la cruz o un click afuera la cierran y el foco vuelve a la pila. Cada fila es un link (arrepentimiento → `/admin/consultas/<id>`). Sin urgencias se ve «Nada urgente». Los arrepentimientos no se repiten en «¿A quién contestar primero?».
 - **Pagaron y no tienen el curso:** el número es igual al contador de «Órdenes» del menú. «La que más espera» muestra cuándo pagó la orden pagada más vieja.
 - **Compras que no se completaron:** hasta 5 filas con nombre, estado, medio de pago y monto, sin correo ni teléfono. Cada fila abre `/admin/ordenes/<public_id>`, y «Ver y escribirles» abre `/admin/ordenes?estado=FAILED`.
