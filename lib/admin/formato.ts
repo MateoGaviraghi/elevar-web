@@ -59,7 +59,7 @@ export const ESTADO_ORDEN: Record<string, { texto: string; tono: Tono }> = {
   FULFILLED: { texto: "Cumplida", tono: "ok" },
 };
 
-export const MEDIO_DE_PAGO: Record<string, string> = { MERCADOPAGO: "Mercado Pago", PAYPAL: "PayPal" };
+export const MEDIO_DE_PAGO: Record<string, string> = { MERCADOPAGO: "Mercado Pago", STRIPE: "Stripe", PAYPAL: "PayPal" };
 
 export const MODALIDAD: Record<string, string> = {
   ASYNC: "Asincrónico",

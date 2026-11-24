@@ -17,3 +17,21 @@ Actualización (rondas 4 y 5, mismo día):
 - Rechazado: «me quedó demasiado insulso»; casillas del código cuadradas («no los quiero así… está siendo muy feo»); las ondas y el brillo de la ronda 4 (los reemplaza el humo).
 
 Archivos: `components/admin/humo.tsx`, `components/admin/ingreso.tsx`, `components/admin/ingreso-escenario.tsx`, `app/admin/(ingreso)/layout.tsx`, `app/admin/(ingreso)/ingresar/page.tsx`, `app/admin/(ingreso)/ingresar/codigo/page.tsx`, `app/admin/(ingreso)/primer-ingreso/page.tsx`.
+
+## D-002 — 2026-11-24 — Marco (barra lateral) e Inicio (`/admin`)
+Elegido: versión A «Protagonista» (Finance Bento de romanvasnev en 21st.dev + Growth Benchmark de Evil Charts, https://evilcharts.com/docs/echarts/area-chart/blocks), con el contenido de tres pisos que pidió Mateo: «pensá como si fueras el profesional y dueño de esta empresa, qué es lo que importa el día a día ver». Mateo: «el que me recomiendes».
+- **Para hacer hoy:** aviso de arrepentimiento con su plazo de 24 h; consultas sin contestar (tarjeta naranja con la línea de 30 días contra los 30 anteriores); pagaron y no tienen el curso; a quién contestar primero; compras que no se completaron.
+- **Lo que viene:** próxima fecha con medidor de cupo y días que faltan; ritmo de inscripción con el cupo punteado (solo webinars).
+- **Cómo va el negocio:** cobrado del mes contra el anterior, por moneda; ventas de 12 meses; mosaico de cursos más vendidos; de dónde llegan las consultas; del webinar a la compra; tiempo de respuesta.
+- Marco: barra azul tinta con contadores y la cuenta abajo. Tres colores con trabajo (azul superficie, naranja lo que espera, blanco para leer), tres fuentes (DM Sans, Space Grotesk, Inter), tres botones, cada tarjeta con etiqueta e ícono propio, pregunta, «Sirve para…», referencia, conclusión y acción.
+
+Rechazado:
+- Ronda 1 de referencias (Halcyon, Serf, Square UI, Nuxt UI, shadcn sidebar-09, Magic UI Animated List, Linear): «todas malísimas, estáticas».
+- Versión B «Mosaico» y versión C «Centro de mando» (columna de íconos que se abre, pila de fechas, columnas de puntos): no elegidas.
+- Primera pasada de la A: «solamente usás el blanco y el naranja y te olvidás del azul… queda muy insulso».
+- Íconos de 18 px sobre un cuadro del mismo tono: «ni se notan y no se entienden».
+- Fuera del Inicio: mapa de días y horas (queda `MapaCalor` para la pantalla de Consultas), puntos y área del año, actividad reciente.
+
+Archivos: `components/admin/shell.tsx`, `components/admin/iconos.tsx`, `components/admin/inicio/{Protagonista,piezas,graficos}.tsx`, `app/admin/(panel)/page.tsx`, `app/admin/(panel)/layout.tsx`, `tailwind.config.ts`, `lib/admin/tipos.ts`, `lib/admin/formato.ts`; backend `panel/services/inicio.py`, `panel/serializers.py`, `tests/panel/test_inicio.py`. Verificación: `.claude/skills/verify-elevar/`.
+- Corrección (mismo día): la franja roja de arrepentimientos debajo de «Para hacer hoy» se rechazó («esto no va, quiero como lo tiene el del portal de CESS»). En su lugar, la pila de urgencias dentro de la banda azul, como la `PilaUrgente` del portal CESS: `components/admin/inicio/PilaUrgente.tsx`.
+
