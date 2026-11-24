@@ -1,24 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { createContext, useContext, useRef, type ReactNode } from "react";
+import { createContext, useContext, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
-import { fechaDeHoy, fechaHora, ORIGEN_CONSULTA, plata } from "@/lib/admin/formato";
+import { fechaDeHoy, ORIGEN_CONSULTA, plata } from "@/lib/admin/formato";
 import type { Inicio } from "@/lib/admin/tipos";
 import { pegar, sinViuda } from "@/lib/texto";
 import { Icono } from "../iconos";
 import { diaCorto, mesLargo, numero } from "./graficos";
 
 /**
- * Piezas comunes de las tres versiones del Inicio (prototipo del 2026-11-24, segunda pasada).
- * Tres colores con trabajo propio: blanco para leer, azul tinta para el contexto y los números,
- * naranja para lo que espera. Tres fuentes: DM Sans en títulos, Space Grotesk (`font-sub`) en
- * etiquetas, cifras y botones, Inter en el texto.
- * Cada tarjeta sigue el mismo orden: etiqueta con ícono, la pregunta, para qué sirve, el gráfico
- * con su referencia, la conclusión y lo que se puede hacer.
+ * Piezas del Inicio (2026-11-24). Tres colores con trabajo propio: blanco para leer, azul tinta para el
+ * contexto y los números, naranja para lo que espera. Tres fuentes: DM Sans en títulos, Space Grotesk
+ * (`font-sub`) en etiquetas, cifras y botones, Inter en el texto.
+ * Compactas (tercera pasada, «los componentes son tan grandes que arrancás y no ves ninguno»): cada vista
+ * del Inicio entra en una pantalla. El «para qué sirve» va en el ícono de información; a la vista quedan la
+ * etiqueta, la pregunta, el gráfico, la conclusión y la acción.
  */
 
 export type Tono = "blanco" | "azul" | "naranja";
+
+/** En una computadora con pantalla baja (menos de 780 px de alto) se esconde lo que repite otra cosa. */
+export const SI_ALCANZA = "[@media(min-width:1024px)_and_(max-height:780px)]:hidden";
 const TonoContexto = createContext<Tono>("blanco");
 export const useTono = () => useContext(TonoContexto);
 
@@ -31,7 +34,7 @@ const FONDO: Record<Tono, string> = {
 export function Tarjeta({ children, className = "", as: Etiqueta = "section", tono = "blanco", ...resto }: TarjetaProps) {
   return (
     <TonoContexto.Provider value={tono}>
-      <Etiqueta {...resto} className={`relative overflow-hidden rounded-[20px] p-5 sm:p-6 ${FONDO[tono]} ${className}`}>
+      <Etiqueta {...resto} data-tarjeta="" className={`relative flex min-h-0 flex-col gap-3 rounded-[18px] p-4 ${FONDO[tono]} ${className}`}>
         {children}
       </Etiqueta>
     </TonoContexto.Provider>
@@ -48,12 +51,8 @@ interface TarjetaProps extends React.HTMLAttributes<HTMLElement> {
 /** Tinta suave del texto secundario según el fondo. */
 export const suave = (t: Tono) => (t === "blanco" ? "text-neutral-700" : t === "azul" ? "text-neutral-0/75" : "text-neutral-0/90");
 
-/**
- * La etiqueta de arriba: el ícono propio de esa tarjeta en un cuadro de color que contrasta con el
- * fondo (azul sobre blanco, naranja sobre azul, blanco sobre naranja) y el nombre del tema en
- * Space Grotesk. Al entrar, el ícono se dibuja (0,6 s).
- */
-export function Etiqueta({ icono, children }: { icono: string; children: ReactNode }) {
+/** El ícono propio de cada tarjeta en un cuadro que contrasta con el fondo; se dibuja al entrar (0,6 s). */
+function CajaIcono({ icono }: { icono: string }) {
   const t = useTono();
   const ref = useRef<HTMLSpanElement>(null);
   useGSAP(() => {
@@ -63,27 +62,44 @@ export function Etiqueta({ icono, children }: { icono: string; children: ReactNo
   }, { scope: ref });
   const caja = t === "blanco" ? "bg-ink-900 text-neutral-0" : t === "azul" ? "bg-brand-500 text-neutral-0" : "bg-neutral-0 text-ink-900";
   const acento = t === "blanco" ? "#F37040" : t === "azul" ? "#0B1E33" : "#E94E1B";
-  const texto = t === "blanco" ? "text-ink-500" : t === "azul" ? "text-neutral-0/75" : "text-neutral-0/90";
   return (
-    <p className="flex items-center gap-3">
-      <span ref={ref} className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] shadow-sm ${caja}`}>
-        <Icono nombre={icono} className="h-6 w-6" acento={acento} grosor={2} />
-      </span>
-      <span className={`font-sub text-xs font-semibold uppercase tracking-wider ${texto}`}>{children}</span>
-    </p>
+    <span ref={ref} className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] shadow-sm ${caja}`}>
+      <Icono nombre={icono} className="h-5 w-5" acento={acento} grosor={2} />
+    </span>
   );
 }
 
-/** Encabezado de una tarjeta: etiqueta, la pregunta que contesta (título) y para qué sirve. */
-export function Encabezado({ icono, etiqueta, titulo, paraQue, id, grande = false }: EncabezadoProps) {
+/** «¿Para qué sirve?»: un ícono que muestra la explicación al pasar el mouse, al enfocarlo o al tocarlo. */
+export function Info({ texto }: { texto: string }) {
   const t = useTono();
   return (
-    <header className="flex flex-col gap-3">
-      <Etiqueta icono={icono}>{etiqueta}</Etiqueta>
-      <div className="flex flex-col gap-1.5">
-        <h2 id={id} className={`font-display font-semibold leading-tight tracking-tight ${grande ? "text-2xl sm:text-3xl" : "text-xl"}`}>{sinViuda(titulo)}</h2>
-        {paraQue && <p className={`text-sm ${suave(t)}`}>{pegar(paraQue)}</p>}
+    <span className="group/info relative shrink-0">
+      <button type="button" aria-label={`Para qué sirve: ${texto}`}
+        className={`grid h-7 w-7 place-items-center rounded-full font-sub text-xs font-bold outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-brand-500 ${t === "blanco" ? "bg-ink-50 text-ink-500 [@media(hover:hover)]:hover:bg-ink-100" : "bg-neutral-0/10 text-neutral-0/80 [@media(hover:hover)]:hover:bg-neutral-0/20"}`}>
+        ?
+      </button>
+      <span role="tooltip"
+        className="pointer-events-none absolute right-0 top-full z-30 mt-2 hidden w-64 rounded-[12px] bg-ink-900 p-3 text-xs leading-relaxed text-neutral-0 shadow-lg ring-1 ring-neutral-0/10 group-focus-within/info:block [@media(hover:hover)]:group-hover/info:block">
+        {pegar(texto)}
+      </span>
+    </span>
+  );
+}
+
+/** Encabezado en una línea: ícono, etiqueta y la pregunta; a la derecha, el «para qué sirve» y una acción. */
+export function Encabezado({ icono, etiqueta, titulo, paraQue, id, extra, chico = false }: EncabezadoProps) {
+  const t = useTono();
+  const texto = t === "blanco" ? "text-ink-500" : t === "azul" ? "text-neutral-0/70" : "text-neutral-0/85";
+  return (
+    <header className="flex items-start gap-3">
+      <CajaIcono icono={icono} />
+      <div className="min-w-0 flex-1">
+        <p className={`font-sub text-[11px] font-semibold uppercase tracking-wider ${texto}`}>{etiqueta}</p>
+        <h2 id={id} className={`font-display font-semibold leading-snug tracking-tight ${chico ? "text-sm" : "text-base"}`}>{sinViuda(titulo)}</h2>
       </div>
+      {/* En el celular el enlace del encabezado no entra al lado de la pregunta: queda el menú. */}
+      {extra && <span className="hidden shrink-0 sm:inline-flex">{extra}</span>}
+      {paraQue && <Info texto={paraQue} />}
     </header>
   );
 }
@@ -94,20 +110,43 @@ interface EncabezadoProps {
   titulo: string;
   paraQue?: string;
   id?: string;
-  grande?: boolean;
+  extra?: ReactNode;
+  chico?: boolean;
 }
 
-/** La referencia del gráfico: qué es cada color o cada forma, y cómo se lee. */
+/**
+ * El lugar del gráfico: ocupa lo que le queda a la tarjeta y le pasa ese alto al gráfico. En el celular,
+ * donde las tarjetas se apilan, usa el mínimo.
+ */
+export function Lienzo({ min = 110, children }: { min?: number; children: (alto: number) => ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [alto, setAlto] = useState(0);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setAlto(Math.floor(e!.contentRect.height)));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return (
+    // El mínimo vale en el celular; en la computadora el gráfico usa lo que quede (desde 64 px).
+    <div ref={ref} className="relative min-h-[var(--min)] flex-1 lg:min-h-[64px]" style={{ ["--min" as string]: `${min}px` }}>
+      {alto > 0 && <div className="absolute inset-0">{children(Math.max(64, alto))}</div>}
+    </div>
+  );
+}
+
+/** La referencia del gráfico: qué es cada color o cada forma. */
 export function Referencia({ items, children }: { items?: { muestra: "barra" | "linea" | "punteada" | "punto" | "apagada"; texto: string }[]; children?: ReactNode }) {
   const t = useTono();
   const claro = t !== "blanco";
   const color = t === "naranja" ? "bg-neutral-0" : "bg-brand-500";
   return (
-    <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-xs ${suave(t)}`}>
+    <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-xs ${suave(t)} ${SI_ALCANZA}`}>
       {items?.map((it) => (
         <span key={it.texto} className="inline-flex items-center gap-2">
-          {it.muestra === "barra" && <span className={`h-3 w-3 rounded-[3px] ${color}`} />}
-          {it.muestra === "apagada" && <span className={`h-3 w-3 rounded-[3px] ${t === "azul" ? "bg-ink-500" : claro ? "bg-neutral-0/25" : "bg-ink-200"}`} />}
+          {it.muestra === "barra" && <span className={`h-2.5 w-2.5 rounded-[3px] ${color}`} />}
+          {it.muestra === "apagada" && <span className={`h-2.5 w-2.5 rounded-[3px] ${t === "azul" ? "bg-ink-500" : claro ? "bg-neutral-0/25" : "bg-ink-200"}`} />}
           {it.muestra === "punto" && <span className={`h-2.5 w-2.5 rounded-full ${color}`} />}
           {it.muestra === "linea" && <span className={`h-0.5 w-5 rounded-full ${color}`} />}
           {it.muestra === "punteada" && <span className={`h-0 w-5 border-t-2 border-dashed ${claro ? "border-neutral-0/70" : "border-neutral-500"}`} />}
@@ -124,7 +163,7 @@ export function Conclusion({ children }: { children: ReactNode }) {
   const t = useTono();
   const c = t === "blanco" ? "bg-ink-50 text-ink-900 before:bg-brand-500" : t === "azul" ? "bg-neutral-0/[0.07] text-neutral-0 before:bg-brand-500" : "bg-neutral-0/15 text-neutral-0 before:bg-neutral-0";
   return (
-    <p className={`relative rounded-[12px] py-2.5 pl-4 pr-3 text-sm font-semibold before:absolute before:inset-y-2 before:left-0 before:w-1 before:rounded-full ${c}`}>
+    <p className={`${SI_ALCANZA} relative rounded-[10px] py-2 pl-3.5 pr-3 text-[13px] font-semibold leading-snug before:absolute before:inset-y-1.5 before:left-0 before:w-1 before:rounded-full ${c}`}>
       {children}
     </p>
   );
@@ -137,7 +176,7 @@ export function Conclusion({ children }: { children: ReactNode }) {
  * - enlace: texto con flecha que se corre.
  * Sobre una tarjeta azul o naranja cambian para que siempre contrasten.
  */
-export function Boton({ href, children, variante = "principal" }: { href: string; children: ReactNode; variante?: "principal" | "secundario" | "enlace" }) {
+export function Boton({ href, children, variante = "principal", chico = false }: { href: string; children: ReactNode; variante?: "principal" | "secundario" | "enlace"; chico?: boolean }) {
   const t = useTono();
   const flecha = (
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden className="relative transition-transform duration-300 ease-out [@media(hover:hover)]:group-hover:translate-x-1">
@@ -147,7 +186,7 @@ export function Boton({ href, children, variante = "principal" }: { href: string
   if (variante === "enlace") {
     const c = t === "blanco" ? "text-ink-900 decoration-brand-500" : "text-neutral-0 decoration-neutral-0/60";
     return (
-      <Link href={href} className={`group inline-flex min-h-[44px] items-center gap-2 rounded-[8px] font-sub text-sm font-semibold underline decoration-2 underline-offset-[6px] outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${c}`}>
+      <Link href={href} className={`group inline-flex min-h-[40px] items-center gap-2 rounded-[8px] font-sub text-sm font-semibold underline decoration-2 underline-offset-[6px] outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${c}`}>
         {children}{flecha}
       </Link>
     );
@@ -161,9 +200,9 @@ export function Boton({ href, children, variante = "principal" }: { href: string
   const [fondo, texto, relleno, textoLleno] = estilos[t][variante];
   return (
     <Link href={href}
-      className={`group relative inline-flex min-h-[44px] items-center justify-center gap-2 overflow-hidden rounded-[12px] px-4 font-sub text-sm font-semibold outline-none transition-[transform,color] duration-300 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:scale-[0.97] ${fondo} ${texto} ${textoLleno}`}>
+      className={`group relative inline-flex ${chico ? "min-h-[36px] px-3 text-[13px]" : "min-h-[44px] px-4 text-sm"} shrink-0 items-center justify-center gap-2 overflow-hidden rounded-[12px] font-sub font-semibold outline-none transition-[transform,color] duration-300 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:scale-[0.97] ${fondo} ${texto} ${textoLleno}`}>
       <span aria-hidden className={`absolute inset-0 translate-y-full transition-transform duration-500 ease-[cubic-bezier(.22,.8,.24,1)] [@media(hover:hover)]:group-hover:translate-y-0 ${relleno}`} />
-      <span className="relative">{children}</span>
+      <span className="relative whitespace-nowrap">{children}</span>
       {flecha}
     </Link>
   );
@@ -171,33 +210,23 @@ export function Boton({ href, children, variante = "principal" }: { href: string
 
 /** El pie de una tarjeta con lo que se puede hacer. */
 export function Acciones({ children }: { children: ReactNode }) {
-  return <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">{children}</div>;
+  return <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2">{children}</div>;
 }
 
 /**
- * La banda azul de arriba: la fecha, el saludo, lo de hoy en una oración, las cosas que más se hacen y, a la
- * derecha, la pila de urgencias (como el Inicio del portal CESS).
+ * La banda azul de arriba, baja (unos 120 px): la fecha, el saludo y lo de hoy en una oración a la izquierda;
+ * a la derecha, la pila de urgencias (como el Inicio del portal CESS).
  */
-export function Bienvenida({ d, nombre, acciones, urgente }: { d: Inicio; nombre: string; acciones?: ReactNode; urgente?: ReactNode }) {
+export function Bienvenida({ d, nombre, urgente }: { d: Inicio; nombre: string; urgente?: ReactNode }) {
   const hoy = d.consultas_dias.at(-1)?.n ?? 0;
   return (
-    <Tarjeta tono="azul" className="rounded-[24px] sm:p-8" aria-labelledby="hola">
+    <Tarjeta tono="azul" className="shrink-0 rounded-[22px] px-5 py-4 sm:px-6" aria-labelledby="hola">
       <Trama />
-      <div className="relative grid grid-cols-1 items-center gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)]">
-        <div className="flex min-w-0 flex-col gap-5">
-        <div className="max-w-2xl">
-          <p className="font-sub text-xs font-semibold uppercase tracking-wider text-neutral-0/70 first-letter:uppercase">{fechaDeHoy()}</p>
-          <h1 id="hola" className="mt-2 font-display text-4xl font-semibold tracking-tight sm:text-5xl">Hola, {nombre}</h1>
-          <p className="mt-3 text-base text-neutral-0/85">{pegar(resumenDelDia(d, hoy))}</p>
-        </div>
-        <Acciones>
-          {acciones ?? (
-            <>
-              <Boton href="/admin/consultas">Contestar consultas</Boton>
-              <Boton href="/admin/ordenes" variante="secundario">Ver las órdenes</Boton>
-            </>
-          )}
-        </Acciones>
+      <div className="relative grid grid-cols-1 items-center gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,30rem)]">
+        <div className="min-w-0">
+          <p className="font-sub text-[11px] font-semibold uppercase tracking-wider text-neutral-0/70 first-letter:uppercase">{fechaDeHoy()}</p>
+          <h1 id="hola" className="mt-0.5 font-display text-3xl font-semibold tracking-tight">Hola, {nombre}</h1>
+          <p className={`mt-1 text-sm text-neutral-0/85 ${SI_ALCANZA}`}>{pegar(resumenDelDia(d, hoy))}</p>
         </div>
         {urgente && <div className="flex min-w-0 justify-center lg:justify-end">{urgente}</div>}
       </div>
@@ -216,31 +245,11 @@ export function resumenDelDia(d: Inicio, hoy: number): string {
 export function Trama() {
   return (
     <>
-      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:32px_32px] [mask-image:linear-gradient(to_left,#000,transparent_70%)]" />
-      <div aria-hidden className="pointer-events-none absolute -right-24 -top-28 h-80 w-80 rounded-full bg-brand-500/30 blur-3xl" />
-    </>
-  );
-}
-
-/**
- * El título de cada piso del Inicio: «Para hacer hoy», «Lo que viene», «Cómo va el negocio».
- * Una línea fina que se extiende al entrar (0,9 s) separa un piso del otro.
- */
-export function Piso({ titulo, detalle, id }: { titulo: string; detalle: string; id: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useGSAP(() => {
-    const linea = ref.current?.querySelector("[data-linea]");
-    if (!linea || prefersReducedMotion()) return;
-    gsap.fromTo(linea, { scaleX: 0 }, { scaleX: 1, transformOrigin: "0% 50%", duration: 0.9, ease: "power3.out" });
-  }, { scope: ref });
-  return (
-    <div ref={ref} className="mt-4 flex flex-col gap-1 lg:col-span-12">
-      <div className="flex items-center gap-4">
-        <h2 id={id} className="shrink-0 font-sub text-sm font-bold uppercase tracking-wider text-ink-900">{titulo}</h2>
-        <span data-linea aria-hidden className="h-px flex-1 bg-ink-200" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+        <div className="absolute inset-0 opacity-[0.07] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:32px_32px] [mask-image:linear-gradient(to_left,#000,transparent_70%)]" />
+        <div className="absolute -right-24 -top-28 h-80 w-80 rounded-full bg-brand-500/30 blur-3xl" />
       </div>
-      <p className="text-sm text-neutral-700">{pegar(detalle)}</p>
-    </div>
+    </>
   );
 }
 
@@ -253,34 +262,34 @@ export function hace(iso: string, ahora = Date.now()): string {
   return d === 1 ? "hace 1 día" : `hace ${d} días`;
 }
 
-/** Las consultas sin contestar más viejas, como filas que llevan a cada una. */
+/** Barra de scroll fina del portal CESS, para las listas que corren adentro de una tarjeta. */
+export const SCROLL_FINO = "overflow-y-auto overscroll-contain [scrollbar-color:rgba(11,30,51,.18)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-ink-900/20 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1.5";
+
+/** Las consultas sin contestar más viejas, como filas que llevan a cada una (la lista corre adentro). */
 export function ConsultasViejas({ d }: { d: Inicio }) {
   if (!d.consultas_viejas.length) {
     return (
-      <div className="flex flex-col items-center justify-center gap-1 py-10 text-center">
+      <div className="flex flex-1 flex-col items-center justify-center gap-1 py-6 text-center">
         <p className="font-display text-lg font-semibold text-ink-900">Todo al día.</p>
         <p className="text-sm text-neutral-700">No hay consultas sin contestar.</p>
       </div>
     );
   }
   return (
-    <ul className="flex flex-col gap-2">
+    <ul className={`-mr-1.5 flex min-h-0 flex-1 flex-col gap-1.5 pr-1.5 ${SCROLL_FINO}`}>
       {d.consultas_viejas.map((c, k) => (
         <li key={c.id}>
-          <Link href={`/admin/consultas/${c.id}`} className="group flex min-h-[60px] items-center gap-3 rounded-[14px] border border-ink-100 px-3 py-2 outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-brand-500 [@media(hover:hover)]:hover:border-ink-900 [@media(hover:hover)]:hover:bg-ink-50">
-            <span aria-hidden className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-sub text-xs font-semibold ${k === 0 ? "bg-brand-500 text-neutral-0" : "bg-ink-900 text-neutral-0"}`}>
+          <Link href={`/admin/consultas/${c.id}`} className="group flex min-h-[48px] items-center gap-3 rounded-[12px] border border-ink-100 px-2.5 py-1.5 outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-brand-500 [@media(hover:hover)]:hover:border-ink-900 [@media(hover:hover)]:hover:bg-ink-50">
+            <span aria-hidden className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-sub text-[11px] font-semibold ${k === 0 ? "bg-brand-500 text-neutral-0" : "bg-ink-900 text-neutral-0"}`}>
               {iniciales(c.name)}
             </span>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-semibold text-ink-900">{c.name}</span>
               <span className="block truncate text-xs text-neutral-700">{c.company || "Sin empresa"} · {ORIGEN_CONSULTA[c.source] ?? c.source}</span>
-              <span className="block font-sub text-xs font-semibold tabular-nums text-ink-900 sm:hidden">
-                {fechaHora(c.created_at)}{k === 0 && <span className="text-brand-600"> · La que más espera</span>}
-              </span>
             </span>
-            <span className="hidden shrink-0 text-right sm:block">
-              <span className="block font-sub text-xs font-semibold tabular-nums text-ink-900">{fechaHora(c.created_at)}</span>
-              {k === 0 && <span className="block text-[11px] font-semibold text-brand-600">La que más espera</span>}
+            <span className="shrink-0 text-right">
+              <span className="block font-sub text-xs font-semibold tabular-nums text-ink-900">{hace(c.created_at).replace("hace ", "")}</span>
+              {k === 0 && <span className="block text-[11px] font-semibold text-brand-600">la que más espera</span>}
             </span>
           </Link>
         </li>
@@ -327,3 +336,4 @@ export function consultaMasVieja(d: Inicio): string | null {
 }
 
 export const plural = (n: number, uno: string, varios: string) => `${numero(n)} ${n === 1 ? uno : varios}`;
+

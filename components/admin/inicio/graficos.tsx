@@ -416,16 +416,16 @@ export function Filas({ items, azul = false }: { items: { texto: string; n: numb
     gsap.fromTo(barras, { scaleX: 0 }, { scaleX: 1, transformOrigin: "0% 50%", duration: 0.8, ease: "power3.out", stagger: 0.1 });
   }, { dependencies: [items.map((x) => x.n).join()], scope: ref });
   return (
-    <ul ref={ref} className="flex flex-col gap-4">
+    <ul ref={ref} className="flex flex-col gap-3 [@media(min-width:1024px)_and_(max-height:780px)]:gap-1.5">
       {items.map((x, k) => (
         <li key={x.texto} className="flex flex-col gap-1.5">
-          <span className="flex items-baseline justify-between gap-3 text-sm">
-            <span className="font-semibold">{x.texto}</span>
-            <span className={`font-sub tabular-nums ${azul ? "text-neutral-0/80" : "text-neutral-700"}`}>
+          <span className="flex items-baseline justify-between gap-3 text-sm [@media(min-width:1024px)_and_(max-height:780px)]:text-xs">
+            <span className="min-w-0 font-semibold">{x.texto}</span>
+            <span className={`shrink-0 whitespace-nowrap font-sub tabular-nums ${azul ? "text-neutral-0/80" : "text-neutral-700"}`}>
               <b className={azul ? "text-neutral-0" : "text-ink-900"}>{numero(x.n)}</b> · {total ? Math.round((x.n / total) * 100) : 0} %
             </span>
           </span>
-          <span className={`h-3 overflow-hidden rounded-full ${azul ? "bg-neutral-0/10" : "bg-ink-50"}`}>
+          <span className={`h-3 [@media(min-width:1024px)_and_(max-height:780px)]:h-2 overflow-hidden rounded-full ${azul ? "bg-neutral-0/10" : "bg-ink-50"}`}>
             <span data-barra className={`block h-full rounded-full ${k === iMax && x.n > 0 ? "bg-brand-500" : azul ? "bg-ink-200" : "bg-ink-500"}`}
               style={{ width: `${(x.n / max) * 100}%` }} />
           </span>
@@ -448,12 +448,12 @@ export function Embudo({ arriba, abajo, textoArriba, textoAbajo }: { arriba: num
   }, { dependencies: [parte], scope: ref });
   return (
     <div ref={ref} className="flex flex-col gap-2" role="img" aria-label={`${textoArriba}: ${arriba}. ${textoAbajo}: ${abajo}.`}>
-      <div className="flex h-12 items-center justify-between rounded-[12px] bg-neutral-0/10 px-4">
+      <div className="flex h-10 items-center justify-between rounded-[12px] bg-neutral-0/10 px-4 [@media(min-width:1024px)_and_(max-height:780px)]:h-8">
         <span className="text-sm">{textoArriba}</span>
         <Cifra valor={arriba} className="font-sub text-xl font-bold" />
       </div>
       <div className="flex justify-center">
-        <div data-abajo className="flex h-12 min-w-[150px] items-center justify-between gap-3 rounded-[12px] bg-brand-500 px-4" style={{ width: `${parte * 100}%` }}>
+        <div data-abajo className="flex h-10 min-w-[150px] items-center justify-between gap-3 rounded-[12px] bg-brand-500 px-4 [@media(min-width:1024px)_and_(max-height:780px)]:h-8" style={{ width: `${parte * 100}%` }}>
           <span className="whitespace-nowrap text-sm font-semibold">{textoAbajo}</span>
           <Cifra valor={abajo} className="font-sub text-xl font-bold" />
         </div>

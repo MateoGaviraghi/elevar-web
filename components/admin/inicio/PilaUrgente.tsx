@@ -67,6 +67,9 @@ function urgencias(d: Inicio, ahora: number): Urgencia[] {
   return lista;
 }
 
+/** Cuántas urgencias hay (para el número de la pestaña «Hoy»). */
+export const contarUrgencias = (d: Inicio) => urgencias(d, Date.now()).length;
+
 const resumen = (graves: number, atencion: number) =>
   [graves ? `${graves} ${graves === 1 ? "urgente" : "urgentes"}` : "", atencion ? `${atencion} para mirar` : ""].filter(Boolean).join(" · ");
 
@@ -239,19 +242,19 @@ export function PilaUrgente({ d }: { d: Inicio }) {
   );
 
   return (
-    <section ref={raiz} aria-label="Urgente" className="w-full min-w-0 max-w-[34rem]">
+    <section ref={raiz} aria-label="Urgente" className="w-full min-w-0 max-w-[30rem]">
       <button ref={mazo} type="button" aria-expanded={abierta} aria-haspopup="dialog"
         onClick={() => {
           if (abierta) return cerrar();
           medir();
           setAbierta(true);
         }}
-        className="group flex w-full flex-col gap-3 rounded-[22px] border border-neutral-0/15 bg-neutral-0/[0.08] p-3 text-left text-neutral-0 outline-none backdrop-blur-md transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-neutral-0 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 [@media(hover:hover)]:hover:bg-neutral-0/[0.12]">
+        className="group flex w-full flex-col gap-2 rounded-[18px] border border-neutral-0/15 bg-neutral-0/[0.08] p-2 text-left text-neutral-0 outline-none backdrop-blur-md transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-neutral-0 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 [@media(hover:hover)]:hover:bg-neutral-0/[0.12]">
         <span className="relative block">
-          {n > 2 && <span aria-hidden className="absolute inset-0 z-[1] translate-y-[1.4rem] scale-[0.9] rounded-[16px] bg-[#24364B] opacity-45 shadow-[0_8px_20px_rgba(0,0,0,.3)] transition-transform duration-300 [@media(hover:hover)]:group-hover:translate-y-[1.9rem]" />}
-          {n > 1 && <span aria-hidden className="absolute inset-0 z-[1] translate-y-[0.7rem] scale-[0.95] rounded-[16px] bg-[#24364B] opacity-75 shadow-[0_8px_20px_rgba(0,0,0,.3)] transition-transform duration-300 [@media(hover:hover)]:group-hover:translate-y-[0.95rem]" />}
-          <span className="relative z-[2] flex items-center gap-3 rounded-[16px] bg-[#24364B] py-3 pl-3 pr-4 shadow-[0_0_0_1px_rgba(255,255,255,.1)_inset,0_8px_20px_rgba(0,0,0,.3)]">
-            <span aria-hidden className={`grid h-10 w-10 shrink-0 place-items-center rounded-[12px] ${grave ? "text-neutral-0" : "text-brand-300"}`}
+          {n > 2 && <span aria-hidden className="absolute inset-0 z-[1] translate-y-[0.9rem] scale-[0.9] rounded-[16px] bg-[#24364B] opacity-45 shadow-[0_8px_20px_rgba(0,0,0,.3)] transition-transform duration-300 [@media(hover:hover)]:group-hover:translate-y-[1.2rem]" />}
+          {n > 1 && <span aria-hidden className="absolute inset-0 z-[1] translate-y-[0.45rem] scale-[0.95] rounded-[16px] bg-[#24364B] opacity-75 shadow-[0_8px_20px_rgba(0,0,0,.3)] transition-transform duration-300 [@media(hover:hover)]:group-hover:translate-y-[0.6rem]" />}
+          <span className="relative z-[2] flex items-center gap-3 rounded-[14px] bg-[#24364B] py-2 pl-2 pr-3 shadow-[0_0_0_1px_rgba(255,255,255,.1)_inset,0_8px_20px_rgba(0,0,0,.3)]">
+            <span aria-hidden className={`grid h-9 w-9 shrink-0 place-items-center rounded-[10px] ${grave ? "text-neutral-0" : "text-brand-300"}`}
               style={grave ? { background: COLOR_GRAVE, boxShadow: "0 0 0 4px rgba(255,107,94,.18)" } : { background: "rgba(247,146,104,.2)" }}>
               {grave ? <Alerta /> : <Icono nombre={primera.icono} className="h-5 w-5" acento="#FFFFFF" />}
             </span>
@@ -260,16 +263,16 @@ export function PilaUrgente({ d }: { d: Inicio }) {
                 {grave ? "Urgente" : "Para mirar"}<span className="hidden text-neutral-0/60 sm:inline"> · {primera.tipo}</span>
               </span>
               <span className="text-xs text-neutral-0/70 sm:hidden">{primera.tipo}</span>
-              <span className="line-clamp-2 text-base font-semibold leading-snug sm:truncate">{primera.titulo}</span>
+              <span className="line-clamp-2 text-sm font-semibold leading-snug sm:truncate">{primera.titulo}</span>
             </span>
             <span aria-hidden className="grid shrink-0 justify-items-center border-l border-neutral-0/10 pl-3 leading-none">
-              <strong className="font-sub text-[1.75rem] font-light tabular-nums tracking-tight" style={{ color: grave ? COLOR_GRAVE : "#F79268" }}>{primera.n}</strong>
+              <strong className="font-sub text-2xl font-light tabular-nums tracking-tight" style={{ color: grave ? COLOR_GRAVE : "#F79268" }}>{primera.n}</strong>
               <span className="mt-1 text-[10px] font-semibold text-neutral-0/65">{primera.unidad}</span>
             </span>
           </span>
         </span>
-        <span className={`flex items-center gap-2 px-1 text-sm font-semibold ${n === 2 ? "mt-2.5" : n > 2 ? "mt-5" : ""}`}>
-          <span className="inline-grid h-6 min-w-6 place-items-center rounded-full px-1.5 font-sub text-xs font-bold tabular-nums"
+        <span className={`flex items-center gap-2 px-1 text-xs font-semibold ${n === 2 ? "mt-1.5" : n > 2 ? "mt-3" : ""}`}>
+          <span className="inline-grid h-5 min-w-5 place-items-center rounded-full px-1.5 font-sub text-xs font-bold tabular-nums"
             style={graves.length ? { background: COLOR_GRAVE, color: "#fff" } : { background: "#F79268", color: "#0B1E33" }}>{n}</span>
           <span className="whitespace-nowrap">{n === 1 ? "Ver la urgencia" : `Ver las ${n}`}</span>
           <span className="hidden truncate font-normal text-neutral-0/70 before:mr-2 before:content-['·'] sm:inline">{resumen(graves.length, atencion.length)}</span>
