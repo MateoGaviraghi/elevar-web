@@ -573,6 +573,7 @@ interface OrdenDelServidor {
   payment_method: MedioDePago;
   created_at: string;
   paid_at: string | null;
+  refunded_at?: string | null;
   items: {
     course_id: number;
     code: string;
@@ -630,6 +631,7 @@ export async function getOrder(publicId: string): Promise<Order> {
         total_usd: null,
         created_at: s.created_at,
         paid_at: s.paid_at,
+        refunded_at: s.refunded_at ?? null,
         items,
       };
       if (local) saveOrder(order);

@@ -31,7 +31,7 @@ const fechaLarga = (iso: string) =>
 const fechaCorta = (iso: string) =>
   new Date(iso).toLocaleString("es-AR", {
     timeZone: TZ, day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false,
-  });
+  }).replace(", ", ",\u00A0"); // fecha y hora en un renglón (2026-11-25)
 
 const hora = (iso: string) =>
   new Date(iso).toLocaleTimeString("es-AR", { timeZone: TZ, hour: "2-digit", minute: "2-digit", hour12: false });
@@ -49,7 +49,7 @@ export interface LineaComprobante {
 
 export interface Comprobante {
   numero: string;
-  estado: "PAGADO" | "PENDIENTE" | "NO PAGADO";
+  estado: "PAGADO" | "PENDIENTE" | "NO PAGADO" | "DEVUELTO";
   emitido: string;
   comprador: { etiqueta: string; valor: string }[];
   emisor: string[];
@@ -70,7 +70,9 @@ export function numeroDeOrden(publicId: string): string {
 export function armarComprobante(order: Order, origen: string): Comprobante {
   const numero = numeroDeOrden(order.public_id);
   const pagada = order.status === "PAID" || order.status === "FULFILLED";
-  const estado = pagada ? "PAGADO" : order.status === "PENDING" ? "PENDIENTE" : "NO PAGADO";
+  // Devuelta (2026-11-25): la plata volvió al comprador; el comprobante lo dice y no promete el acceso.
+  const devuelta = pagada && !!order.refunded_at;
+  const estado = devuelta ? "DEVUELTO" : pagada ? "PAGADO" : order.status === "PENDING" ? "PENDIENTE" : "NO PAGADO";
   const modalidades = new Set(order.items.map((i) => i.modality).filter(Boolean));
   // Una orden pagada con Stripe está en dólares (KAN-42).
   const monto = (n: number) =>
@@ -101,19 +103,19 @@ export function armarComprobante(order: Order, origen: string): Comprobante {
   const etiquetaDescuento = order.discounts?.[0]?.label ?? "Descuento";
 
   const pasos: Comprobante["pasos"] = [];
-  if (modalidades.has("ASYNC") || modalidades.has("LIVE")) {
+  if (!devuelta && (modalidades.has("ASYNC") || modalidades.has("LIVE"))) {
     pasos.push({
       titulo: "Te damos acceso en 24 horas",
       texto: `Dentro de las 24 h del pago te mandamos a ${order.buyer_email} el usuario y la contraseña de la plataforma de capacitación de ELEVAR.`,
     });
   }
-  if (modalidades.has("LIVE")) {
+  if (!devuelta && modalidades.has("LIVE")) {
     pasos.push({
       titulo: "El enlace del encuentro está en la plataforma",
       texto: "El día del curso entrás a la sala con el enlace que publicamos en la plataforma.",
     });
   }
-  if (modalidades.has("ASYNC")) {
+  if (!devuelta && modalidades.has("ASYNC")) {
     pasos.push({
       titulo: "Tenés 90 días para cursar",
       texto: "Desde que recibís el acceso. Al terminar el ejercicio final se emite tu certificado.",
@@ -121,7 +123,7 @@ export function armarComprobante(order: Order, origen: string): Comprobante {
   }
   pasos.push({
     titulo: "¿Alguna duda?",
-    texto: `Escribinos a ${CONTACT.email} o por WhatsApp al ${CONTACT.phoneShort}, con tu número de orden #${numero}.`,
+    texto: `Escribinos a ${CONTACT.email} o por WhatsApp al ${CONTACT.phoneShort}, con tu número de orden\u00A0#${numero}.`,
   });
 
   return {
@@ -142,9 +144,10 @@ export function armarComprobante(order: Order, origen: string): Comprobante {
     total: monto(parseFloat(order.total)),
     pago: [
       { etiqueta: "Medio de pago", valor: METODO[order.payment_method] ?? "Mercado Pago" },
-      { etiqueta: "Estado", valor: pagada ? "Aprobado" : order.status === "PENDING" ? "Pendiente de acreditación" : "No se cobró" },
+      { etiqueta: "Estado", valor: devuelta ? "Devuelto" : pagada ? "Aprobado" : order.status === "PENDING" ? "Pendiente de acreditación" : "No se cobró" },
       ...(order.paid_at ? [{ etiqueta: "Fecha de pago", valor: fechaCorta(order.paid_at) }] : []),
-      { etiqueta: "Moneda", valor: "Pesos argentinos (ARS)" },
+      ...(devuelta && order.refunded_at ? [{ etiqueta: "Devolución", valor: fechaCorta(order.refunded_at) }] : []),
+      { etiqueta: "Moneda", valor: "Pesos argentinos\u00A0(ARS)" },
     ],
     pasos,
     url: `${origen}/orden/${order.public_id}`,

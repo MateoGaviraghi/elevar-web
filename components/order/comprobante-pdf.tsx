@@ -195,7 +195,7 @@ function Documento({ d }: { d: Comprobante }) {
         </View>
 
         <View style={s.pie} fixed>
-          <Text>Este comprobante acredita tu inscripción. No reemplaza a la factura.</Text>
+          <Text>{d.estado === "DEVUELTO" ? "El pago de esta compra se devolvió: la inscripción no está vigente. No reemplaza a la factura." : "Este comprobante acredita tu inscripción. No reemplaza a la factura."}</Text>
           <Text style={{ marginTop: 2 }}>Versión online: {d.url}</Text>
         </View>
       </Page>

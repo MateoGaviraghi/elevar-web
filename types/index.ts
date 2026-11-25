@@ -232,6 +232,8 @@ export interface Order {
   total_usd?: string | null;
   created_at: string;
   paid_at: string | null;
+  /** Devolución total avisada por Mercado Pago o Stripe (2026-11-25); el estado sigue PAID. */
+  refunded_at?: string | null;
   items: OrderItem[];
 }
 

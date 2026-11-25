@@ -170,6 +170,10 @@ function Confirmada({ order }: { order: Order }) {
   // reintentar en lugar de los próximos pasos (2026-11-24, Mateo: «La 1» con las filas de la 3).
   const fallida = order.status === "FAILED" || order.status === "CANCELLED";
   const cancelada = order.status === "CANCELLED";
+  // Devuelta (2026-11-25, Mateo: «Sí, armalo»): cobrada y devuelta entera por Mercado Pago o Stripe.
+  // El pase lleva el sello «Devuelto»; sin agenda ni pasos de acceso.
+  const devuelta = pagada && !!order.refunded_at;
+  const medio = order.payment_method === "STRIPE" ? "Stripe" : "Mercado Pago";
   const [rearmando, setRearmando] = useState<MedioDePago | null>(null);
   const first = order.items[0];
   const resto = order.items.length - 1;
@@ -214,12 +218,12 @@ ${formatDate(order.paid_at).replace(", ", ", ")}` : ""}`;
     orden,
     pago,
     total,
-    sello: pagada ? "Pagado" : fallida ? "Sin cobrar" : "Pendiente",
-    selloTono: pagada ? "ok" : fallida ? "void" : "wait",
+    sello: devuelta ? "Devuelto" : pagada ? "Pagado" : fallida ? "Sin cobrar" : "Pendiente",
+    selloTono: devuelta ? "void" : pagada ? "ok" : fallida ? "void" : "wait",
   };
 
   // Google Calendar con el evento ya cargado (sin DNI ni correo en el enlace).
-  const agenda = first.starts_at
+  const agenda = first.starts_at && !devuelta
     ? enlaceGoogleCalendar({
         titulo: `ELEVAR · ${first.code ?? ""} ${first.title_snapshot}`.replace(/\s+/g, " ").trim(),
         inicio: first.starts_at,
@@ -299,7 +303,7 @@ ${formatDate(order.paid_at).replace(", ", ", ")}` : ""}`;
     ...(first.starts_at && agenda
       ? [{ n: "01", titulo: "Agendá la fecha", texto: `${fecha(first.starts_at)}, ${hora(first.starts_at)} h.`, accion: "Agregar a Google Calendar", href: agenda }]
       : []),
-    { n: first.starts_at ? "02" : "01", titulo: "Tu comprobante", texto: "Con el detalle de la compra, para ver o descargar en PDF.", accion: "Ver comprobante", interno: `/orden/${order.public_id}/comprobante` },
+    { n: first.starts_at ? "02" : "01", titulo: "Tu comprobante", texto: devuelta ? "Con el detalle de la compra y la devolución." : "Con el detalle de la compra, para ver o descargar en PDF.", accion: "Ver comprobante", interno: `/orden/${order.public_id}/comprobante` },
     { n: first.starts_at ? "03" : "02", titulo: "¿Dudas?", texto: "Te respondemos por WhatsApp.", accion: "Escribinos", href: CONTACT.whatsappUrl },
   ];
 
@@ -309,15 +313,19 @@ ${formatDate(order.paid_at).replace(", ", ", ")}` : ""}`;
       <Container className="grid gap-12 py-12 sm:py-16 lg:min-h-[calc(100vh-6.5rem)] lg:grid-cols-[minmax(0,1fr)_minmax(440px,42%)] lg:items-center lg:gap-16 lg:py-10">
         <div className="min-w-0">
           <p className="im-bajada flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.18em] text-neutral-0/70">
-            <span className={`h-2 w-2 rounded-full ${pagada ? "bg-emerald-400" : fallida ? "bg-red-400" : "bg-amber-400"}`} aria-hidden />
+            <span className={`h-2 w-2 rounded-full ${devuelta ? "bg-neutral-400" : pagada ? "bg-emerald-400" : fallida ? "bg-red-400" : "bg-amber-400"}`} aria-hidden />
             <span>
               <span className="whitespace-nowrap">Orden #{orden} ·</span>{" "}
-              <span className="whitespace-nowrap">{pagada ? (gratis ? "Inscripción confirmada" : "Pago aprobado") : fallida ? "Pago no aprobado" : "Pago pendiente"}</span>
+              <span className="whitespace-nowrap">{devuelta ? "Pago devuelto" : pagada ? (gratis ? "Inscripción confirmada" : "Pago aprobado") : fallida ? "Pago no aprobado" : "Pago pendiente"}</span>
             </span>
           </p>
           <h1 className="mt-5 font-display font-semibold leading-[1.02] tracking-tight">
             <span className="block overflow-hidden pb-[0.08em]">
-              {fallida ? (
+              {devuelta ? (
+                <span className="im-linea block text-[40px] sm:text-5xl xl:text-6xl">
+                  <span className="whitespace-nowrap">{nombre},</span> <span className="whitespace-nowrap">te devolvimos</span> <span className="whitespace-nowrap">el pago.</span>
+                </span>
+              ) : fallida ? (
                 // Más largo que «¡Listo, Mateo!»: un escalón menos y el corte después de la coma.
                 <span className="im-linea block text-[40px] sm:text-5xl xl:text-6xl">
                   <span className="whitespace-nowrap">{nombre},</span> <span className="whitespace-nowrap">el pago no pasó.</span>
@@ -329,11 +337,13 @@ ${formatDate(order.paid_at).replace(", ", ", ")}` : ""}`;
               )}
             </span>
             <span className="block overflow-hidden pb-[0.08em]">
-              <span className="im-linea mt-2 block text-balance text-[26px] leading-[1.1] text-brand-500 sm:whitespace-nowrap sm:text-4xl xl:text-5xl">{pagada ? pegar("Tu lugar está reservado.") : fallida ? pegar("No se cobró nada.") : pegar("Tu lugar te espera.")}</span>
+              <span className="im-linea mt-2 block text-balance text-[26px] leading-[1.1] text-brand-500 sm:whitespace-nowrap sm:text-4xl xl:text-5xl">{devuelta ? pegar("La inscripción se anuló.") : pagada ? pegar("Tu lugar está reservado.") : fallida ? pegar("No se cobró nada.") : pegar("Tu lugar te espera.")}</span>
             </span>
           </h1>
           <p className="im-bajada mt-6 text-pretty text-[17px] leading-relaxed text-neutral-0/75">
-            {pagada
+            {devuelta && order.refunded_at
+              ? pegar(`La devolución salió el ${fecha(order.refunded_at)} por ${medio}. Según tu banco, puede tardar unos días hábiles en verse en tu cuenta.`)
+              : pagada
               ? pegar(`Este pase es tu comprobante de inscripción${first.code ? ` a ${first.code}` : ""}.`)
               : pegar(textoSinPagar)}
           </p>

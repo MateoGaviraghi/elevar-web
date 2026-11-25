@@ -52,7 +52,8 @@ export function PaseImpreso({ d }: { d: DatosPase }) {
               </span>
               {d.resto > 0 && <span className="ml-2 align-top text-2xl font-semibold text-neutral-0/75">+{d.resto}</span>}
             </p>
-            <p className="mt-3 line-clamp-2 text-[15px] font-medium leading-snug lg:text-base">{pegar(d.titulo)}</p>
+            {/* sinViuda: palabras chicas pegadas y las dos últimas juntas; line-clamp-3 para que el título se lea entero (2026-11-25). */}
+            <p className="mt-3 line-clamp-3 text-[15px] font-medium leading-snug lg:text-base">{sinViuda(d.titulo)}</p>
 
             <div className="relative">
               <dl className="mt-5 grid grid-cols-2 gap-x-5 gap-y-3 border-t border-neutral-0/25 pt-4 text-sm">
@@ -95,7 +96,7 @@ export function PaseImpreso({ d }: { d: DatosPase }) {
             </div>
             <div className="shrink-0 text-right">
               <p className="text-[12px] text-neutral-0/70">Total</p>
-              <p className="font-display text-4xl font-bold tabular-nums tracking-tight lg:text-5xl">{d.total}</p>
+              <p className="font-display text-3xl font-bold tabular-nums tracking-tight sm:text-4xl lg:text-5xl">{d.total}</p>
             </div>
           </div>
         </div>

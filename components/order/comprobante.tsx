@@ -238,7 +238,7 @@ function Documento({ d }: { d: Datos }) {
       </div>
 
       {/* Pago */}
-      <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-4 bg-neutral-50 px-5 py-5 sm:grid-cols-4">
+      <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 bg-neutral-50 px-5 py-5 min-[375px]:grid-cols-2 sm:grid-cols-4">
         {d.pago.map((p) => (
           <div key={p.etiqueta}>
             <p className={ETIQUETA}>{p.etiqueta}</p>
@@ -265,7 +265,7 @@ function Documento({ d }: { d: Datos }) {
 
       {/* Pie */}
       <footer className="mt-12 border-t border-neutral-200 pt-5 text-xs leading-relaxed text-neutral-500">
-        <p>{pegar("Este comprobante acredita tu inscripción. No reemplaza a la factura.")}</p>
+        <p>{pegar(d.estado === "DEVUELTO" ? "El pago de esta compra se devolvió: la inscripción no está vigente. No reemplaza a la factura." : "Este comprobante acredita tu inscripción. No reemplaza a la factura.")}</p>
         <p className="mt-1 break-all">Versión online: {d.url}</p>
       </footer>
     </>
