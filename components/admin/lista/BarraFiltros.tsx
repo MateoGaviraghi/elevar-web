@@ -128,14 +128,14 @@ export function Menu<V extends string>({ etiqueta, valor, opciones, onCambiar, p
       </button>
       {abierto && (
         <ul ref={lista} id={id} role="listbox" aria-label={etiqueta} onKeyDown={teclaLista}
-          className="absolute right-0 top-full z-40 mt-1.5 min-w-full overflow-hidden rounded-[14px] border border-ink-100 bg-neutral-0 p-1.5 shadow-[0_18px_40px_-16px_rgba(11,30,51,.35)]">
+          className="absolute right-0 top-full z-40 mt-1.5 max-h-[min(360px,60dvh)] min-w-full max-w-[min(26rem,calc(100vw-2rem))] overflow-y-auto overscroll-contain rounded-[14px] border border-ink-100 bg-neutral-0 p-1.5 shadow-[0_18px_40px_-16px_rgba(11,30,51,.35)] [scrollbar-color:rgba(11,30,51,.25)_transparent] [scrollbar-width:thin]">
           {opciones.map((o, i) => {
             const marcada = o.valor === valor;
             return (
               <li key={o.valor} data-i={i} role="option" aria-selected={marcada} tabIndex={-1}
                 onClick={() => elegir(o.valor)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), elegir(o.valor))} onPointerEnter={() => setFoco(i)}
                 className={`flex min-h-[40px] cursor-pointer items-center justify-between gap-3 whitespace-nowrap rounded-[10px] px-3 text-sm outline-none focus:bg-ink-50 ${marcada ? "font-semibold text-ink-900" : "text-ink-900/85"}`}>
-                {o.texto}
+                <span className="min-w-0 truncate" title={o.texto}>{o.texto}</span>
                 {marcada && (
                   <svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden className="shrink-0 text-brand-500">
                     <path d="m4.5 10.5 3.5 3.5 7.5-8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />

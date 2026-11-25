@@ -58,6 +58,12 @@ export function useUsuario(): Yo {
 type Estado = { tipo: "cargando" } | { tipo: "listo"; usuario: Yo } | { tipo: "error"; mensaje: string };
 type Cuentas = Partial<Record<"consultas" | "ordenes", number>>;
 
+const EVENTO_CONTADORES = "panel:contadores";
+/** Pide que el menú vuelva a contar (después de marcar, contestar o dar acceso). */
+export function avisarContadores() {
+  window.dispatchEvent(new Event(EVENTO_CONTADORES));
+}
+
 export function PanelShell({ children }: PanelShellProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -136,11 +142,14 @@ function Marco({ usuario, children }: { usuario: Yo; children: ReactNode }) {
   const [abierto, setAbierto] = useState(false);
   const [saliendo, setSaliendo] = useState(false);
 
-  // Los contadores del menú salen del Inicio, una vez por pantalla (TD: un pedido propio más liviano).
+  // Los contadores del menú: un pedido liviano al cambiar de pantalla y cada vez que una pantalla avisa que
+  // cambió algo (`avisarContadores()`, p. ej. al dar acceso a una orden), sin esperar a navegar (2026-11-25).
   useEffect(() => {
     let vivo = true;
-    panel.inicio().then((d) => vivo && setCuentas({ consultas: d.consultas_nuevas, ordenes: d.ordenes_sin_cumplir })).catch(() => {});
-    return () => { vivo = false; };
+    const pedir = () => panel.contadores().then((d) => vivo && setCuentas(d)).catch(() => {});
+    void pedir();
+    window.addEventListener(EVENTO_CONTADORES, pedir);
+    return () => { vivo = false; window.removeEventListener(EVENTO_CONTADORES, pedir); };
   }, [pathname]);
 
   useEffect(() => setAbierto(false), [pathname]);
