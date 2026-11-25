@@ -19,6 +19,7 @@ const ERRORES: Record<string, string> = {
   FALTA_SEGUNDO_FACTOR: "Primero configurá el segundo factor.",
   BACKEND_NO_DISPONIBLE: "No pudimos conectar. Reintentá.",
   RED: "No pudimos conectar. Reintentá.",
+  ENVIO_FALLIDO: "No se pudo enviar el correo. Probá de nuevo en un momento.",
 };
 
 export function textoDeError(code: string | undefined, porDefecto = "Algo falló. Reintentá."): string {
@@ -49,6 +50,7 @@ export const ORIGEN_CONSULTA: Record<string, string> = {
   CONTACTO: "Formulario",
   COMUNIDAD: "Comunidad de WhatsApp",
   WEBINAR: "Webinar",
+  ARREPENTIMIENTO: "Arrepentimiento",
 };
 
 export const ESTADO_ORDEN: Record<string, { texto: string; tono: Tono }> = {
@@ -90,6 +92,7 @@ export const ACCION: Record<string, string> = {
   "usuario.rol": "Cambio de rol",
   "usuario.segundo_factor_reiniciado": "Reinicio del segundo factor",
   "consulta.estado": "Cambió el estado de una consulta",
+  "consulta.respuesta": "Contestó una consulta por correo",
   "orden.cumplida": "Marcó una orden como cumplida",
   "orden.nota": "Escribió una nota en una orden",
   "orden.ver_dni": "Vio el DNI de un comprador",

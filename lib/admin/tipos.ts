@@ -101,7 +101,7 @@ export interface Inicio {
 // --- Consultas (etapa 3) -------------------------------------------------------------------
 
 export type EstadoConsulta = "NEW" | "CONTACTED" | "CLOSED";
-export type OrigenConsulta = "CONTACTO" | "COMUNIDAD" | "WEBINAR";
+export type OrigenConsulta = "CONTACTO" | "COMUNIDAD" | "WEBINAR" | "ARREPENTIMIENTO";
 
 /** ConsultaListaSerializer: sin mensaje, correo ni teléfono. */
 export interface ConsultaFila {
@@ -112,6 +112,19 @@ export interface ConsultaFila {
   source: OrigenConsulta;
   subject: string;
   status: EstadoConsulta;
+  /** Solo los pedidos de arrepentimiento: hasta cuándo hay para contestar (24 h, Res. 424/2020). */
+  vence: string | null;
+}
+
+/** La banda de Consultas y la pestaña «Cuándo llegan». */
+export interface ConsultaCifras {
+  sin_contestar: number;
+  arrepentimiento: number;
+  vencidos: number;
+  contactadas: number;
+  cerradas: number;
+  dias_mapa: number;
+  por_hora: { dia: number; hora: number; n: number }[];
 }
 
 export interface ConsultaDetalle extends ConsultaFila {
