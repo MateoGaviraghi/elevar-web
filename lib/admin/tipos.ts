@@ -251,14 +251,38 @@ export interface Categoria {
 
 export type EstadoOrden = "PENDING" | "PAID" | "FAILED" | "CANCELLED" | "FULFILLED";
 
+export type MedioDePago = "MERCADOPAGO" | "STRIPE";
+
 export interface OrdenFila {
   public_id: string;
+  /** El número corto que ve el comprador: los primeros 8 caracteres en mayúsculas («F66DC23D»). */
+  numero: string;
   created_at: string;
+  paid_at: string | null;
+  /** Devolución total o contracargo avisado por Mercado Pago o Stripe: el estado no cambia. */
+  refunded_at: string | null;
   buyer_name: string;
   cursos: string[];
   total: string;
   currency: string;
   status: EstadoOrden;
+  payment_method: MedioDePago;
+}
+
+export interface OrdenCifras {
+  falta_acceso: number;
+  /** De las que esperan el acceso, las pagadas hace más de 24 h. */
+  demoradas: number;
+  sin_completar: number;
+  cumplidas: number;
+  devueltas: number;
+  /** Lo cobrado en el mes, una fila por moneda: nunca se suman pesos con dólares. */
+  cobrado_mes: { moneda: string; cantidad: number; suma: string }[];
+}
+
+export interface Contadores {
+  consultas: number;
+  ordenes: number;
 }
 
 export interface Totales {
@@ -268,10 +292,12 @@ export interface Totales {
 
 export interface OrdenDetalle {
   public_id: string;
+  numero: string;
   status: EstadoOrden;
   created_at: string;
   paid_at: string | null;
   fulfilled_at: string | null;
+  refunded_at: string | null;
   buyer_name: string;
   buyer_email: string;
   buyer_phone: string;
@@ -283,16 +309,17 @@ export interface OrdenDetalle {
     quantity: number;
     unit_price: string;
     total: string;
-    participantes: number;
+    participantes: { nombre: string; correo: string }[];
   }[];
   subtotal: string;
   discount_total: string;
   discount_label: string;
   total: string;
   currency: string;
-  payment_method: "MERCADOPAGO" | "PAYPAL";
+  payment_method: MedioDePago;
   mp_payment_id: string;
   mp_status: string;
+  stripe_payment_intent_id: string;
   admin_notes: string;
   historial: EventoHistorial[];
 }

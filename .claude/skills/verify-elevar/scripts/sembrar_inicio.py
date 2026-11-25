@@ -97,9 +97,46 @@ def _segunda_tanda():
     print("segunda tanda sembrada")
 
 
+# --- Tercera tanda (2026-11-25): lo que pide Órdenes. Stripe en dólares, participantes, demoradas y devueltas. ---
+def _tercera_tanda():
+    if Order.objects.filter(buyer_email__startswith="semilla.orden").exists():
+        print("tercera tanda ya sembrada"); return
+    from orders.models import PaymentMethod
+    ahora = timezone.now()
+    cursos = list(Course.objects.all()[:4])
+    filas = [
+        # (nombre, medio, moneda, total, estado, horas desde el pago, devuelta, participantes)
+        ("Prueba Stripe Uno", PaymentMethod.STRIPE, "USD", "180.00", OrderStatus.PAID, 3, False, 2),
+        ("Prueba Demorada", PaymentMethod.MERCADOPAGO, "ARS", "96000.00", OrderStatus.PAID, 50, False, 1),
+        ("Prueba Laboratorio Con Un Nombre Largo de Verdad SRL", PaymentMethod.MERCADOPAGO, "ARS", "144000.00", OrderStatus.PAID, 8, False, 3),
+        ("Prueba Devuelta", PaymentMethod.MERCADOPAGO, "ARS", "48000.00", OrderStatus.PAID, 30, True, 1),
+        ("Prueba Stripe Devuelta", PaymentMethod.STRIPE, "USD", "90.00", OrderStatus.FULFILLED, 120, True, 1),
+        ("Prueba Cumplida Stripe", PaymentMethod.STRIPE, "USD", "90.00", OrderStatus.FULFILLED, 70, False, 1),
+    ]
+    for k, (nombre, medio, moneda, total, estado, horas, devuelta, gente) in enumerate(filas):
+        pagada = ahora - timedelta(hours=horas)
+        o = Order.objects.create(
+            buyer_email=f"semilla.orden{k}@ejemplo.com", buyer_name=nombre, buyer_phone="3446000000", buyer_dni="30111222",
+            buyer_company="Laboratorio Prueba" if k % 2 else "", status=estado, payment_method=medio, currency=moneda,
+            total=Decimal(total), subtotal=Decimal(total), paid_at=pagada,
+            fulfilled_at=pagada + timedelta(hours=2) if estado == OrderStatus.FULFILLED else None,
+            refunded_at=pagada + timedelta(hours=5) if devuelta else None,
+            mp_payment_id=f"pago-prueba-{k}" if medio == PaymentMethod.MERCADOPAGO else "",
+            stripe_payment_intent_id=f"pi_prueba_{k}" if medio == PaymentMethod.STRIPE else "",
+        )
+        Order.objects.filter(pk=o.pk).update(created_at=pagada - timedelta(minutes=4))
+        curso = cursos[k % len(cursos)]
+        OrderItem.objects.create(order=o, course=curso, title_snapshot=curso.title, unit_price=Decimal(total) / gente, quantity=gente,
+                                 attendees=[{"name": f"Prueba Participante {k}-{j + 1}", "email": f"semilla.orden{k}.p{j + 1}@ejemplo.com"} for j in range(gente)])
+        if devuelta:
+            auditoria.registrar(actor=None, accion="orden.devuelta", entidad="order", entidad_id=o.public_id,
+                                detalle={"motivo": "refunded", "medio": medio, "pago": "prueba"})
+    print("tercera tanda sembrada")
+
 
 if YA:
     print("primera tanda ya sembrada")
 else:
     _primera_tanda()
 _segunda_tanda()
+_tercera_tanda()

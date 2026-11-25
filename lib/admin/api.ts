@@ -8,6 +8,7 @@
 import type {
   Categoria,
   ConsultaCifras,
+  Contadores,
   ConsultaDetalle,
   ConsultaFila,
   CursoDatos,
@@ -20,6 +21,7 @@ import type {
   FechaInscripciones,
   Inicio,
   Inscripto,
+  OrdenCifras,
   OrdenDetalle,
   OrdenFila,
   Pagina,
@@ -157,6 +159,8 @@ type Params = Record<string, string | number | undefined | null>;
 
 export const panel = {
   inicio: () => pedir<Inicio>("inicio"),
+  /** Los números del menú lateral (un pedido liviano). */
+  contadores: () => pedir<Contadores>("contadores"),
 
   consultas: (p: Params) => pedir<Pagina<ConsultaFila>>(`consultas${consulta(p)}`),
   consultaCifras: () => pedir<ConsultaCifras>("consultas/cifras"),
@@ -191,6 +195,7 @@ export const panel = {
   cancelarFecha: (id: number) => escribir<Fecha>(`fechas/${id}/cancelar`, "POST"),
 
   ordenes: (p: Params) => pedir<Pagina<OrdenFila> & { totales: Totales }>(`ordenes${consulta(p)}`),
+  ordenCifras: () => pedir<OrdenCifras>("ordenes/cifras"),
   orden: (publicId: string) => pedir<OrdenDetalle>(`ordenes/${encodeURIComponent(publicId)}`),
   verDni: (publicId: string) => escribir<{ dni: string }>(`ordenes/${publicId}/dni`, "POST"),
   marcarCumplida: (publicId: string) => escribir<OrdenDetalle>(`ordenes/${publicId}/cumplida`, "POST"),
