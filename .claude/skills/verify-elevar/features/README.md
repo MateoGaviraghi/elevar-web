@@ -27,7 +27,8 @@ Se recorren con `scripts/recorrer-sitio.mjs` (ver SKILL.md, «Sitio público»).
 | `/blog/<slug>` | Una nota del blog | no | sin ficha todavía |
 | `/promociones` | Calculadora del descuento por equipo | sí | sin ficha todavía |
 | `/contacto` | Contacto | no (enviar sí) | sin ficha todavía |
-| `/carrito` · `/checkout` · `/orden/<id>` | Compra (prueba con pago simulado, nunca con plata real) | sí | sin ficha todavía |
+| `/carrito` · `/checkout` | Compra (prueba con pago simulado, nunca con plata real) | sí | sin ficha todavía |
+| `/orden/<id>` · `/orden/<id>/comprobante` | Pase de la orden y comprobante: pagada, devuelta, fallida, pendiente | sí | `orden.md` (con `scripts/acciones-orden.mjs`) |
 | `/privacidad` · `/terminos` · `/arrepentimiento` | Textos legales y botón de arrepentimiento | no (enviar sí) | sin ficha todavía |
 
 Cuando se rediseña una página, se le escribe su ficha y, si tiene interacciones propias, su `scripts/acciones-<pagina>.mjs` (modelo: `acciones-blog.mjs`).

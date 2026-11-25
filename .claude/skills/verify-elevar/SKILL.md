@@ -54,7 +54,7 @@ Lo mismo que el panel pero sin cuenta: el sitio se recorre como alguien que entr
    - Por cada ruta y ancho: cuadros de la entrada a 0,4 · 1,2 · 2,8 s (a 375 y 1440), baja la página de a 60 % de pantalla cada 0,7 s para que disparen las animaciones, y mide saltos de línea, desborde, consola, imágenes rotas, textos que se salen de su caja y lo que quedó invisible (una entrada que no se disparó). Captura la página entera.
    - Por cada ruta, una vez: una pasada con «menos movimiento» (nada puede quedar oculto) y los links internos de `main` (todos responden por debajo de 400).
    - Sale con 1 si algo falla y deja `informe.json` en `$EV`.
-4. **Lo que hace cada página:** su ficha en `features/` y, si tiene, su script de acciones. Hoy: `/blog` → `node acciones-blog.mjs --salida "$EV"` (el número que cuenta, la destacada que se abre al bajar, grilla y lista, que cada tarjeta abra su nota, el cierre y «menos movimiento», en 1440 y 375). Una página nueva con interacciones propias lleva su `acciones-<página>.mjs` con el mismo formato: un `ok`/`FALLA` por paso, capturas `<página>-<ancho>-<paso>.png` y salida 1 si algo falla.
+4. **Lo que hace cada página:** su ficha en `features/` y, si tiene, su script de acciones. Hoy: `/blog` → `node acciones-blog.mjs --salida "$EV"` (el número que cuenta, la destacada que se abre al bajar, grilla y lista, que cada tarjeta abra su nota, el cierre y «menos movimiento», en 1440 y 375); `/orden/<id>` y su comprobante → `ordenes-prueba.mjs` arma cuatro órdenes inventadas (pagada, devuelta, fallida, pendiente), `ordenes_prueba.py` con `MODO=devolver` aplica la devolución y `node acciones-orden.mjs --salida "$EV" --ordenes "$EV/ordenes.json"` prueba los cuatro estados, el comprobante y el PDF (pasos en `features/orden.md`; al terminar, `MODO=borrar`). Una página nueva con interacciones propias lleva su `acciones-<página>.mjs` con el mismo formato: un `ok`/`FALLA` por paso, capturas `<página>-<ancho>-<paso>.png` y salida 1 si algo falla.
 5. **Compra:** solo con pago simulado (`STRIPE_FAKE_MODE` o el simulador de Mercado Pago del backend local). Nunca una tarjeta real ni producción.
 
 ## Evidence
@@ -84,5 +84,8 @@ Lo mismo que el panel pero sin cuenta: el sitio se recorre como alguien que entr
 | `scripts/panel_local_3100.py` | Ajuste de Django para el sitio en el 3100 |
 | `scripts/recorrer-sitio.mjs` | Sitio público sin sesión: entrada, bajar leyendo, saltos, desborde, consola, imágenes, textos que se salen, ocultos, menos movimiento y links |
 | `scripts/acciones-blog.mjs` | Interacciones de `/blog` (ficha `features/blog.md`) |
+| `scripts/ordenes-prueba.mjs` | Cuatro órdenes inventadas por el checkout del backend con pago simulado; deja `ordenes.json` |
+| `scripts/ordenes_prueba.py` | `MODO=devolver` devuelve la orden «devuelta» como el aviso de Mercado Pago; `MODO=borrar` saca las órdenes de prueba (solo `elevar_e2e`) |
+| `scripts/acciones-orden.mjs` | `/orden/<id>` y su comprobante en los cuatro estados, con el PDF (ficha `features/orden.md`) |
 
 Mapa de pantallas del panel y del sitio público: `features/README.md`.
