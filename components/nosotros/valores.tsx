@@ -43,7 +43,7 @@ export function Valores() {
                   aria-hidden
                   className="absolute inset-0 -z-10 origin-bottom scale-y-0 bg-brand-500 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100 group-focus-visible:scale-y-100 motion-reduce:transition-none"
                 />
-                <div className="vl-row grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-3 px-1 py-7 md:grid-cols-[3rem_5rem_minmax(0,1fr)_minmax(0,1.3fr)] md:gap-x-8 md:px-4 md:py-10">
+                <div className="vl-row grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-3 px-1 py-7 md:grid-cols-[3rem_5rem_minmax(0,1fr)_minmax(0,1.3fr)] lg:grid-cols-[3rem_5rem_minmax(14rem,0.7fr)_minmax(0,1.6fr)] md:gap-x-8 md:px-4 md:py-10">
                   <span className="hidden text-sm font-medium text-neutral-400 transition-colors duration-500 group-hover:text-ink-900 md:block">
                     {String(i + 1).padStart(2, "0")}
                   </span>

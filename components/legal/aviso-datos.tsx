@@ -11,7 +11,7 @@ export function AvisoDatos({ para, tono = "claro", className = "" }: { para: str
       {pegar(`Tus datos los guarda ELEVAR y los usa solo para ${para}. Podés pedir verlos, corregirlos o borrarlos cuando quieras.`)}{" "}
       <Link
         href="/privacidad"
-        className={`font-semibold underline underline-offset-2 transition-colors ${dark ? "text-neutral-0/85 hover:text-neutral-0" : "text-ink-900 hover:text-brand-600"}`}
+        className={`whitespace-nowrap font-semibold underline underline-offset-2 transition-colors ${dark ? "text-neutral-0/85 hover:text-neutral-0" : "text-ink-900 hover:text-brand-600"}`}
       >
         Política de privacidad
       </Link>

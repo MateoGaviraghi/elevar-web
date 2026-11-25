@@ -58,7 +58,7 @@ export const CourseRailCard = forwardRef<
         </div>
         <div className="flex flex-1 flex-col px-6 pb-6 pt-5">
           <ModalityChip modality={course.modality} className="self-start" />
-          <h3 className="mt-3 line-clamp-3 font-display text-base font-semibold leading-snug text-ink-900 transition-colors group-hover:text-brand-600">
+          <h3 className="mt-3 line-clamp-4 font-display text-base font-semibold leading-snug text-ink-900 transition-colors group-hover:text-brand-600">
             {course.title}
           </h3>
           <p className="mt-auto pt-3 text-xs text-neutral-500">{courseWhen(course)}</p>

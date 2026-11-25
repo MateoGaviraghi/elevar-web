@@ -86,8 +86,10 @@ for (const r of rutas) {
 
     await p.goto(`${B}${r}`, { waitUntil: "commit" })
     if (w === 375 || w === 1440) {
+      // caret "initial": por defecto Playwright esconde el cursor con un style en cada campo, y si la
+      // captura cae antes de que React hidrate, React avisa que los atributos no coinciden (2026-11-25).
       let t0 = 0
-      for (const t of [400, 1200, 2800]) { await p.waitForTimeout(t - t0); t0 = t; await p.screenshot({ path: `${salida}/${base}-entrada-${t}.png` }) }
+      for (const t of [400, 1200, 2800]) { await p.waitForTimeout(t - t0); t0 = t; await p.screenshot({ path: `${salida}/${base}-entrada-${t}.png`, caret: "initial" }) }
     }
     await p.waitForLoadState("networkidle").catch(() => {})
     await p.waitForTimeout(espera)

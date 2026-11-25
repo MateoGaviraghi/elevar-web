@@ -246,7 +246,7 @@ function Upcoming({ courses }: { courses: Course[] }) {
       <Container>
         <div className="mb-12 flex items-end justify-between gap-6 md:mb-16">
           <h2 className="overflow-hidden font-display text-3xl font-semibold tracking-tight md:text-[2.5rem]">
-            <span className="pu-title block">Próximos en vivo y webinars</span>
+            <span className="pu-title block">{pegar("Próximos en vivo y webinars")}</span>
           </h2>
           <Link href="/formacion/cursos-online-en-vivo" className="shrink-0 overflow-hidden whitespace-nowrap text-sm font-semibold text-brand-400 transition-colors hover:text-neutral-0">
             <span className="pu-title flex items-center gap-2">Ver todos <Arrow /></span>
@@ -282,12 +282,14 @@ function Upcoming({ courses }: { courses: Course[] }) {
             {next.map((c) => {
               const d = dayMonth(c);
               const si = sessionInfo(c);
+              // Título del curso: solo se unen sus dos últimas palabras (sin pegar(), que no va en títulos
+              // de cursos): con pegar() «en el Laboratorio Microbiológico» quedaba entero y se salía a 360.
               return (
                 <li key={c.id} className="pu-row relative">
-                  <Link href={`/cursos/${c.slug}`} className="group grid grid-cols-[4.5rem_minmax(0,1fr)_1.5rem] items-baseline gap-4 py-5 md:grid-cols-[6rem_5rem_minmax(0,1fr)_10rem_7rem_1.5rem] md:gap-6">
-                    <span className="block overflow-hidden"><span className="pu-txt block font-display text-lg font-semibold tabular-nums">{d ? `${d.day} ${d.month}` : ""}</span></span>
+                  <Link href={`/cursos/${c.slug}`} className="group grid grid-cols-[4rem_minmax(0,1fr)_1.5rem] items-baseline gap-3 py-5 md:grid-cols-[6rem_5rem_minmax(0,1fr)_10rem_7rem_1.5rem] md:gap-6">
+                    <span className="block overflow-hidden"><span className="pu-txt block whitespace-nowrap font-display text-base font-semibold tabular-nums md:text-lg">{d ? `${d.day} ${d.month}` : ""}</span></span>
                     <span className="hidden overflow-hidden md:block"><span className="pu-txt block font-mono text-sm font-semibold text-brand-400">{c.code}</span></span>
-                    <span className="block overflow-hidden"><span className="pu-txt block text-[15px] leading-snug text-neutral-200 transition-colors duration-500 group-hover:text-neutral-0 md:text-base">{c.title}</span></span>
+                    <span className="block overflow-hidden"><span className="pu-txt block text-balance text-sm leading-snug text-neutral-200 transition-colors duration-500 group-hover:text-neutral-0 md:text-base">{c.title.replace(/\s+(\S+)$/u, "\u00A0$1")}</span></span>
                     <span className="hidden overflow-hidden md:block"><span className="pu-txt block text-sm text-neutral-400">{si?.time}</span></span>
                     <span className="hidden overflow-hidden text-right md:block"><span className={`pu-txt block text-sm font-semibold ${isFree(c) ? "text-brand-400" : ""}`}>{priceARS(c)}</span></span>
                     <Arrow className="justify-self-end text-brand-400 opacity-0 transition-all duration-500 -translate-x-1 group-hover:translate-x-0 group-hover:opacity-100" />
