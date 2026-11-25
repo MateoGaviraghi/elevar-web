@@ -7,6 +7,7 @@
  */
 import type {
   Categoria,
+  ConsultaCifras,
   ConsultaDetalle,
   ConsultaFila,
   CursoDatos,
@@ -158,9 +159,13 @@ export const panel = {
   inicio: () => pedir<Inicio>("inicio"),
 
   consultas: (p: Params) => pedir<Pagina<ConsultaFila>>(`consultas${consulta(p)}`),
+  consultaCifras: () => pedir<ConsultaCifras>("consultas/cifras"),
   consulta: (id: string) => pedir<ConsultaDetalle>(`consultas/${encodeURIComponent(id)}`),
   cambiarEstadoConsulta: (id: number, estado: EstadoConsulta) =>
     escribir<ConsultaDetalle>(`consultas/${id}/estado`, "POST", { estado }),
+  /** Manda el correo escrito en el panel. `clave`: un UUID por intento (no se manda dos veces). */
+  responderConsulta: (id: number, asunto: string, mensaje: string, clave: string) =>
+    escribir<ConsultaDetalle>(`consultas/${id}/respuesta`, "POST", { asunto, mensaje, clave }),
 
   auditoria: (p: Params, cursor?: string | null) =>
     pedir<PaginaCursor<Evento>>(`auditoria${consulta({ ...p, cursor: cursor ?? undefined })}`),
