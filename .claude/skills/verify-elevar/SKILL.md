@@ -1,9 +1,9 @@
 ---
 name: verify-elevar
-description: Manejar el panel interno de ELEVAR (Next.js en frontend/ + Django en backend/) como una persona con sesión y probar que una pantalla funciona - levantar la base local, el backend y el sitio, crear la cuenta inventada con segundo factor, cargar datos de muestra, recorrer rutas a 360/375/412/1440/1920 con capturas, chequeo de saltos de línea, desborde y consola. Usar cuando Mateo dice «verificá», o antes de entregar un cambio que se ve en el panel (Inicio, Consultas, Órdenes, Inscripciones, Cursos, Auditoría, Mi cuenta).
+description: Manejar ELEVAR (Next.js en frontend/ + Django en backend/) como una persona y probar que una pantalla funciona - el panel interno con sesión (cuenta inventada con segundo factor y datos de muestra) y el sitio público sin sesión (Inicio, Formación, cursos, Servicios, Nosotros, Blog, Promociones, compra, textos legales) - levantar la base local, el backend y el sitio, recorrer rutas a 360/375/412/1440/1920 bajando la página, con capturas de la entrada y de la página entera, chequeo de saltos de línea, desborde, consola, imágenes rotas, textos que se salen, lo que queda oculto, «menos movimiento» y links rotos, y probar las interacciones de cada página con su ficha. Usar cuando Mateo dice «verificá», o antes de entregar un cambio que se ve en el panel o en el sitio público.
 ---
 
-# Verificar el panel de ELEVAR
+# Verificar ELEVAR: el panel y el sitio público
 
 El panel vive en `/admin` del sitio (`frontend/`) y le pide todo a Django (`backend/`, API en `/api/v1/panel/`). Se prueba **solo en local**, contra la base `elevar_e2e`, con una cuenta inventada (`visor.local@ejemplo.com`) y datos inventados (nombres «Prueba …», correos `@ejemplo.com`). **Nunca contra producción** ni con datos de personas reales. No se abre ningún `.env` ni se imprime un secreto: la clave y el secreto del segundo factor de la cuenta inventada van a un archivo, nunca al chat.
 
@@ -42,6 +42,21 @@ Parado en `<scratchpad>/verify-elevar/pw`:
 - Lo que hay que mirar en cada pantalla, además del recorrido: `features/`.
 - Un flujo que escribe (contestar una consulta, marcar una orden cumplida) se prueba con un script chico de Playwright en el scratchpad que haga los clicks reales, y después se mira el efecto en la base local (consulta de solo lectura con `manage.py shell`).
 
+## Sitio público (sin sesión)
+
+Lo mismo que el panel pero sin cuenta: el sitio se recorre como alguien que entra desde Google. Base local igual (`elevar_e2e`): nada de producción.
+
+1. **Launch:** los pasos 1 a 4 de «Launch» (base, ajuste, backend y sitio). El paso 5 (cuenta y datos del panel) no hace falta. El backend solo lo necesitan las páginas que leen el catálogo (Inicio, Formación, cursos, Promociones, compra): sin él, `/` da 500 y el recorrido lo marca como link roto. El blog, Servicios, Nosotros y los textos legales andan sin backend.
+   - Si el sitio público se prueba desde otro checkout (por ejemplo `wt-muestra`), se levanta igual con `npx next dev -p 3100` desde esa carpeta, con las mismas variables. Si el 3100 está ocupado por el panel, se usa otro puerto y se pasa `--base`.
+2. **Doctor:** `node scripts/doctor.mjs --sitio` — el sitio y `/blog` responden, y avisa si el catálogo del backend no tiene cursos.
+3. **Recorrido** (parado en `<scratchpad>/verify-elevar/pw`):
+   `MSYS_NO_PATHCONV=1 node recorrer-sitio.mjs --salida "$EV" --rutas /,/blog [--anchos 360,375,412,1440,1920] [--base http://localhost:3100] [--sin-links]`
+   - Por cada ruta y ancho: cuadros de la entrada a 0,4 · 1,2 · 2,8 s (a 375 y 1440), baja la página de a 60 % de pantalla cada 0,7 s para que disparen las animaciones, y mide saltos de línea, desborde, consola, imágenes rotas, textos que se salen de su caja y lo que quedó invisible (una entrada que no se disparó). Captura la página entera.
+   - Por cada ruta, una vez: una pasada con «menos movimiento» (nada puede quedar oculto) y los links internos de `main` (todos responden por debajo de 400).
+   - Sale con 1 si algo falla y deja `informe.json` en `$EV`.
+4. **Lo que hace cada página:** su ficha en `features/` y, si tiene, su script de acciones. Hoy: `/blog` → `node acciones-blog.mjs --salida "$EV"` (el número que cuenta, la destacada que se abre al bajar, grilla y lista, que cada tarjeta abra su nota, el cierre y «menos movimiento», en 1440 y 375). Una página nueva con interacciones propias lleva su `acciones-<página>.mjs` con el mismo formato: un `ok`/`FALLA` por paso, capturas `<página>-<ancho>-<paso>.png` y salida 1 si algo falla.
+5. **Compra:** solo con pago simulado (`STRIPE_FAKE_MODE` o el simulador de Mercado Pago del backend local). Nunca una tarjeta real ni producción.
+
 ## Evidence
 
 - La prueba es el camino real: la pantalla de ingreso, los clicks, los teclados. Nada de llamar a la API a mano para dar algo por probado.
@@ -67,5 +82,7 @@ Parado en `<scratchpad>/verify-elevar/pw`:
 | `scripts/usuario_visor.py` | La cuenta inventada con segundo factor (escribe clave y secreto en un archivo) |
 | `scripts/sembrar_inicio.py` | Un año de datos inventados para el Inicio |
 | `scripts/panel_local_3100.py` | Ajuste de Django para el sitio en el 3100 |
+| `scripts/recorrer-sitio.mjs` | Sitio público sin sesión: entrada, bajar leyendo, saltos, desborde, consola, imágenes, textos que se salen, ocultos, menos movimiento y links |
+| `scripts/acciones-blog.mjs` | Interacciones de `/blog` (ficha `features/blog.md`) |
 
-Mapa de pantallas: `features/README.md`.
+Mapa de pantallas del panel y del sitio público: `features/README.md`.

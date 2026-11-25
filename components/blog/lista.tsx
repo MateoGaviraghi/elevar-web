@@ -93,7 +93,7 @@ function Encabezado() {
             </div>
             <div className="flex shrink-0 flex-col items-end gap-3 pt-3 md:gap-6 md:pt-6">
               <span className="font-display text-2xl font-medium tabular-nums md:text-5xl">
-                <span ref={num}>{total}</span>
+                <span ref={num} data-contador>{total}</span>
               </span>
               <button
                 type="button"
