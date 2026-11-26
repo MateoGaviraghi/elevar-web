@@ -1,0 +1,2 @@
+Fuentes para el PDF de inscriptos del panel (2026-11-25), bajadas de Google Fonts (subconjunto latino, WOFF):
+DM Sans, Inter y Space Grotesk. Las tres son de licencia SIL Open Font License 1.1 (https://openfontlicense.org).

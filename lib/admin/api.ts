@@ -19,8 +19,10 @@ import type {
   Evento,
   Fecha,
   FechaInscripciones,
+  InscripcionCifras,
   Inicio,
   Inscripto,
+  PersonaInscripta,
   OrdenCifras,
   OrdenDetalle,
   OrdenFila,
@@ -182,7 +184,16 @@ export const panel = {
   fechasConInscripciones: () => pedir<FechaInscripciones[]>("inscripciones/fechas"),
   inscriptos: (sesion: number, p: Params) =>
     pedir<Pagina<Inscripto> & { fecha: FechaInscripciones }>(`inscripciones${consulta({ ...p, sesion })}`),
-  /** La exportación es un archivo: se descarga con un link al puente (GET, con la cookie). */
+  fechasInscripciones: (p: Params) => pedir<Pagina<FechaInscripciones>>(`inscripciones/lista${consulta(p)}`),
+  inscripcionCifras: () => pedir<InscripcionCifras>("inscripciones/cifras"),
+  personasDeFecha: (sesion: number) =>
+    pedir<{ fecha: FechaInscripciones; personas: PersonaInscripta[] }>(`inscripciones/personas${consulta({ sesion })}`),
+  /** Queda en la auditoría como una exportación. */
+  correosDeFecha: (sesion: number) => pedir<{ correos: string[] }>(`inscripciones/correos${consulta({ sesion })}`),
+  /** Los datos del PDF de la fecha; queda en la auditoría como una exportación. */
+  pdfDeFecha: (sesion: number) =>
+    pedir<{ fecha: FechaInscripciones; personas: PersonaInscripta[] }>(`inscripciones/pdf${consulta({ sesion })}`),
+    /** La exportación es un archivo: se descarga con un link al puente (GET, con la cookie). */
   urlExportarInscriptos: (sesion: number) => `${BASE}inscripciones/exportar${consulta({ sesion })}`,
 
   categorias: () => pedir<Categoria[]>("categorias"),
