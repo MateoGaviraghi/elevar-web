@@ -175,6 +175,32 @@ def _cuarta_tanda():
     print("cuarta tanda sembrada")
 
 
+# --- Quinta tanda (2026-11-26): lo que pide Cursos. Dos borradores (uno con el título más largo que entra), un webinar
+#     publicado sin fecha y un curso en dólares con etiqueta. Códigos SEM*. No se repite. ---
+def _quinta_tanda():
+    from catalog.models import Category, Course, Modality
+    if Course.objects.filter(code__startswith="SEM").exists():
+        print("quinta tanda ya sembrada"); return
+    cat = Category.objects.order_by("order", "id").first()
+    if cat is None:
+        print("quinta tanda: no hay categorías"); return
+    largo = ("Prueba de título largo: validación de métodos analíticos fisicoquímicos y microbiológicos en "
+             "laboratorios de ensayo acreditados bajo la norma ISO/IEC 17025:2017, con ejercicios prácticos")[:200]
+    cursos = [
+        ("SEM1", "Prueba borrador sin ficha", Modality.ASYNC, False, "", "65000.00", None),
+        ("SEM2", largo, Modality.LIVE, False, "NUEVO", "120000.00", "95.00"),
+        ("SEM3", "Prueba webinar sin fecha", Modality.WEBINAR, True, "PROXIMO", "0.00", None),
+        ("SEM4", "Prueba taller en dólares", Modality.WORKSHOP, True, "", "80000.00", "70.00"),
+    ]
+    for code, titulo, modalidad, publicado, etiqueta, precio, usd in cursos:
+        Course.objects.create(
+            code=code, title=titulo, slug=f"prueba-{code.lower()}", category=cat, modality=modalidad,
+            is_published=publicado, badge=etiqueta, price=Decimal(precio), price_usd=Decimal(usd) if usd else None,
+            summary="" if code == "SEM1" else "Resumen inventado para probar la tarjeta.", position=900,
+        )
+    print("quinta tanda sembrada")
+
+
 if YA:
     print("primera tanda ya sembrada")
 else:
@@ -182,3 +208,4 @@ else:
 _segunda_tanda()
 _tercera_tanda()
 _cuarta_tanda()
+_quinta_tanda()

@@ -218,6 +218,20 @@ export interface CursoFila {
   currency: string;
   is_published: boolean;
   proxima_fecha: string | null;
+  price_usd: string | null;
+  is_featured: boolean;
+  badge: "" | "NUEVO" | "PROXIMO";
+  category: number;
+  category_nombre: string;
+}
+
+/** La banda de Cursos: las cuatro cifras que filtran y el total. */
+export interface CursoCifras {
+  total: number;
+  publicados: number;
+  borradores: number;
+  con_fecha: number;
+  sin_fecha: number;
 }
 
 export interface CursoDatos {

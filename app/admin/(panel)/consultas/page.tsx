@@ -2,12 +2,14 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { EstadoNoListo, useDatos, useErrorDeAccion, type EstadoDatos } from "@/components/admin/datos";
+import { EstadoNoListo, useErrorDeAccion, type EstadoDatos } from "@/components/admin/datos";
+import { useDatosRecordados } from "@/components/admin/lista/memoria";
 import { Barras, Filas, numero } from "@/components/admin/inicio/graficos";
 import { Conclusion, Encabezado, Lienzo, SCROLL_FINO, SI_ALCANZA, Tarjeta, hace } from "@/components/admin/inicio/piezas";
 import { Banda, CifraFiltro, Pestanas } from "@/components/admin/lista/Banda";
 import { BarraFiltros, Buscador, Limpiar, Menu, Pastilla, type Opcion } from "@/components/admin/lista/BarraFiltros";
 import { Icono } from "@/components/admin/iconos";
+import { BotonAccion, BotonFicha, ChipOscuro, CuadroIcono, Ic } from "@/components/admin/lista/Botones";
 import { DatoFicha, Ficha, useAviso } from "@/components/admin/lista/Ficha";
 import { Paginacion, TAMANOS } from "@/components/admin/lista/Paginacion";
 import { ChipPunto, Tabla, Vacia, type Columna } from "@/components/admin/lista/Tabla";
@@ -120,11 +122,11 @@ function Consultas() {
   // Cambia después de marcar o contestar una consulta: vuelve a pedir la lista, las cifras y la tarjeta.
   const [version, setVersion] = useState(0);
   const claveLista = [v.estado, v.origen, v.fecha, v.q, v.orden, pagina, por, version].join("|");
-  const lista = useDatos(
+  const lista = useDatosRecordados(
     () => panel.consultas({ estado: v.estado, origen: v.origen, q: v.q, orden: v.orden, ...rangoDe(v.fecha), page: pagina, page_size: por }),
     [claveLista],
   );
-  const cifras = useDatos(() => panel.consultaCifras(), [version]);
+  const cifras = useDatosRecordados(() => panel.consultaCifras(), [version]);
   const { aviso, avisar } = useAviso();
   const errorDeAccion = useErrorDeAccion();
 
@@ -331,39 +333,10 @@ function FilaMovil({ c }: { c: ConsultaFila }) {
   );
 }
 
-const ICONOS: Record<string, string> = {
-  sobre: "M3.5 5.5h13v9h-13zM3.5 6l6.5 5 6.5-5",
-  tilde: "m4.5 10.5 3.5 3.5 7.5-8",
-  whatsapp: "M10 3.2a6.8 6.8 0 0 0-5.9 10.2L3.2 16.8l3.5-.9A6.8 6.8 0 1 0 10 3.2zM7.6 7.3c.2-.4.5-.4.7-.4l.4.1.6 1.4-.4.7.9 1.2 1.2.8.7-.4 1.4.6v.4c0 .3-.2.7-.6.9-.5.3-1.3.4-2.6-.3a7.3 7.3 0 0 1-2.6-2.6c-.6-1.1-.4-1.9-.1-2.4",
-  abrir: "M8 4.5H4.5v11h11V12M11 4.5h4.5V9M15.5 4.5 9 11",
-  enviar: "M16.5 3.5 3.5 9l5 2 2 5z M8.5 11l3-3",
-};
-
-function Ic({ nombre, tam = 18 }: { nombre: string; tam?: number }) {
-  return (
-    <svg viewBox="0 0 20 20" width={tam} height={tam} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="shrink-0">
-      <path d={ICONOS[nombre]} />
-    </svg>
-  );
-}
-
-/** Un botón de la fila con ícono y texto: se entiende sin pasar el mouse. */
-function BotonAccion({ icono, children, onClick, etiqueta, variante = "contorno" }: { icono: string; children: ReactNode; onClick: () => void; etiqueta: string; variante?: "contorno" | "suave" }) {
-  return (
-    <button type="button" data-accion aria-label={etiqueta} onClick={onClick}
-      className={`inline-flex min-h-[36px] items-center gap-1.5 whitespace-nowrap rounded-[10px] px-3 font-sub text-[13px] font-semibold outline-none transition-[background-color,border-color,transform] duration-150 focus-visible:ring-2 focus-visible:ring-brand-500 active:scale-[0.96] ${
-        variante === "contorno" ? "border border-ink-200 bg-neutral-0 text-ink-900 [@media(hover:hover)]:hover:border-ink-900" : "bg-ink-50 text-ink-900 [@media(hover:hover)]:hover:bg-ink-100"
-      }`}>
-      <Ic nombre={icono} tam={16} />
-      {children}
-    </button>
-  );
-}
-
 // --- La tarjeta de la consulta -------------------------------------------------------------------------
 
 function FichaConsulta({ id, abierta, fila, origen, onSalida, version, contestar, posicion, onCerrar, onAnterior, onSiguiente, onCambiar, onEnviada }: FichaConsultaProps) {
-  const { estado, recargar } = useDatos(() => panel.consulta(id), [id, version]);
+  const { estado, recargar } = useDatosRecordados(() => panel.consulta(id), [id, version]);
   const cuerpo = useRef<HTMLDivElement>(null);
   const [guardando, setGuardando] = useState(false);
   const [copiado, setCopiado] = useState(false);
@@ -462,14 +435,14 @@ function FichaConsulta({ id, abierta, fila, origen, onSalida, version, contestar
               <p className="mt-1.5 whitespace-pre-wrap break-words text-sm leading-relaxed text-ink-900">{c.message || "No dejó mensaje: se anotó en la comunidad de WhatsApp."}</p>
               <p className="mt-2 text-xs text-neutral-700">{fechaHora(c.created_at)}</p>
             </section>
-            <div data-entra><DatoFicha icono={<Ic nombre="sobre" tam={20} />} etiqueta="Correo"
+            <div data-entra><DatoFicha icono={<Ic nombre="sobre" tam={24} />} etiqueta="Correo"
               accion={<button type="button" onClick={() => void copiar()} className="min-h-[36px] rounded-[10px] border border-ink-100 px-3 text-xs font-semibold text-ink-900 outline-none focus-visible:ring-2 focus-visible:ring-brand-500 [@media(hover:hover)]:hover:border-ink-900">{copiado ? "Copiado" : "Copiar"}</button>}>
               <span className="[overflow-wrap:anywhere]">{c.email}</span>
             </DatoFicha></div>
             {(c.phone || c.company) && (
               <div data-entra className={`grid gap-3 ${c.phone && c.company ? "sm:grid-cols-2" : ""}`}>
-                {c.phone && <DatoFicha icono={<Ic nombre="whatsapp" tam={20} />} etiqueta="Teléfono">{c.phone}</DatoFicha>}
-                {c.company && <DatoFicha icono={<IconoEmpresa />} etiqueta="Empresa">{c.company}</DatoFicha>}
+                {c.phone && <DatoFicha icono={<Ic nombre="whatsapp" tam={24} />} etiqueta="Teléfono">{c.phone}</DatoFicha>}
+                {c.company && <DatoFicha icono={<Ic nombre="empresa" tam={24} />} etiqueta="Empresa">{c.company}</DatoFicha>}
               </div>
             )}
             <HistorialConsulta eventos={c.historial} />
@@ -547,9 +520,9 @@ function Contestar({ c, enfocar, onSucio, onEnviada }: { c: ConsultaDetalle; enf
   const whatsapp = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
 
   return (
-    <section data-entra aria-labelledby="contestar-titulo" className="flex min-w-0 flex-col gap-3 rounded-[18px] border-2 border-ink-900 bg-neutral-0 p-4 lg:sticky lg:top-0">
+    <section data-entra data-escribe aria-labelledby="contestar-titulo" className="flex min-w-0 flex-col gap-3 rounded-[18px] border-2 border-ink-900 bg-neutral-0 p-4 lg:sticky lg:top-0">
       <header className="flex items-center gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-ink-900 text-neutral-0"><Ic nombre="sobre" tam={20} /></span>
+        <CuadroIcono nombre="enviar" />
         <div className="min-w-0">
           <h3 id="contestar-titulo" className="font-display text-lg font-semibold leading-tight text-ink-900">Contestar</h3>
           <p className="truncate text-xs text-neutral-700">Para <b className="font-semibold text-ink-900">{c.email}</b></p>
@@ -623,43 +596,6 @@ function HistorialConsulta({ eventos }: { eventos: EventoHistorial[] }) {
       </ol>
     </section>
   );
-}
-
-function ChipOscuro({ children, punto }: { children: ReactNode; punto?: string }) {
-  return (
-    <span className="inline-flex min-h-[30px] items-center gap-2 rounded-full border border-neutral-0/25 bg-neutral-0/10 px-3 text-[13px] font-semibold">
-      {punto && <span aria-hidden className={`h-2 w-2 rounded-full ${punto}`} />}
-      {children}
-    </span>
-  );
-}
-
-function IconoEmpresa() {
-  return (
-    <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M4 16.5v-11l6-2v13M10 7.5h6v9M2.5 16.5h15M6.5 8h1M6.5 11h1M12.5 10h1M12.5 13h1" />
-    </svg>
-  );
-}
-
-/** Los botones de la tarjeta: el principal naranja se llena de azul tinta desde abajo; el de contorno, blanco. */
-function BotonFicha({ children, onClick, href, externo, variante = "principal", deshabilitado, icono }: { children: ReactNode; onClick?: () => void; href?: string; externo?: boolean; variante?: "principal" | "contorno" | "claro" | "peligro"; deshabilitado?: boolean; icono?: string }) {
-  const estilo = {
-    principal: "bg-brand-500 text-neutral-0",
-    contorno: "border border-ink-200 bg-neutral-0 text-ink-900 [@media(hover:hover)]:hover:border-ink-900",
-    claro: "bg-neutral-0/10 text-neutral-0 [@media(hover:hover)]:hover:bg-neutral-0/20",
-    peligro: "border border-status-error/40 bg-neutral-0 text-status-error [@media(hover:hover)]:hover:border-status-error",
-  }[variante];
-  const clase = `group relative inline-flex min-h-[44px] items-center justify-center gap-2 overflow-hidden rounded-[12px] px-4 font-sub text-sm font-semibold outline-none transition-[transform,border-color,background-color] duration-150 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 ${estilo}`;
-  const contenido = (
-    <>
-      {variante === "principal" && <span aria-hidden className="absolute inset-0 translate-y-full bg-ink-900 transition-transform duration-500 ease-[cubic-bezier(.22,.8,.24,1)] [@media(hover:hover)]:group-enabled:group-hover:translate-y-0" />}
-      {icono && <span className="relative"><Ic nombre={icono} /></span>}
-      <span className="relative whitespace-nowrap">{children}</span>
-    </>
-  );
-  if (href) return <a href={href} className={clase} {...(externo ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{contenido}</a>;
-  return <button type="button" onClick={onClick} disabled={deshabilitado} className={clase}>{contenido}</button>;
 }
 
 // --- Cuándo llegan ------------------------------------------------------------------------------------

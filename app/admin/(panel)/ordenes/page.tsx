@@ -2,12 +2,13 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { EstadoNoListo, useDatos, useErrorDeAccion, type EstadoDatos } from "@/components/admin/datos";
+import { EstadoNoListo, useErrorDeAccion, type EstadoDatos } from "@/components/admin/datos";
+import { useDatosRecordados } from "@/components/admin/lista/memoria";
 import { numero } from "@/components/admin/inicio/graficos";
 import { hace } from "@/components/admin/inicio/piezas";
 import { Banda, CifraFiltro } from "@/components/admin/lista/Banda";
 import { BarraFiltros, Buscador, Limpiar, Menu, Pastilla, type Opcion } from "@/components/admin/lista/BarraFiltros";
-import { BotonAccion, BotonFicha, ChipOscuro, Ic, Rotulo } from "@/components/admin/lista/Botones";
+import { BotonAccion, BotonFicha, ChipOscuro, CuadroIcono, Ic, Rotulo } from "@/components/admin/lista/Botones";
 import { DatoFicha, Ficha, useAviso } from "@/components/admin/lista/Ficha";
 import { Paginacion, TAMANOS } from "@/components/admin/lista/Paginacion";
 import { ChipPunto, Tabla, Vacia, type Columna } from "@/components/admin/lista/Tabla";
@@ -104,12 +105,12 @@ function Ordenes() {
   // Las que esperan el acceso van de la más vieja a la más nueva (primero la que más espera); el resto, al revés.
   const orden = v.estado === "PAID" ? "viejas" : "nuevas";
   const claveLista = [v.estado, v.medio, v.curso, v.fecha, v.q, pagina, por, version].join("|");
-  const lista = useDatos(
+  const lista = useDatosRecordados(
     () => panel.ordenes({ estado: v.estado, medio: v.medio, curso: v.curso, q: v.q, orden, ...rangoDe(v.fecha), page: pagina, page_size: por }),
     [claveLista],
   );
-  const cifras = useDatos(() => panel.ordenCifras(), [version]);
-  const cursos = useDatos(() => panel.cursos({ page_size: 100 }), []);
+  const cifras = useDatosRecordados(() => panel.ordenCifras(), [version]);
+  const cursos = useDatosRecordados(() => panel.cursos({ page_size: 100 }), []);
   const { aviso, avisar } = useAviso();
 
   const filas = lista.estado.tipo === "listo" ? lista.estado.datos.results : [];
@@ -238,9 +239,9 @@ function Cifras({ estado, v, enlace }: { estado: EstadoDatos<OrdenCifras>; v: ty
   const elegida = (e: string) => sinOtros && v.estado === e;
   return (
     <>
-      <CifraFiltro href={enlace({ ...base, estado: "PAID" })} icono="llave" nombre="Falta dar acceso" detalle="Pagaron y esperan el aula" valor={d.falta_acceso} elegida={elegida("PAID")}
+      <CifraFiltro href={enlace({ ...base, estado: "PAID" })} icono="candado" nombre="Falta dar acceso" detalle="Pagaron y esperan el aula" valor={d.falta_acceso} elegida={elegida("PAID")}
         aviso={d.demoradas ? `${numero(d.demoradas)} hace más de 24 h` : undefined} />
-      <CifraFiltro href={enlace({ ...base, estado: "SIN_COMPLETAR" })} icono="espera" nombre="Sin completar" detalle="No terminaron de pagar" valor={d.sin_completar} elegida={elegida("SIN_COMPLETAR")} />
+      <CifraFiltro href={enlace({ ...base, estado: "SIN_COMPLETAR" })} icono="reloj" nombre="Sin completar" detalle="No terminaron de pagar" valor={d.sin_completar} elegida={elegida("SIN_COMPLETAR")} />
       <CifraFiltro href={enlace({ ...base, estado: "FULFILLED" })} icono="inscripciones" nombre="Cumplidas" detalle="Ya tienen el acceso" valor={d.cumplidas} elegida={elegida("FULFILLED")} />
       <CifraFiltro href={enlace({ ...base, estado: "DEVUELTAS" })} icono="moneda" nombre="Devueltas" detalle="La plata volvió al comprador" valor={d.devueltas} elegida={elegida("DEVUELTAS")} />
     </>
@@ -270,7 +271,9 @@ function Comprador({ o }: { o: OrdenFila }) {
       <span aria-hidden className={`inline-grid h-9 w-9 shrink-0 place-items-center rounded-full font-sub text-xs font-semibold ${demorada(o) ? "bg-brand-500 text-neutral-0" : "bg-ink-50 text-ink-900 ring-1 ring-ink-100"}`}>
         {iniciales(o.buyer_name)}
       </span>
-      <span className="min-w-0">
+      {/* En una tabla, «truncate» no achica la columna: sin un tope, el nombre largo del curso empujaba
+          «Dar acceso» fuera de la tarjeta a 1440 (2026-11-26). El tope deja lugar a las otras cuatro columnas. */}
+      <span className="min-w-0 max-w-[max(10rem,calc(100vw-44rem))] lg:max-w-[max(12rem,calc(100vw-60rem))]">
         <span className="block truncate font-semibold text-ink-900">{o.buyer_name}</span>
         <span className="block truncate text-xs text-neutral-700" title={o.cursos.join(" · ")}>{o.cursos.join(" · ") || "Sin cursos"}</span>
       </span>
@@ -323,7 +326,7 @@ interface FichaOrdenProps {
 }
 
 function FichaOrden({ id, abierta, fila, origen, onSalida, version, accion, posicion, onCerrar, onAnterior, onSiguiente, onCumplida, avisar }: FichaOrdenProps) {
-  const { estado, recargar, setEstado } = useDatos(() => panel.orden(id), [id, version]);
+  const { estado, recargar, setEstado } = useDatosRecordados(() => panel.orden(id), [id, version]);
   const cuerpo = useRef<HTMLDivElement>(null);
   const o = estado.tipo === "listo" && estado.datos.public_id === id ? estado.datos : null;
   const cabeza = o ?? fila ?? null;
@@ -473,15 +476,15 @@ function CompradorFicha({ o, avisar }: { o: OrdenDetalle; avisar: (t: string) =>
 
   return (
     <div data-entra className="flex flex-col gap-3">
-      <DatoFicha icono={<Ic nombre="sobre" tam={20} />} etiqueta="Correo del comprador"
+      <DatoFicha icono={<Ic nombre="sobre" tam={24} />} etiqueta="Correo del comprador"
         accion={<button type="button" onClick={() => void copiar()} className={boton}>{copiado ? "Copiado" : "Copiar"}</button>}>
         <span className="[overflow-wrap:anywhere]">{o.buyer_email}</span>
       </DatoFicha>
       <div className="grid gap-3 sm:grid-cols-2">
-        {o.buyer_phone && <DatoFicha icono={<Ic nombre="whatsapp" tam={20} />} etiqueta="Teléfono">{o.buyer_phone}</DatoFicha>}
-        {o.buyer_company && <DatoFicha icono={<Ic nombre="persona" tam={20} />} etiqueta="Laboratorio o empresa">{o.buyer_company}</DatoFicha>}
+        {o.buyer_phone && <DatoFicha icono={<Ic nombre="whatsapp" tam={24} />} etiqueta="Teléfono">{o.buyer_phone}</DatoFicha>}
+        {o.buyer_company && <DatoFicha icono={<Ic nombre="empresa" tam={24} />} etiqueta="Laboratorio o empresa">{o.buyer_company}</DatoFicha>}
         {o.dni_enmascarado && (
-          <DatoFicha icono={<Ic nombre="tarjeta" tam={20} />} etiqueta="DNI"
+          <DatoFicha icono={<Ic nombre="tarjeta" tam={24} />} etiqueta="DNI"
             accion={!dni ? <button type="button" disabled={viendo} onClick={() => void verDni()} className={boton}>{viendo ? "…" : "Mostrar"}</button> : undefined}>
             <span className="font-mono">{dni ?? o.dni_enmascarado}</span>
           </DatoFicha>
@@ -546,9 +549,9 @@ function DarAcceso({ o, enfocar, onHecho }: { o: OrdenDetalle; enfocar: boolean;
   };
 
   return (
-    <section ref={caja} data-entra aria-labelledby="acceso-titulo" className="flex flex-col gap-3 rounded-[18px] border-2 border-ink-900 bg-neutral-0 p-4">
+    <section ref={caja} data-entra data-escribe aria-labelledby="acceso-titulo" className="flex flex-col gap-3 rounded-[18px] border-2 border-ink-900 bg-neutral-0 p-4">
       <header className="flex items-center gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-brand-500 text-neutral-0"><Ic nombre="llave" tam={20} /></span>
+        <CuadroIcono nombre="llave" tono="marca" />
         <div className="min-w-0">
           <h3 id="acceso-titulo" className="font-display text-lg font-semibold leading-tight text-ink-900">Dar acceso al aula</h3>
           <p className="text-xs text-neutral-700">{lugares === 1 ? "1 lugar" : `${lugares} lugares`} · pagó {o.paid_at ? hace(o.paid_at) : ""}</p>
@@ -589,9 +592,9 @@ function Escribirle({ o, enfocar }: { o: OrdenDetalle; enfocar: boolean }) {
   }, [enfocar]);
 
   return (
-    <section ref={caja} data-entra aria-labelledby="escribir-titulo" className="flex flex-col gap-3 rounded-[16px] border border-ink-100 p-4">
+    <section ref={caja} data-entra data-escribe aria-labelledby="escribir-titulo" className="flex flex-col gap-3 rounded-[16px] border border-ink-100 p-4">
       <header className="flex items-center gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-ink-900 text-neutral-0"><Ic nombre="sobre" tam={20} /></span>
+        <CuadroIcono nombre="sobre" />
         <div className="min-w-0">
           <h3 id="escribir-titulo" className="font-display text-lg font-semibold leading-tight text-ink-900">Escribirle</h3>
           <p className="truncate text-xs text-neutral-700">Desde tu correo o por WhatsApp</p>

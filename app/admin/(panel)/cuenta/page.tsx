@@ -1,5 +1,6 @@
 "use client";
 
+import { pegar } from "@/lib/texto";
 import { useState, type FormEvent } from "react";
 import { Bloque, Dato, EstadoNoListo, Titulo, useDatos, useErrorDeAccion } from "@/components/admin/datos";
 import { useUsuario } from "@/components/admin/shell";
@@ -148,7 +149,7 @@ export default function CuentaPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            <p className="text-sm text-neutral-700">Si usaste o perdiste tus códigos de respaldo, generá otros. Los anteriores dejan de servir.</p>
+            <p className="text-sm text-neutral-700">{pegar("Si usaste o perdiste tus códigos de respaldo, generá otros. Los anteriores dejan de servir.")}</p>
             <div>
               <button type="button" onClick={() => setConfirmarCodigos(true)} className={adminButtonClasses("secondary")}>
                 Generar códigos de respaldo nuevos

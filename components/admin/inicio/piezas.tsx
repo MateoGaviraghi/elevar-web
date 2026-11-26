@@ -170,7 +170,8 @@ export function Conclusion({ children }: { children: ReactNode }) {
 }
 
 /**
- * Tres botones:
+ * Tres botones (el relleno crece con `scale-y` desde abajo; el color del texto al llenarse va con `hover:` del
+ * propio link: con `group-hover:` no se aplicaba y «Ver los inscriptos» quedaba blanco sobre blanco, 2026-11-26):
  * - principal: relleno naranja; al pasar el mouse se llena de azul tinta desde abajo (0,5 s).
  * - secundario: relleno azul tinta; se llena de naranja desde abajo.
  * - enlace: texto con flecha que se corre.
@@ -194,14 +195,14 @@ export function Boton({ href, children, variante = "principal", chico = false }:
   // [fondo, texto, relleno que sube, texto al llenarse]
   const estilos: Record<Tono, Record<"principal" | "secundario", [string, string, string, string]>> = {
     blanco: { principal: ["bg-brand-500", "text-neutral-0", "bg-ink-900", ""], secundario: ["bg-ink-900", "text-neutral-0", "bg-brand-500", ""] },
-    azul: { principal: ["bg-brand-500", "text-neutral-0", "bg-neutral-0", "[@media(hover:hover)]:group-hover:text-ink-900"], secundario: ["bg-neutral-0/10", "text-neutral-0", "bg-neutral-0", "[@media(hover:hover)]:group-hover:text-ink-900"] },
-    naranja: { principal: ["bg-neutral-0", "text-brand-700", "bg-ink-900", "[@media(hover:hover)]:group-hover:text-neutral-0"], secundario: ["bg-ink-900", "text-neutral-0", "bg-neutral-0", "[@media(hover:hover)]:group-hover:text-ink-900"] },
+    azul: { principal: ["bg-brand-500", "text-neutral-0", "bg-neutral-0", "[@media(hover:hover)]:hover:text-ink-900"], secundario: ["bg-neutral-0/10", "text-neutral-0", "bg-neutral-0", "[@media(hover:hover)]:hover:text-ink-900"] },
+    naranja: { principal: ["bg-neutral-0", "text-brand-700", "bg-ink-900", "[@media(hover:hover)]:hover:text-neutral-0"], secundario: ["bg-ink-900", "text-neutral-0", "bg-neutral-0", "[@media(hover:hover)]:hover:text-ink-900"] },
   };
   const [fondo, texto, relleno, textoLleno] = estilos[t][variante];
   return (
     <Link href={href}
       className={`group relative inline-flex ${chico ? "min-h-[36px] px-3 text-[13px]" : "min-h-[44px] px-4 text-sm"} shrink-0 items-center justify-center gap-2 overflow-hidden rounded-[12px] font-sub font-semibold outline-none transition-[transform,color] duration-300 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:scale-[0.97] ${fondo} ${texto} ${textoLleno}`}>
-      <span aria-hidden className={`absolute inset-0 translate-y-full transition-transform duration-500 ease-[cubic-bezier(.22,.8,.24,1)] [@media(hover:hover)]:group-hover:translate-y-0 ${relleno}`} />
+      <span aria-hidden className={`absolute inset-0 origin-bottom scale-y-0 transition-transform duration-500 ease-[cubic-bezier(.22,.8,.24,1)] [@media(hover:hover)]:group-hover:scale-y-100 ${relleno}`} />
       <span className="relative whitespace-nowrap">{children}</span>
       {flecha}
     </Link>

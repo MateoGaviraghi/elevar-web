@@ -6,7 +6,7 @@
 | `/admin/consultas` | Consultas que entran por el sitio: cifras que filtran, lista, ficha y «Cuándo llegan» | `consultas.md` |
 | `/admin/ordenes` | Compras: cifras que filtran, lista, tarjeta con «Dar acceso», devoluciones | `ordenes.md` |
 | `/admin/inscripciones` | Fechas de webinars y cursos en vivo: cifras que filtran, quién viene (en vivo, de las órdenes pagadas), copiar correos y descargar | `inscripciones.md` |
-| `/admin/cursos` | Catálogo y fechas | sin ficha todavía |
+| `/admin/cursos` | Catálogo: cifras que filtran, tarjeta del curso con sus fechas, publicar con «Deshacer», alta y edición en pasos | `cursos.md` |
 | `/admin/auditoria` | Registro de lo que se hizo | sin ficha todavía |
 | `/admin/cuenta` | Clave, códigos de respaldo y sesiones | sin ficha todavía |
 

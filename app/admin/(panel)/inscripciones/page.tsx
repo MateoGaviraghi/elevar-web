@@ -2,12 +2,13 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { EstadoNoListo, useDatos, useErrorDeAccion, type EstadoDatos } from "@/components/admin/datos";
+import { EstadoNoListo, useErrorDeAccion, type EstadoDatos } from "@/components/admin/datos";
+import { useDatosRecordados } from "@/components/admin/lista/memoria";
 import { numero } from "@/components/admin/inicio/graficos";
 import { SCROLL_FINO, hace } from "@/components/admin/inicio/piezas";
 import { Banda, CifraFiltro } from "@/components/admin/lista/Banda";
 import { BarraFiltros, Buscador, Limpiar, Menu, Pastilla, type Opcion } from "@/components/admin/lista/BarraFiltros";
-import { BotonAccion, BotonFicha, ChipOscuro, Ic, Rotulo } from "@/components/admin/lista/Botones";
+import { BotonAccion, BotonFicha, ChipOscuro, CuadroIcono, Rotulo } from "@/components/admin/lista/Botones";
 import { Ficha, useAviso } from "@/components/admin/lista/Ficha";
 import { Paginacion, TAMANOS } from "@/components/admin/lista/Paginacion";
 import { ChipPunto, Tabla, Vacia, type Columna } from "@/components/admin/lista/Tabla";
@@ -101,12 +102,12 @@ function Inscripciones() {
   const ir = useCallback((cambios: Partial<Record<Clave, string>>) => window.history.replaceState(null, "", enlace(cambios)), [enlace]);
 
   const claveLista = [v.cuando, v.tipo, v.curso, v.q, pagina, por].join("|");
-  const lista = useDatos(
+  const lista = useDatosRecordados(
     () => panel.fechasInscripciones({ cuando: v.cuando, tipo: v.tipo, curso: v.curso, q: v.q, page: pagina, page_size: por }),
     [claveLista],
   );
-  const cifras = useDatos(() => panel.inscripcionCifras(), []);
-  const cursos = useDatos(() => panel.cursos({ page_size: 100 }), []);
+  const cifras = useDatosRecordados(() => panel.inscripcionCifras(), []);
+  const cursos = useDatosRecordados(() => panel.cursos({ page_size: 100 }), []);
   const { aviso, avisar } = useAviso();
 
   const filas = lista.estado.tipo === "listo" ? lista.estado.datos.results : [];
@@ -304,7 +305,7 @@ interface FichaFechaProps {
 }
 
 function FichaFecha({ id, abierta, fila, origen, onSalida, posicion, onCerrar, onAnterior, onSiguiente, avisar }: FichaFechaProps) {
-  const { estado, recargar } = useDatos(() => panel.personasDeFecha(id), [id]);
+  const { estado, recargar } = useDatosRecordados(() => panel.personasDeFecha(id), [id]);
   const cuerpo = useRef<HTMLDivElement>(null);
   const d = estado.tipo === "listo" && estado.datos.fecha.id === id ? estado.datos : null;
   const cabeza = d?.fecha ?? fila ?? null;
@@ -483,17 +484,17 @@ function Llevar({ f, hay, avisar }: { f: FechaInscripciones; hay: boolean; avisa
     }
   };
   return (
-    <section data-entra aria-labelledby="llevar-titulo" className="flex flex-col gap-3 rounded-[16px] border border-ink-100 p-4">
+    <section data-entra data-escribe aria-labelledby="llevar-titulo" className="flex flex-col gap-3 rounded-[16px] border border-ink-100 p-4">
       <header className="flex items-center gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-ink-900 text-neutral-0"><Ic nombre="copiar" tam={20} /></span>
+        <CuadroIcono nombre="personas" />
         <div className="min-w-0">
           <h3 id="llevar-titulo" className="font-display text-lg font-semibold leading-tight text-ink-900">Llevarte la lista</h3>
           <p className="text-xs text-neutral-700">Para mandar el enlace o pasar asistencia</p>
         </div>
       </header>
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-        <BotonFicha onClick={() => void copiar()} deshabilitado={!hay || copiando} icono="sobre">{copiando ? "Copiando…" : "Copiar correos"}</BotonFicha>
-        <BotonFicha variante="contorno" onClick={() => void bajarPdf()} deshabilitado={!hay || armando} icono="nota">{armando ? "Armando el PDF…" : "Descargar PDF"}</BotonFicha>
+        <BotonFicha onClick={() => void copiar()} deshabilitado={!hay || copiando} icono="copiar">{copiando ? "Copiando…" : "Copiar correos"}</BotonFicha>
+        <BotonFicha variante="contorno" onClick={() => void bajarPdf()} deshabilitado={!hay || armando} icono="descargar">{armando ? "Armando el PDF…" : "Descargar PDF"}</BotonFicha>
       </div>
       <p className="text-xs text-neutral-700">El PDF trae correos y WhatsApp que se tocan. Queda registrado en la auditoría quién copió o descargó la lista.</p>
     </section>
