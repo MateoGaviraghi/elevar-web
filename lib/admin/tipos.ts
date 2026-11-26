@@ -171,7 +171,32 @@ export interface FechaInscripciones {
   capacity: number | null;
   seats_taken: number;
   status: EstadoFecha;
+  /** En un webinar, los anotados; en un curso en vivo, los lugares pagos (como el Inicio). */
   inscriptos: number;
+  curso_id: number;
+}
+
+export interface InscripcionCifras {
+  proximas: number;
+  semana: number;
+  llenas: number;
+  pasadas: number;
+  personas_proximas: number;
+}
+
+/** Quién viene a una fecha: en un webinar, el que se anotó; en vivo, un participante de una orden pagada.
+ *  `comprador` + `sin_nombre`: los lugares de una orden que no cargó a sus participantes. */
+export interface PersonaInscripta {
+  nombre: string;
+  correo: string;
+  fecha: string;
+  orden: string | null;
+  numero: string;
+  sin_nombre: number;
+  comprador: boolean;
+  /** En vivo, el de quien compró (`telefono_de`); en un webinar, el que dejó al anotarse. Puede venir vacío. */
+  telefono: string;
+  telefono_de: string;
 }
 
 export interface Inscripto {

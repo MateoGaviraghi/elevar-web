@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { numero } from "../inicio/graficos";
+import { cambio } from "./Banda";
 
 export const TAMANOS = [10, 25, 50] as const;
 
@@ -10,7 +11,11 @@ export const TAMANOS = [10, 25, 50] as const;
  * El pie de toda tabla larga, como el del portal CESS: «Mostrando 1–25 de 188», cuántas por página como
  * segmentos (el resaltado se desliza, 0,25 s) y las páginas numeradas con «…» en el medio.
  */
-export function Paginacion({ total, pagina, porPagina, onPagina, onPorPagina }: PaginacionProps) {
+export function Paginacion({ total, pagina, porPagina, onPagina: alPedir, onPorPagina }: PaginacionProps) {
+  const onPagina = (n: number) => {
+    cambio.direccion = n < pagina ? -1 : 1;
+    alPedir(n);
+  };
   const paginas = Math.max(1, Math.ceil(total / porPagina));
   const desde = total === 0 ? 0 : (pagina - 1) * porPagina + 1;
   const hasta = Math.min(total, pagina * porPagina);

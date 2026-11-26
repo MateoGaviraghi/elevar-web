@@ -134,9 +134,51 @@ def _tercera_tanda():
     print("tercera tanda sembrada")
 
 
+# --- Cuarta tanda (2026-11-25): lo que pide Inscripciones. Órdenes pagadas de cursos en vivo con su fecha y sus
+# participantes: una fecha llena, una con un comprador que no cargó a su gente y una devuelta que no cuenta. ---
+def _cuarta_tanda():
+    if Order.objects.filter(buyer_email__startswith="semilla.vivo").exists():
+        print("cuarta tanda ya sembrada"); return
+    ahora = timezone.now()
+    fechas = list(CourseSession.objects.filter(course__modality=Modality.LIVE, starts_at__gte=ahora, status=SessionStatus.SCHEDULED)
+                  .select_related("course").order_by("starts_at")[:3])
+    if len(fechas) < 3:
+        print("cuarta tanda: faltan fechas en vivo"); return
+    # (fecha, comprador, estado, lugares, participantes con nombre, devuelta, horas desde el pago)
+    filas = [
+        (0, "Prueba Laboratorio Norte", OrderStatus.FULFILLED, 2, 2, False, 200),
+        (0, "Prueba Ana Vivo", OrderStatus.PAID, 2, 2, False, 20),
+        (1, "Prueba Laboratorio Sur", OrderStatus.PAID, 3, 3, False, 60),
+        (1, "Prueba Sin Participantes", OrderStatus.PAID, 2, 0, False, 10),
+        (1, "Prueba Vivo Devuelta", OrderStatus.PAID, 1, 1, True, 90),
+        (2, "Prueba María de los Ángeles Fernández Echeverría", OrderStatus.FULFILLED, 1, 1, False, 400),
+    ]
+    for k, (n, nombre, estado, lugares, nombrados, devuelta, horas) in enumerate(filas):
+        f = fechas[n]
+        pagada = ahora - timedelta(hours=horas)
+        total = Decimal("48000.00") * lugares
+        o = Order.objects.create(
+            buyer_email=f"semilla.vivo{k}@ejemplo.com", buyer_name=nombre, buyer_phone="3446000000", status=estado,
+            total=total, subtotal=total, paid_at=pagada, mp_payment_id=f"pago-vivo-{k}",
+            fulfilled_at=pagada + timedelta(hours=2) if estado == OrderStatus.FULFILLED else None,
+            refunded_at=pagada + timedelta(hours=5) if devuelta else None,
+        )
+        Order.objects.filter(pk=o.pk).update(created_at=pagada - timedelta(minutes=4))
+        OrderItem.objects.create(
+            order=o, course=f.course, session=f, title_snapshot=f.course.title, unit_price=Decimal("48000.00"), quantity=lugares,
+            attendees=[{"name": f"Prueba Asistente {k}-{j + 1}", "email": f"semilla.vivo{k}.p{j + 1}@ejemplo.com"} for j in range(nombrados)],
+        )
+    # Los lugares ocupados, como los deja el aviso de pago (las devueltas los liberan). La primera queda llena.
+    for n, f in enumerate(fechas):
+        ocupados = sum(l for (m, _a, _b, l, _c, dev, _h) in filas if m == n and not dev)
+        CourseSession.objects.filter(pk=f.pk).update(seats_taken=ocupados, capacity=ocupados if n == 0 else 20)
+    print("cuarta tanda sembrada")
+
+
 if YA:
     print("primera tanda ya sembrada")
 else:
     _primera_tanda()
 _segunda_tanda()
 _tercera_tanda()
+_cuarta_tanda()

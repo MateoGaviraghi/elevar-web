@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
+import { useLlega } from "./Banda";
 
 /**
  * La barra de filtros del portal CESS (su D-033), con los colores del panel: un buscador ancho, menús con la
@@ -9,8 +10,10 @@ import { gsap, prefersReducedMotion } from "@/lib/gsap";
  * los filtros puestos, que se sacan con un toque. Todo vive en una tarjeta blanca.
  */
 export function BarraFiltros({ children, pastillas }: { children: ReactNode; pastillas?: ReactNode }) {
+  const caja = useRef<HTMLDivElement>(null);
+  useLlega(caja, 1);
   return (
-    <div className="shrink-0 rounded-[18px] border border-ink-100 bg-neutral-0 p-2.5">
+    <div ref={caja} className="shrink-0 rounded-[18px] border border-ink-100 bg-neutral-0 p-2.5">
       <div className="flex flex-col gap-2 lg:flex-row lg:items-stretch">{children}</div>
       {pastillas && <div className="mt-2 flex flex-wrap items-center gap-2 px-1">{pastillas}</div>}
     </div>

@@ -1,7 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { SCROLL_FINO } from "../inicio/piezas";
+import { cambio, useLlega } from "./Banda";
 
 /**
  * La tabla del portal CESS dentro de una tarjeta redondeada: encabezado gris de 11 px que queda fijo, filas
@@ -9,11 +11,52 @@ import { SCROLL_FINO } from "../inicio/piezas";
  * En la computadora la tabla corre por dentro (barra fina) y el pie con la paginación queda abajo, así la
  * pantalla entera entra sin scroll. Debajo de 640 px cada fila pasa a ser una tarjeta de dos líneas.
  */
-export function Tabla<T>({ etiqueta, filas, columnas, clave, alAbrir, movil, pie, cargando, vacio, activa }: TablaProps<T>) {
+export function Tabla<T>({ etiqueta, filas: nuevas, columnas, clave, alAbrir, movil, pie, cargando, vacio, activa }: TablaProps<T>) {
+  const caja = useRef<HTMLDivElement>(null);
+  const cuerpo = useRef<HTMLDivElement>(null);
+  useLlega(caja, 2, { scale: 0.98 });
+
+  // Mientras llega la página nueva quedan las filas de antes, apenas apagadas (el portal no salta a un esqueleto).
+  const firmaNueva = nuevas.map(clave).join(",");
+  const [previas, setPrevias] = useState({ filas: nuevas, firma: firmaNueva, listas: !cargando });
+  if (!cargando && (firmaNueva !== previas.firma || !previas.listas)) setPrevias({ filas: nuevas, firma: firmaNueva, listas: true });
+  const esperando = !!cargando && previas.listas;
+  const filas = esperando ? previas.filas : nuevas;
+  const firma = esperando ? previas.firma : firmaNueva;
+
+  // Movimiento de las filas (2026-11-25, Mateo: «que sea como de izquierda a derecha… que parezca que es algo
+  // fluido»). La primera vez entran en cascada como en el portal (20 px, 0,5 s, 60 ms entre filas, hasta la 15).
+  // Al cambiar la lista (cifra, filtro, búsqueda, página) es un pase de lado: las filas de antes se van hacia un
+  // costado (0,22 s) y las nuevas entran desde el otro (56 px, 0,5 s, 35 ms entre filas). La dirección la marca
+  // quien cambió la lista (`cambio.direccion`): ir a una cifra o una página de la izquierda trae la lista desde
+  // la izquierda.
+  const primera = useRef(true);
+  const visibles = () => (cuerpo.current ? [...cuerpo.current.querySelectorAll<HTMLElement>("[data-fila]")].filter((el) => el.offsetParent !== null) : []);
+  useLayoutEffect(() => {
+    if (!esperando || prefersReducedMotion()) return;
+    const salen = visibles().slice(0, 15);
+    if (salen.length) gsap.to(salen, { x: -40 * cambio.direccion, opacity: 0, duration: 0.22, stagger: 0.012, ease: "power2.in", overwrite: "auto" });
+  }, [esperando]); // eslint-disable-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => {
+    if (cargando) return;
+    const filasDom = visibles();
+    const dir = cambio.direccion;
+    cambio.direccion = 1;
+    if (!filasDom.length) return void (primera.current = false);
+    if (prefersReducedMotion()) return void gsap.set(filasDom, { clearProps: "opacity,transform" });
+    if (primera.current) {
+      primera.current = false;
+      gsap.fromTo(filasDom.slice(0, 15), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, delay: 0.2, ease: "power3.out", clearProps: "opacity,transform" });
+      return;
+    }
+    gsap.fromTo(filasDom.slice(0, 15), { opacity: 0, x: 56 * dir }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.035, ease: "power3.out", overwrite: "auto", clearProps: "opacity,transform" });
+    if (filasDom.length > 15) gsap.set(filasDom.slice(15), { clearProps: "opacity,transform" });
+  }, [firma, cargando]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[18px] border border-ink-100 bg-neutral-0">
-      <div className={`min-h-0 flex-1 ${SCROLL_FINO}`}>
-        {cargando ? (
+    <div ref={caja} className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[18px] border border-ink-100 bg-neutral-0">
+      <div ref={cuerpo} aria-busy={cargando || undefined} className={`min-h-0 flex-1 ${SCROLL_FINO}`}>
+        {cargando && !esperando ? (
           <Esqueleto />
         ) : filas.length === 0 ? (
           vacio

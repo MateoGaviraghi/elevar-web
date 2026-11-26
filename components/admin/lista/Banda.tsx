@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useLayoutEffect, useRef, type KeyboardEvent, type ReactNode } from "react";
+import { useLayoutEffect, useRef, type KeyboardEvent, type ReactNode, type RefObject } from "react";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { pegar } from "@/lib/texto";
 import { Icono, useEscribirIcono } from "../iconos";
@@ -14,9 +14,31 @@ import { SI_ALCANZA, Trama } from "../inicio/piezas";
  * el título y su contador, una bajada corta y, abajo, las cifras que filtran al tocarlas. La cifra elegida
  * queda blanca. A la derecha del título va lo que la pantalla necesite (acá, las pestañas).
  */
+/**
+ * La entrada de una pieza al llegar a la pantalla, como la cascada del portal (su `.llega [data-llega]`): sube
+ * 14 px y aparece en 0,5 s, `orden` × 80 ms después de la anterior. Corre antes de pintar (nada asoma antes de
+ * tiempo) y una sola vez por montaje; con «menos movimiento», nada.
+ */
+export function useLlega(ref: RefObject<HTMLElement | null>, orden: number, desde: { y?: number; scale?: number } = { y: 14 }) {
+  useLayoutEffect(() => {
+    if (!ref.current || prefersReducedMotion()) return;
+    const t = gsap.fromTo(ref.current, { opacity: 0, ...desde }, { opacity: 1, y: 0, scale: 1, duration: 0.5, delay: orden * 0.08, ease: "power3.out", clearProps: "opacity,transform" });
+    return () => void t.progress(1).kill();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+}
+
+/**
+ * Hacia dónde va el próximo cambio de la lista: 1 = la lista nueva entra desde la derecha (se avanza: una cifra
+ * más a la derecha, la página siguiente, un filtro), -1 = desde la izquierda. Lo marca quien cambia la lista y
+ * lo usa la tabla una vez (después vuelve a 1).
+ */
+export const cambio = { direccion: 1 as 1 | -1 };
+
 export function Banda({ sobre, titulo, contador, bajada, derecha, children }: BandaProps) {
+  const caja = useRef<HTMLElement>(null);
+  useLlega(caja, 0);
   return (
-    <section aria-labelledby="titulo-lista" className="relative shrink-0 overflow-hidden rounded-[22px] bg-ink-900 px-5 py-4 text-neutral-0 sm:px-6">
+    <section ref={caja} aria-labelledby="titulo-lista" className="relative shrink-0 overflow-hidden rounded-[22px] bg-ink-900 px-5 py-4 text-neutral-0 sm:px-6">
       <Trama />
       <div className="relative flex flex-col gap-3">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -53,6 +75,12 @@ export function CifraFiltro({ href, icono, nombre, detalle, valor, elegida, avis
   const escribir = useEscribirIcono();
   return (
     <Link href={href} scroll={false} aria-current={elegida ? "true" : undefined} onPointerEnter={escribir} onFocus={escribir}
+      onClick={(e) => {
+        const hermanos = [...(e.currentTarget.parentElement?.children ?? [])];
+        const yo = hermanos.indexOf(e.currentTarget);
+        const actual = hermanos.findIndex((h) => h.getAttribute("aria-current") === "true");
+        cambio.direccion = actual >= 0 && yo < actual ? -1 : 1;
+      }}
       className={`group flex min-h-[64px] flex-col items-start gap-1 rounded-[16px] px-3 py-2.5 sm:flex-row sm:items-center sm:gap-3 outline-none transition-[background-color,box-shadow,transform] duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 active:scale-[0.98] sm:px-4 ${
         elegida ? "bg-neutral-0 text-ink-900 shadow-[0_10px_30px_-12px_rgba(0,0,0,.5)]" : "bg-neutral-0/[0.06] text-neutral-0 ring-1 ring-neutral-0/10 [@media(hover:hover)]:hover:bg-neutral-0/[0.12]"
       }`}>

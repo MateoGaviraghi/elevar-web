@@ -10,8 +10,9 @@ import { SCROLL_FINO, Trama } from "../inicio/piezas";
  * cabecera azul, el nombre, sus chips y «↑ ↓ para recorrer · Esc para cerrar».
  *
  * Movimiento (2026-11-25, Mateo: «sigue sin entrar de manera inmersiva… entra trabada»), igual al portal:
- * - Crece desde la fila que se tocó (`origen`): 0,55 s, expo.out. Lo de adentro aparece a los 0,16 s y sus
- *   partes (`[data-cascada]`) entran una detrás de otra desde los 0,26 s (0,35 s cada una, 0,05 s entre ellas).
+ * - Crece desde la fila que se tocó (`origen`): 0,55 s, expo.out. La cabecera azul viene puesta desde el primer
+ *   cuadro y su texto aparece a los 0,06 s (2026-11-25: antes llegaba a los 0,32 s y la tarjeta crecía blanca);
+ *   el cuerpo aparece a los 0,16 s y sus partes (`[data-cascada]`) entran una detrás de otra desde los 0,22 s.
  * - Sin fila a la vista (se abrió por dirección): crece desde la mitad de su tamaño y 40 px más abajo (0,42 s).
  * - Al cerrar vuelve a su fila (0,38 s) y recién ahí se desmonta (`onSalida`).
  * - La animación arranca dos cuadros después de montar, para que el montaje no se coma los primeros cuadros.
@@ -22,6 +23,7 @@ export function Ficha({ abierta, sobre, posicion, titulo, chips, onCerrar, onAnt
   const fondo = useRef<HTMLDivElement>(null);
   const tarjeta = useRef<HTMLDivElement>(null);
   const interior = useRef<HTMLDivElement>(null);
+  const textoCabeza = useRef<HTMLDivElement>(null);
   const [enCliente, setEnCliente] = useState(false);
   const [montada, setMontada] = useState(abierta);
   if (abierta && !montada) setMontada(true);
@@ -66,18 +68,19 @@ export function Ficha({ abierta, sobre, posicion, titulo, chips, onCerrar, onAnt
     const v = fondo.current;
     const t = tarjeta.current;
     const adentro = interior.current;
-    if (!montada || !v || !t || !adentro) return;
-    gsap.killTweensOf([v, t, adentro]);
+    const texto = textoCabeza.current;
+    if (!montada || !v || !t || !adentro || !texto) return;
+    gsap.killTweensOf([v, t, adentro, texto]);
     const quieto = prefersReducedMotion();
     const partes = () => Array.from(t.querySelectorAll<HTMLElement>("[data-cascada]"));
     if (abierta) {
       gsap.set(t, { clearProps: "transform,transformOrigin,opacity" });
-      gsap.set(adentro, { clearProps: "opacity" });
+      gsap.set([adentro, texto], { clearProps: "opacity" });
       const o = quieto ? null : alOrigen.current?.();
       gsap.set(v, { opacity: 0 });
       if (aLaVista(o)) {
         gsap.set(t, { ...encima(t.getBoundingClientRect(), o), transformOrigin: "0 0", opacity: 1 });
-        gsap.set(adentro, { opacity: 0 });
+        gsap.set([adentro, texto], { opacity: 0 });
       } else gsap.set(t, quieto ? { opacity: 0 } : { opacity: 0, scale: 0.5, y: 40 });
       t.focus({ preventScroll: true });
       let cuadro = requestAnimationFrame(() => {
@@ -89,8 +92,9 @@ export function Ficha({ abierta, sobre, posicion, titulo, chips, onCerrar, onAnt
           gsap.to(v, { opacity: 1, duration: 0.3, ease: "power2.out" });
           if (aLaVista(o)) {
             gsap.to(t, { x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.55, ease: "expo.out", clearProps: "transform,transformOrigin" });
+            gsap.to(texto, { opacity: 1, duration: 0.2, delay: 0.06, ease: "power1.out", clearProps: "opacity" });
             gsap.to(adentro, { opacity: 1, duration: 0.22, delay: 0.16, ease: "power1.out", clearProps: "opacity" });
-            gsap.fromTo(partes(), { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.05, delay: 0.26, ease: "power3.out", clearProps: "opacity,transform" });
+            gsap.fromTo(partes(), { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.05, delay: 0.22, ease: "power3.out", clearProps: "opacity,transform" });
           } else {
             gsap.to(t, { scale: 1, y: 0, duration: 0.42, ease: "expo.out", clearProps: "transform" });
             gsap.to(t, { opacity: 1, duration: 0.15, ease: "none" });
@@ -112,7 +116,7 @@ export function Ficha({ abierta, sobre, posicion, titulo, chips, onCerrar, onAnt
     if (aLaVista(o)) {
       // De vuelta a su fila: lo de adentro se apaga y la tarjeta se achica sobre el rectángulo de la fila.
       gsap.set(t, { transformOrigin: "0 0" });
-      gsap.to(adentro, { opacity: 0, duration: 0.12, ease: "power1.in" });
+      gsap.to([adentro, texto], { opacity: 0, duration: 0.12, ease: "power1.in" });
       gsap.to(t, { ...encima(t.getBoundingClientRect(), o), duration: 0.38, delay: 0.05, ease: "power3.inOut" });
       gsap.to(t, { opacity: 0, duration: 0.12, delay: 0.33, ease: "none" });
       gsap.to(v, { opacity: 0, duration: 0.3, delay: 0.1, ease: "power2.in", onComplete: fin });
@@ -128,11 +132,11 @@ export function Ficha({ abierta, sobre, posicion, titulo, chips, onCerrar, onAnt
       <div ref={fondo} aria-hidden onClick={onCerrar} className="absolute inset-0 bg-ink-900/45 backdrop-blur-[2px]" />
       <div ref={tarjeta} role="dialog" aria-modal="true" aria-labelledby="ficha-titulo" tabIndex={-1}
         className="relative flex max-h-[94dvh] w-full flex-col overflow-hidden rounded-t-[22px] bg-neutral-0 shadow-[0_30px_80px_-24px_rgba(11,30,51,.55)] outline-none will-change-transform sm:max-h-[min(90dvh,820px)] sm:max-w-[1040px] sm:rounded-[22px] lg:h-[min(88dvh,760px)]">
-        <div ref={interior} className="flex min-h-0 flex-1 flex-col">
-          <header className="relative shrink-0 bg-ink-900 px-5 pb-3.5 pt-3.5 text-neutral-0 sm:px-6">
-            <Trama />
+        <header className="relative shrink-0 bg-ink-900 px-5 pb-3.5 pt-3.5 text-neutral-0 sm:px-6">
+          <Trama />
+          <div ref={textoCabeza} className="relative">
             <div className="relative flex items-start justify-between gap-3">
-              <div className="min-w-0" data-cascada>
+              <div className="min-w-0">
                 <p className="font-sub text-[11px] font-semibold uppercase tracking-wider text-brand-300">
                   {sobre}{posicion && <span className="text-neutral-0"> · {posicion}</span>}
                 </p>
@@ -144,9 +148,11 @@ export function Ficha({ abierta, sobre, posicion, titulo, chips, onCerrar, onAnt
                 <BotonCabecera etiqueta="Cerrar" onClick={onCerrar}><path d="m5.5 5.5 9 9M14.5 5.5l-9 9" /></BotonCabecera>
               </div>
             </div>
-            <h2 id="ficha-titulo" data-cascada className="relative mt-1 break-words font-display text-2xl font-semibold tracking-tight">{titulo}</h2>
-            {chips && <div data-cascada className="relative mt-2 flex flex-wrap items-center gap-2">{chips}</div>}
-          </header>
+            <h2 id="ficha-titulo" className="relative mt-1 break-words font-display text-2xl font-semibold tracking-tight">{titulo}</h2>
+            {chips && <div className="relative mt-2 flex flex-wrap items-center gap-2">{chips}</div>}
+          </div>
+        </header>
+        <div ref={interior} className="flex min-h-0 flex-1 flex-col">
           <div className={`min-h-0 flex-1 px-5 py-4 sm:px-6 ${SCROLL_FINO}`}>{children}</div>
           {pie && <footer data-cascada className="shrink-0 border-t border-ink-100 px-5 py-3 sm:px-6">{pie}</footer>}
         </div>
