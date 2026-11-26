@@ -11,6 +11,7 @@ import type {
   Contadores,
   ConsultaDetalle,
   ConsultaFila,
+  CursoCifras,
   CursoDatos,
   CursoDetalle,
   CursoFila,
@@ -90,13 +91,42 @@ async function leer<T>(respuesta: Response): Promise<T> {
   throw new ApiError(respuesta.status, ERROR_RED, "Algo falló. Reintentá.");
 }
 
+// --- Memoria de lo último visto (Etapa 3, 2026-11-26: «navego entre las páginas y está súper lento») ---------
+// Cada lectura guarda su respuesta por dirección, solo en la memoria de esta pestaña (nunca en el disco): al volver
+// a una pantalla se muestra al instante y se actualiza por detrás (`components/admin/lista/memoria.ts`). Se borra
+// al salir y cuando la sesión vence.
+
+const recuerdo = new Map<string, unknown>();
+/** De qué dirección vino cada respuesta guardada (para saber si una pantalla muestra datos de otro filtro). */
+export const origenDe = new WeakMap<object, string>();
+let capturar: ((ruta: string) => void) | null = null;
+
+/** La dirección que pediría `fn`, sin pedir nada (null si no pasa por una lectura simple). */
+export function rutaDe(fn: () => Promise<unknown>): string | null {
+  let ruta: string | null = null;
+  capturar = (r) => { ruta = r; };
+  try { void fn().catch(() => {}); } catch { /* nada */ } finally { capturar = null; }
+  return ruta;
+}
+export const recordado = <T,>(ruta: string) => recuerdo.get(ruta) as T | undefined;
+export function olvidarTodo() { recuerdo.clear(); }
+
 async function pedir<T>(ruta: string, init: RequestInit = {}): Promise<T> {
+  const lectura = !init.method && ruta !== "csrf";
+  if (capturar && lectura) { capturar(ruta); return new Promise<T>(() => {}); }
+  const datos = await pedirSinMemoria<T>(ruta, init);
+  if (lectura && typeof datos === "object" && datos !== null) { recuerdo.set(ruta, datos); origenDe.set(datos, ruta); }
+  return datos;
+}
+
+async function pedirSinMemoria<T>(ruta: string, init: RequestInit = {}): Promise<T> {
   let respuesta: Response;
   try {
     respuesta = await fetch(BASE + ruta, { ...init, credentials: "include", cache: "no-store" });
   } catch {
     throw new ApiError(0, ERROR_RED, "No pudimos conectar. Reintentá.");
   }
+  if (respuesta.status === 401) olvidarTodo();
   return leer<T>(respuesta);
 }
 
@@ -152,7 +182,8 @@ export function yo() {
 /** Arma ?a=1&b=2 sin los valores vacíos. Nunca correo, teléfono ni DNI en la dirección (07 §7). */
 function consulta(params: Record<string, string | number | undefined | null>): string {
   const q = new URLSearchParams();
-  for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== null && v !== "") q.set(k, String(v));
+  // En orden alfabético: la misma consulta da siempre la misma dirección (la memoria y la precarga la usan de clave).
+  for (const [k, v] of Object.entries(params).sort(([a], [b]) => a.localeCompare(b))) if (v !== undefined && v !== null && v !== "") q.set(k, String(v));
   const texto = q.toString();
   return texto ? `?${texto}` : "";
 }
@@ -198,6 +229,7 @@ export const panel = {
 
   categorias: () => pedir<Categoria[]>("categorias"),
   cursos: (p: Params) => pedir<Pagina<CursoFila>>(`cursos${consulta(p)}`),
+  cursoCifras: () => pedir<CursoCifras>("cursos/cifras"),
   curso: (id: string) => pedir<CursoDetalle>(`cursos/${encodeURIComponent(id)}`),
   crearCurso: (datos: Partial<CursoDatos>) => escribir<CursoDetalle>("cursos", "POST", datos),
   editarCurso: (id: number, datos: Partial<CursoDatos>) => escribir<CursoDetalle>(`cursos/${id}`, "PATCH", datos),

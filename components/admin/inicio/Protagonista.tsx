@@ -128,7 +128,7 @@ function VistaHoy({ d }: { d: Inicio }) {
           paraQue="Cada una es alguien que preguntó por un curso y espera tu respuesta."
           valor={<CifraRueda valor={d.consultas_nuevas} className="font-sub text-4xl font-bold tracking-tight" />}
           pie={vieja ? `La más vieja llegó el ${vieja}.` : "No hay nadie esperando."} />
-        <Cifra4 tono="azul" icono="llave" etiqueta="Por cumplir" titulo="Pagaron y no tienen el curso" href="/admin/ordenes" accion="Dar el acceso"
+        <Cifra4 tono="azul" icono="candado" etiqueta="Por cumplir" titulo="Pagaron y no tienen el curso" href="/admin/ordenes" accion="Dar el acceso"
           paraQue="Ya pagaron y todavía no pueden entrar al aula. Es lo primero que reclaman."
           valor={<Cifra valor={d.ordenes_sin_cumplir} className="font-sub text-4xl font-bold" />}
           pie={d.ordenes_sin_cumplir && d.sin_acceso_desde ? `La que más espera pagó ${hace(d.sin_acceso_desde)}.` : "Todas tienen el acceso."} />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import "./insignia.css";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { SCROLL_FINO } from "../inicio/piezas";
 import { cambio, useLlega } from "./Banda";
@@ -168,17 +169,15 @@ export function Vacia({ titulo, texto, accion }: { titulo: string; texto?: strin
   );
 }
 
-/** Un chip con punto de color, como el «Activo» del portal. El texto siempre dice el estado (no solo el color). */
+// --- Etiqueta de estado (Etapa 2, 2026-11-26) ------------------------------------------------------------------
+// La de Sanalys (Halo Badge en vidrio, `insignia.css`), llena del color del estado: verde, ámbar, naranja, rojo o
+// gris. Rechazadas: etiqueta sólida con ícono, ícono con texto sin caja, barra en la fila y el chip con punto.
+
+/** El estado de una fila o de una tarjeta. La palabra dice el estado; el color lo repite y se nota. */
 export function ChipPunto({ texto, tono }: { texto: string; tono: "nuevo" | "ok" | "neutro" | "marca" | "peligro" }) {
-  const c = {
-    nuevo: "border-status-warning/40 bg-status-warning/10 text-ink-900 before:bg-status-warning",
-    ok: "border-status-success/35 bg-status-success/10 text-ink-900 before:bg-status-success",
-    neutro: "border-ink-100 bg-ink-50 text-ink-900 before:bg-ink-500",
-    marca: "border-brand-200 bg-brand-50 text-brand-700 before:bg-brand-500",
-    peligro: "border-status-error/35 bg-status-error/10 text-status-error before:bg-status-error",
-  }[tono];
   return (
-    <span className={`inline-flex min-h-[26px] items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 text-xs font-semibold before:h-1.5 before:w-1.5 before:shrink-0 before:rounded-full ${c}`}>
+    <span className="panel-insignia" data-tono={tono}>
+      <span className="panel-insignia-punto" aria-hidden />
       {texto}
     </span>
   );

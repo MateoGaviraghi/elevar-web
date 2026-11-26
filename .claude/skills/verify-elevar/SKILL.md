@@ -42,6 +42,15 @@ Parado en `<scratchpad>/verify-elevar/pw`:
 - Lo que hay que mirar en cada pantalla, además del recorrido: `features/`.
 - Un flujo que escribe (contestar una consulta, marcar una orden cumplida) se prueba con un script chico de Playwright en el scratchpad que haga los clicks reales, y después se mira el efecto en la base local (consulta de solo lectura con `manage.py shell`).
 
+**Estados de cada control (obligatorio en toda verificación del panel; Mateo, 2026-11-26: «la función de verificar no la estás usando como corresponde»).** El recorrido mira saltos, desborde y consola; no mira cómo se ve y se mueve cada botón al usarlo, que es lo primero que Mateo toca:
+
+`MSYS_NO_PATHCONV=1 node estados.mjs --visor "$EV/../visor.json" --salida "$EV/estados" --rutas /admin,/admin/cursos [--abrir-fila] [--tiempos] [--max 40]`
+
+- Por cada botón, link y tarjeta de `main` (y de la tarjeta de la primera fila con `--abrir-fila`), una vez por tipo: reposo, mouse a 80/250/600 ms, salida a 100/300/800 ms, foco y apretado (apretar y salir sin soltar: no dispara la acción).
+- FALLA si el control queda **cortado** dentro de su caja (una tabla que lo empuja fuera: el recorrido no lo ve porque no hay desborde de la página), si con el mouse queda **ilegible** (texto del color del relleno), si al salir quedan **restos** (una línea del relleno) o si su ícono del panel queda **quieto** al entrar el mouse, la primera o la segunda vez.
+- `--tiempos`: pasar de pantalla por el menú, dos vueltas, con clic directo y con el mouse 300 ms antes. Medido en `next dev` incluye compilar y armar la pantalla en el servidor; para un número como el de producción, parar el dev, `next build`, `next start -p <puerto>` y medir ahí (nunca `next build` con el dev prendido: confirmar con `netstat -ano | grep :<puerto>` que no quedó un hijo vivo).
+- Deja `estados.json` y una hoja de contacto por ruta (`hoja-<ruta>.png`): **mirarla**, no solo los números. Tarda unos 5 s por control.
+
 ## Sitio público (sin sesión)
 
 Lo mismo que el panel pero sin cuenta: el sitio se recorre como alguien que entra desde Google. Base local igual (`elevar_e2e`): nada de producción.
@@ -78,6 +87,7 @@ Lo mismo que el panel pero sin cuenta: el sitio se recorre como alguien que entr
 |---|---|
 | `scripts/doctor.mjs` | Chequeo de solo lectura de la instancia |
 | `scripts/recorrer.mjs` | Ingreso real y recorrido con capturas, saltos, desborde y consola |
+| `scripts/estados.mjs` | Cada control en reposo, con el mouse, al salir, con foco y apretado: cortado, ilegible, restos, ícono quieto; tiempos entre pantallas |
 | `scripts/saltos.mjs` | La función del chequeo de saltos (`page.evaluate(revisar, [ENLACE, "main"])`) |
 | `scripts/usuario_visor.py` | La cuenta inventada con segundo factor (escribe clave y secreto en un archivo) |
 | `scripts/sembrar_inicio.py` | Un año de datos inventados para el Inicio |

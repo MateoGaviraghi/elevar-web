@@ -1,0 +1,109 @@
+/*
+ * La etiqueta de estado del panel (2026-11-26), tomada de la de Sanalys (Halo Badge de Cult UI, en vidrio) y llena
+ * del color del estado. Mateo: «si es en verde, que sea verde, si es rojo, que sea rojo, que se note bien, que
+ * atraiga y que se entienda el estado». Vidrio del color (brillo arriba, borde claro, resplandor desde abajo),
+ * punto claro que brilla y palabra en blanco: 4,5:1 o más sobre el tono más claro del degradé.
+ * Al aparecer la fila y cada vez que el mouse entra a la fila, una luz recorre el borde y el punto late una vez.
+ * Con «menos movimiento» no se mueve nada.
+ */
+.panel-insignia {
+  --tono: #475569; /* el color del estado, oscuro para que el blanco se lea */
+  --claro: #cbd5e1; /* el mismo color, claro: punto, borde y brillo */
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  overflow: hidden;
+  min-height: 26px;
+  padding: 0.2rem 0.7rem 0.2rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--claro) 55%, var(--tono));
+  border-radius: 9999px;
+  background:
+    radial-gradient(120% 110% at 50% 140%, color-mix(in srgb, var(--claro) 55%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--tono) 88%, #fff), var(--tono) 55%, color-mix(in srgb, var(--tono) 85%, #000));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.28),
+    0 1px 2px rgb(11 30 51 / 0.18),
+    0 2px 10px -3px color-mix(in srgb, var(--tono) 60%, transparent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+/* La luz del borde: un resplandor claro en el borde de abajo, quieto hasta que corre. */
+.panel-insignia::before {
+  content: "";
+  position: absolute;
+  inset-block-end: -45%;
+  inset-inline-start: 0;
+  z-index: -1;
+  inline-size: 70%;
+  block-size: 90%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--claro), transparent);
+  filter: blur(3px);
+  opacity: 0;
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+.panel-insignia-punto {
+  position: relative;
+  flex-shrink: 0;
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: 50%;
+  background: var(--claro);
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.15), 0 0 8px var(--claro);
+}
+.panel-insignia-punto::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--claro);
+  opacity: 0;
+}
+/* Verde: cumplida, contactada, publicado, programada. Ámbar: espera (sin contestar, pendiente de pago).
+   Naranja: lo que hay que hacer (falta dar acceso). Rojo: rechazado, devuelta, cancelada. Gris: cerrada, borrador. */
+.panel-insignia[data-tono="ok"] { --tono: #15803d; --claro: #86efac; }
+.panel-insignia[data-tono="nuevo"] { --tono: #b45309; --claro: #fcd34d; }
+.panel-insignia[data-tono="marca"] { --tono: #c2410c; --claro: #fdba74; }
+.panel-insignia[data-tono="peligro"] { --tono: #b91c1c; --claro: #fca5a5; }
+.panel-insignia[data-tono="neutro"] { --tono: #475569; --claro: #cbd5e1; }
+
+@keyframes panel-insignia-brillo {
+  0% { opacity: 0; transform: translateX(-100%); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(150%); }
+}
+@keyframes panel-insignia-latido {
+  0% { opacity: 0.7; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.8); }
+}
+/* La de entrada y la del mouse tienen el mismo dibujo pero distinto nombre: al pasar el mouse se suma la segunda a
+   la lista (la primera no cambia y no se repite) y al sacarlo vuelve a quedar solo la de entrada, ya terminada. */
+@keyframes panel-insignia-brillo-entra {
+  0% { opacity: 0; transform: translateX(-100%); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(150%); }
+}
+@keyframes panel-insignia-latido-entra {
+  0% { opacity: 0.7; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.8); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* Al aparecer: una vez, 0,3 s después de que llega la fila. */
+  .panel-insignia::before { animation: panel-insignia-brillo-entra 0.6s cubic-bezier(0.22, 0.8, 0.24, 1) 0.3s both; }
+  .panel-insignia-punto::after { animation: panel-insignia-latido-entra 0.6s ease-out 0.3s both; }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  /* Cada vez que el mouse entra a la fila (o a la tarjeta del celular). */
+  :is(tr, li):hover .panel-insignia::before {
+    animation: panel-insignia-brillo-entra 0.6s cubic-bezier(0.22, 0.8, 0.24, 1) 0.3s both, panel-insignia-brillo 0.8s cubic-bezier(0.22, 0.8, 0.24, 1) both;
+  }
+  :is(tr, li):hover .panel-insignia-punto::after {
+    animation: panel-insignia-latido-entra 0.6s ease-out 0.3s both, panel-insignia-latido 0.7s ease-out both;
+  }
+}

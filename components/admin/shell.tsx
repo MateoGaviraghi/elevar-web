@@ -4,11 +4,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Logo } from "@/components/brand/logo";
-import { ApiError, panel, rutaDeIngreso, salir, yo } from "@/lib/admin/api";
+import { ApiError, olvidarTodo, panel, rutaDeIngreso, salir, yo } from "@/lib/admin/api";
 import { textoDeError } from "@/lib/admin/formato";
 import type { Yo } from "@/lib/admin/tipos";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
 import { Icono, useEscribirIcono } from "./iconos";
+import { precargar } from "./lista/memoria";
 
 /**
  * Estructura del panel: el marco (menú por tarea, logo, cuenta y «Salir») alrededor de cada pantalla.
@@ -161,6 +162,8 @@ function Marco({ usuario, children }: { usuario: Yo; children: ReactNode }) {
     } catch {
       // Aunque falle (p. ej. la sesión ya venció), se vuelve al ingreso.
     }
+    // Lo que se vio en esta pestaña no queda en memoria después de salir.
+    olvidarTodo();
     // push y no replace: «atrás» vuelve a una página del panel, que le pregunta a Django y,
     // sin sesión, lleva de nuevo al ingreso (09-ETAPAS, etapa 2).
     router.push("/admin/ingresar");
@@ -247,7 +250,7 @@ function BarraCompleta({ usuario, cuentas, pathname, saliendo, cerrarSesion, osc
                 return (
                   <li key={item.href}>
                     <Link href={item.href} aria-current={activo ? "page" : undefined}
-                      onPointerEnter={(e) => { mover(e.currentTarget); escribir(e); }} onFocus={(e) => { mover(e.currentTarget); escribir(e); }} onBlur={volver}
+                      onPointerEnter={(e) => { mover(e.currentTarget); escribir(e); precargar(item.href); }} onFocus={(e) => { mover(e.currentTarget); escribir(e); precargar(item.href); }} onBlur={volver}
                       className={`relative flex min-h-[44px] items-center gap-3 rounded-[12px] px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${activo ? `font-semibold ${c.activo}` : c.item}`}>
                       {activo && <span aria-hidden className="absolute -left-3 top-2.5 h-6 w-1 rounded-r-full bg-brand-500" />}
                       <Icono nombre={item.icono} />

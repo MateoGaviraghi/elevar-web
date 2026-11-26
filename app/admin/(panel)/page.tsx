@@ -2,7 +2,8 @@
 
 import { Suspense } from "react";
 import { Protagonista } from "@/components/admin/inicio/Protagonista";
-import { EstadoNoListo, useDatos } from "@/components/admin/datos";
+import { EstadoNoListo } from "@/components/admin/datos";
+import { useDatosRecordados } from "@/components/admin/lista/memoria";
 import { useUsuario } from "@/components/admin/shell";
 import { panel } from "@/lib/admin/api";
 
@@ -12,7 +13,7 @@ import { panel } from "@/lib/admin/api";
  */
 export default function InicioPage() {
   const usuario = useUsuario();
-  const { estado, recargar } = useDatos(() => panel.inicio(), []);
+  const { estado, recargar } = useDatosRecordados(() => panel.inicio(), []);
   const nombre = usuario.nombre.split(" ")[0] || usuario.nombre;
 
   return (
