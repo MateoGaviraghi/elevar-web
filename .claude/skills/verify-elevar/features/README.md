@@ -24,7 +24,7 @@ Se recorren con `scripts/recorrer-sitio.mjs` (ver SKILL.md, «Sitio público»).
 | `/servicios` · `/servicios/<slug>` | Servicios | no | sin ficha todavía |
 | `/nosotros` | Nosotros | no | sin ficha todavía |
 | `/blog` | Lista del blog: encabezado, destacada que se abre, grilla/lista, cierre | no | `blog.md` (con `scripts/acciones-blog.mjs`) |
-| `/blog/<slug>` | Una nota del blog | no | sin ficha todavía |
+| `/blog/<slug>` | Una nota del blog («Cartas»): cabecera con isotipo, partes en tarjetas que se apilan, anterior y siguiente | no | `nota.md` (con `scripts/acciones-nota.mjs`) |
 | `/promociones` | Calculadora del descuento por equipo | sí | sin ficha todavía |
 | `/contacto` | Contacto | no (enviar sí) | sin ficha todavía |
 | `/carrito` · `/checkout` | Compra (prueba con pago simulado, nunca con plata real) | sí | sin ficha todavía |

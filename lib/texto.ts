@@ -8,7 +8,7 @@
  * cambia, solo dónde puede cortar. text-wrap: pretty (globals.css) evita la palabra sola
  * abajo, no el corte a mitad de frase.
  */
-const ENLACE =
+export const ENLACE =
   "a|al|ante|cada|con|como|de|del|desde|e|el|en|entre|es|hasta|la|las|le|les|lo|los|me|mi|más|muy|no|ni|nos|o|para|pero|por|que|se|sin|sobre|su|sus|te|tu|tus|u|un|una|unos|unas|y|ya";
 
 const DURO = " ";

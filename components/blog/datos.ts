@@ -30,3 +30,8 @@ export const CAPSULAS: Capsula[] = [...BLOG_POSTS]
     minutos: minutos(p.slug),
     foto: `/assets/blog/fotos/${p.slug}.webp`,
   }));
+
+export function getCapsula(slug: string): Capsula | undefined {
+  return CAPSULAS.find((c) => c.slug === slug);
+}
+

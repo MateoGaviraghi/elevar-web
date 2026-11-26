@@ -95,7 +95,13 @@ for (const r of rutas) {
     await p.waitForTimeout(espera)
     await bajarLeyendo(p, h)
     const m = await p.evaluate(medir)
+    // Los saltos se miden sin giros ni escalas de las animaciones: un bloque girado (las tarjetas
+    // apiladas de la nota del blog) hace que cada palabra parezca otra línea (2026-11-26: 30 de 32
+    // marcas eran eso). Se sacan un momento y se vuelven a poner.
+    await p.addStyleTag({ content: "main *{transform:none!important;rotate:none!important;scale:none!important;translate:none!important}" }).then((t) => t.evaluate((n) => n.setAttribute("data-medir", ""))).catch(() => {})
+    await p.waitForTimeout(150)
     const saltos = await p.evaluate(revisar, [ENLACE, "main"]).catch((e) => [`no se pudo medir: ${e.message}`])
+    await p.evaluate(() => document.querySelector("style[data-medir]")?.remove()).catch(() => {})
     const desborde = await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
     await p.evaluate(() => window.scrollTo(0, 0)); await p.waitForTimeout(600)
     await p.screenshot({ path: `${salida}/${base}.png`, fullPage: true })

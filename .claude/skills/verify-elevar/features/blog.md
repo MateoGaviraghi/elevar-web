@@ -19,4 +19,4 @@ Elegido el 2026-11-24 («Revista», ref. The Explora Journal, con el encabezado 
 ## Lo que no prueba
 
 - Un celular real ni Safari.
-- La página de cada nota (`/blog/<slug>`): solo que responda 200. Cuando se rediseñe, lleva su propia ficha.
+- La página de cada nota (`/blog/<slug>`): tiene su ficha, `nota.md`.

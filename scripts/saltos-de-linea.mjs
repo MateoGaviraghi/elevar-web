@@ -35,6 +35,7 @@ const PAGES = [
   "/promociones",
   "/carrito",
   "/blog",
+  "/blog/fuentes-de-deteccion-de-no-conformidades",
 ];
 const WIDTHS = [360, 375, 390, 768, 1440, 1920];
 

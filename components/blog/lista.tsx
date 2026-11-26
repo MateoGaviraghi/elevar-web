@@ -359,7 +359,7 @@ function Todas({ notas }: { notas: Capsula[] }) {
 }
 
 // ── 4. Cierre naranja: la comunidad ────────────────────────────────────────────
-function Cierre() {
+export function Cierre() {
   return (
     <section data-tone="dark" className="bg-brand-500 py-20 text-neutral-0 md:py-28">
       <Container className="grid gap-10 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-16">
