@@ -52,12 +52,6 @@ export interface Pagina<T> {
   results: T[];
 }
 
-export interface PaginaCursor<T> {
-  next: string | null;
-  previous: string | null;
-  results: T[];
-}
-
 export interface EventoHistorial {
   fecha: string;
   persona: string;
@@ -146,6 +140,35 @@ export interface Evento {
   entidad_id: string;
   detalle: Record<string, unknown>;
   ip: string | null;
+}
+
+export interface AuditoriaCifras {
+  total: number;
+  hoy: number;
+  semana: number;
+  ingresos: number;
+  fallidos: number;
+  cursos: number;
+  atencion: number;
+}
+
+export interface MiCuenta {
+  nombre: string;
+  correo: string;
+  rol: string;
+  creada_en: string;
+  segundo_factor_listo: boolean;
+  codigos_sin_usar: number;
+  sesiones: number;
+}
+
+export interface Movimiento {
+  id: number;
+  created_at: string;
+  accion: string;
+  entidad: string;
+  entidad_id: string;
+  detalle: Record<string, unknown>;
 }
 
 export interface SesionAbierta {

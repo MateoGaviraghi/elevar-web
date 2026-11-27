@@ -50,7 +50,13 @@ const TRAZOS: Record<string, { lineas: string[]; acento: string }> = {
   nota: { lineas: ["M6 3.5h8.5l3.5 3.5v13.5H6z"], acento: "M9 11h6M9 14.5h6M9 18h3.5" },
   enviar: { lineas: ["M20.5 3.5 3.5 10.5l7 3 3 7z"], acento: "M20.5 3.5 10.5 13.5" },
   mas: { lineas: ["M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"], acento: "M12 8v8M8 12h8" },
-  empresa: { lineas: ["M5 20.5V6.5l7-2.5v16.5M12 9h7v11.5M3 20.5h18"], acento: "M8 9h1M8 12.5h1M15 12.5h1M15 16h1" },
+  // Mi cuenta y Auditoría (2026-11-26).
+  escudo: { lineas: ["M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6z"], acento: "m8.8 12 2.3 2.3 4.2-4.6" },
+  pantalla: { lineas: ["M3.5 4.5h17v11.5h-17z"], acento: "M9 20h6M12 16v4" },
+  celular: { lineas: ["M7 3h10v18H7z"], acento: "M11 17.5h2" },
+  flechas: { lineas: [], acento: "M8 9.5 12 5.5l4 4M8 14.5l4 4 4-4" },
+  alerta: { lineas: ["M12 3.5 2.8 19.5h18.4z"], acento: "M12 10v4.2M12 16.8v.2" },
+  empresa: { lineas: ["M5 20.5V6.5l7-2.5v16.5M12 9h7v11.5M320.5h18"], acento: "M8 9h1M8 12.5h1M15 12.5h1M15 16h1" },
 };
 
 /** Lo que reescribe sus íconos: el botón o link más cercano, una tarjeta del Inicio o un bloque marcado. */
