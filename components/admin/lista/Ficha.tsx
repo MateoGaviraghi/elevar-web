@@ -19,7 +19,7 @@ import { SCROLL_FINO, Trama } from "../inicio/piezas";
  * - Con «menos movimiento», solo aparece y desaparece (0,15 s).
  * En el celular ocupa la pantalla y sube desde abajo.
  */
-export function Ficha({ abierta, sobre, posicion, titulo, chips, onCerrar, onAnterior, onSiguiente, onSalida, origen, pie, children }: FichaProps) {
+export function Ficha({ abierta, sobre, posicion, titulo, chips, onCerrar, onAnterior, onSiguiente, onSalida, origen, pie, chica = false, children }: FichaProps) {
   const fondo = useRef<HTMLDivElement>(null);
   const tarjeta = useRef<HTMLDivElement>(null);
   const interior = useRef<HTMLDivElement>(null);
@@ -131,7 +131,7 @@ export function Ficha({ abierta, sobre, posicion, titulo, chips, onCerrar, onAnt
     <div className={`fixed inset-0 z-[70] flex items-end justify-center sm:items-center sm:p-6 ${abierta ? "" : "pointer-events-none"}`}>
       <div ref={fondo} aria-hidden onClick={onCerrar} className="absolute inset-0 bg-ink-900/45 backdrop-blur-[2px]" />
       <div ref={tarjeta} role="dialog" aria-modal="true" aria-labelledby="ficha-titulo" tabIndex={-1}
-        className="relative flex max-h-[94dvh] w-full flex-col overflow-hidden rounded-t-[22px] bg-neutral-0 shadow-[0_30px_80px_-24px_rgba(11,30,51,.55)] outline-none will-change-transform sm:max-h-[min(90dvh,820px)] sm:max-w-[1040px] sm:rounded-[22px] lg:h-[min(88dvh,760px)]">
+        className={`relative flex max-h-[94dvh] w-full flex-col overflow-hidden rounded-t-[22px] bg-neutral-0 shadow-[0_30px_80px_-24px_rgba(11,30,51,.55)] outline-none will-change-transform sm:max-h-[min(90dvh,820px)] sm:rounded-[22px] ${chica ? "sm:max-w-[520px]" : "sm:max-w-[1040px] lg:h-[min(88dvh,760px)]"}`}>
         <header className="relative shrink-0 bg-ink-900 px-5 pb-3.5 pt-3.5 text-neutral-0 sm:px-6">
           <Trama />
           <div ref={textoCabeza} className="relative">
@@ -180,6 +180,8 @@ interface FichaProps {
   /** El rectángulo de la fila que la abrió: la tarjeta crece desde ahí y vuelve ahí. */
   origen?: () => DOMRect | null;
   pie?: ReactNode;
+  /** Una tarjeta angosta y del alto de su contenido (formularios cortos: Mi cuenta). */
+  chica?: boolean;
   children: ReactNode;
 }
 

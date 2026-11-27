@@ -90,10 +90,12 @@ export const ACCION: Record<string, string> = {
   "usuario.alta": "Alta de usuario",
   "usuario.baja": "Baja de usuario",
   "usuario.rol": "Cambio de rol",
+  "usuario.nombre": "Cambió su nombre",
   "usuario.segundo_factor_reiniciado": "Reinicio del segundo factor",
   "consulta.estado": "Cambió el estado de una consulta",
   "consulta.respuesta": "Contestó una consulta por correo",
   "orden.cumplida": "Marcó una orden como cumplida",
+  "orden.devuelta": "Se devolvió el pago de una orden",
   "orden.nota": "Escribió una nota en una orden",
   "orden.ver_dni": "Vio el DNI de un comprador",
   "curso.alta": "Creó un curso",
@@ -130,6 +132,72 @@ export function detalleDeEvento(detalle: Record<string, unknown>): string {
     }
   }
   return partes.join(" · ");
+}
+
+/** Los campos de un curso o una fecha, en palabras (la auditoría guarda el nombre técnico). */
+export const CAMPO_CURSO: Record<string, string> = {
+  title: "título", slug: "dirección", code: "código", code_suffix: "mes y año", category: "categoría", modality: "modalidad",
+  price: "precio", price_usd: "precio en dólares", badge: "etiqueta", position: "posición", is_published: "publicación", is_featured: "destacado",
+  lead: "bajada", summary: "resumen", description: "descripción", objectives: "objetivos", syllabus: "temario",
+  instructor_names: "disertantes", instructor_role: "cargo", level: "nivel", duration_hours: "duración", pdf_url: "PDF", currency: "moneda",
+  starts_at: "inicio", ends_at: "fin", capacity: "cupo", location: "lugar", meeting_url: "link de la reunión", status: "estado",
+};
+
+const MOTIVO: Record<string, string> = {
+  clave_temporal_vencida: "la contraseña temporal había vencido",
+  primer_ingreso: "en el primer ingreso",
+  sin_permiso: "sin permiso",
+  sin_perfil: "usuario sin perfil del panel",
+};
+const EXPORTA: Record<string, string> = { correos: "copió los correos", pdf: "bajó el PDF de la lista", inscripciones: "bajó la planilla de inscriptos" };
+
+/**
+ * El detalle de un evento como líneas en castellano para la tarjeta de Auditoría y Mi cuenta (2026-11-26,
+ * Mateo: «Campos: is_published» no se entiende). Nunca muestra lo que no sea del evento: ni el mensaje de una
+ * respuesta entera ni claves.
+ */
+export function detalleEnPalabras(accion: string, detalle: Record<string, unknown>): string[] {
+  const d = detalle ?? {};
+  const lineas: string[] = [];
+  const campos = Array.isArray(d.campos) ? (d.campos as string[]) : [];
+  if (accion === "curso.cambio" && campos.length === 1 && campos[0] === "is_published") lineas.push("Publicó o sacó del sitio el curso");
+  else if (campos.length) lineas.push(`Cambió ${campos.map((c) => CAMPO_CURSO[c] ?? c).join(", ")}`);
+  if (Array.isArray(d.status) && d.status.length === 2) {
+    const [a, b] = d.status.map((v) => ESTADO_CONSULTA[String(v)]?.texto ?? ESTADO_ORDEN[String(v)]?.texto ?? String(v));
+    lineas.push(`${a} → ${b}`);
+  }
+  if (typeof d.codigo === "string") lineas.push(`Código ${d.codigo}`);
+  if (typeof d.curso === "number" || typeof d.curso === "string") lineas.push(`Del curso n.º ${d.curso}`);
+  if (typeof d.asunto === "string") lineas.push(`Asunto: «${d.asunto}»`);
+  if (typeof d.que === "string") lineas.push(`${EXPORTA[d.que] ?? d.que}${typeof d.filas === "number" ? ` (${d.filas} ${d.filas === 1 ? "fila" : "filas"})` : ""}`);
+  if (typeof d.largo === "number") lineas.push(`Nota de ${d.largo} caracteres`);
+  if (typeof d.motivo === "string") lineas.push(`Motivo: ${MOTIVO[d.motivo] ?? d.motivo.replaceAll("_", " ")}`);
+  if (d.paso === "clave") lineas.push("En el paso de la contraseña");
+  if (d.paso === "codigo") lineas.push("En el paso del código");
+  if (d.segundo_factor === "pendiente") lineas.push("Falta el código del segundo factor");
+  if (typeof d.otras_sesiones === "number") lineas.push(`Cerró ${d.otras_sesiones} ${d.otras_sesiones === 1 ? "sesión" : "sesiones"} de otros dispositivos`);
+  if (d.una === true) lineas.push("Cerró la sesión de otro dispositivo");
+  if (typeof d.otras_sesiones_cerradas === "number" && d.otras_sesiones_cerradas > 0) lineas.push(`Y cerró ${d.otras_sesiones_cerradas} sesiones abiertas`);
+  if (typeof d.sesiones_cerradas === "number") lineas.push(`Se cerraron ${d.sesiones_cerradas} sesiones`);
+  if (typeof d.comando === "string") lineas.push("Hecho por soporte");
+  if (typeof d.ruta === "string") lineas.push(`Pidió ${d.ruta}`);
+  if (typeof d.medio === "string") lineas.push(`Medio de pago: ${d.medio}`);
+  return lineas;
+}
+
+/** «hace 5 min», «hace 3 h», «ayer 18:04» o la fecha: para la actividad de Mi cuenta y las sesiones. */
+export function haceCuanto(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  const ms = Date.now() - new Date(iso).getTime();
+  const min = Math.round(ms / 60_000);
+  if (min < 1) return "recién";
+  if (min < 60) return `hace ${min} min`;
+  const h = Math.round(min / 60);
+  if (h < 24) return `hace ${h} h`;
+  const dias = Math.round(h / 24);
+  if (dias === 1) return `ayer, ${fechaHora(iso).slice(11)}`;
+  if (dias < 7) return `hace ${dias} días`;
+  return fechaHora(iso).slice(0, 10);
 }
 
 /** Fecha y hora en Argentina, 24 h: «17/11/2026 13:00». */

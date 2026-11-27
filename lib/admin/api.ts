@@ -28,7 +28,9 @@ import type {
   OrdenDetalle,
   OrdenFila,
   Pagina,
-  PaginaCursor,
+  AuditoriaCifras,
+  MiCuenta,
+  Movimiento,
   SesionAbierta,
   Totales,
   IngresoRespuesta,
@@ -204,8 +206,12 @@ export const panel = {
   responderConsulta: (id: number, asunto: string, mensaje: string, clave: string) =>
     escribir<ConsultaDetalle>(`consultas/${id}/respuesta`, "POST", { asunto, mensaje, clave }),
 
-  auditoria: (p: Params, cursor?: string | null) =>
-    pedir<PaginaCursor<Evento>>(`auditoria${consulta({ ...p, cursor: cursor ?? undefined })}`),
+  auditoria: (p: Params) => pedir<Pagina<Evento>>(`auditoria${consulta(p)}`),
+  auditoriaCifras: () => pedir<AuditoriaCifras>("auditoria/cifras"),
+  miCuenta: () => pedir<MiCuenta>("cuenta"),
+  cambiarNombre: (nombre: string) => escribir<MiCuenta>("cuenta", "PATCH", { nombre }),
+  miActividad: () => pedir<Movimiento[]>("cuenta/actividad"),
+  cerrarSesionDe: (id: string) => escribir<{ cerrada: boolean }>(`cuenta/sesiones/${encodeURIComponent(id)}/cerrar`, "POST"),
   cambiarClave: (actual: string, nueva: string, cerrar_otras: boolean) =>
     escribir<{ otras_sesiones_cerradas: number }>("cuenta/clave", "POST", { actual, nueva, cerrar_otras }),
   codigosNuevos: () => escribir<{ codigos_respaldo: string[] }>("cuenta/codigos-respaldo", "POST"),
@@ -245,15 +251,6 @@ export const panel = {
   guardarNota: (publicId: string, nota: string) => escribir<OrdenDetalle>(`ordenes/${publicId}/nota`, "POST", { nota }),
 };
 
-/** El cursor de la auditoría viene como URL completa del backend: se usa solo el parámetro. */
-export function cursorDe(url: string | null): string | null {
-  if (!url) return null;
-  try {
-    return new URL(url).searchParams.get("cursor");
-  } catch {
-    return null;
-  }
-}
 
 // --- Ayudas para las pantallas -------------------------------------------------------------
 

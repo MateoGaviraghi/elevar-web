@@ -65,10 +65,25 @@ export function avisarContadores() {
   window.dispatchEvent(new Event(EVENTO_CONTADORES));
 }
 
+const EVENTO_USUARIO = "panel:usuario";
+/** Avisa al marco que cambió algo tuyo (el nombre, desde Mi cuenta) para que la barra lo muestre sin recargar. */
+export function avisarUsuario(cambios: Partial<Yo>) {
+  window.dispatchEvent(new CustomEvent<Partial<Yo>>(EVENTO_USUARIO, { detail: cambios }));
+}
+
 export function PanelShell({ children }: PanelShellProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [estado, setEstado] = useState<Estado>({ tipo: "cargando" });
+
+  useEffect(() => {
+    const cambiar = (e: Event) => {
+      const cambios = (e as CustomEvent<Partial<Yo>>).detail;
+      setEstado((s) => (s.tipo === "listo" ? { ...s, usuario: { ...s.usuario, ...cambios } } : s));
+    };
+    window.addEventListener(EVENTO_USUARIO, cambiar);
+    return () => window.removeEventListener(EVENTO_USUARIO, cambiar);
+  }, []);
 
   const cargar = useCallback(async () => {
     setEstado({ tipo: "cargando" });
@@ -233,9 +248,13 @@ function BarraCompleta({ usuario, cuentas, pathname, saliendo, cerrarSesion, osc
 
   return (
     <nav id="menu-panel" aria-label="Menú del panel" className={`flex h-full w-64 flex-col ${c.fondo}`}>
-      <Link href="/admin" className="mx-5 mt-6 flex items-center gap-2 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-500" aria-label="ELEVAR, inicio del panel">
+      {/* «PANEL» y la raya se alinean con la palabra ELEVAR, no con el dibujo entero: la palabra ocupa del
+          42 % al 84 % del alto del logo (`LOGO_WORD`), así que con 28 px va de 11,8 a 23,6 px (2026-11-26,
+          Mateo: «en el navbar está mal centrado»). */}
+      <Link href="/admin" className="mx-6 mt-6 flex h-7 items-start gap-2.5 self-start rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-500" aria-label="ELEVAR, inicio del panel">
         <Logo wordColor={c.logo} className="h-7" />
-        <span className={`border-l pl-2 font-sub text-xs font-semibold uppercase tracking-widest ${c.borde} ${c.titulo}`}>Panel</span>
+        <span aria-hidden className={`mt-[11.8px] h-[11.8px] w-px ${oscura ? "bg-neutral-0/25" : "bg-neutral-200"}`} />
+        <span className={`mt-[11.8px] font-sub text-[11px] font-semibold uppercase leading-[11.8px] tracking-[0.2em] ${c.titulo}`}>Panel</span>
       </Link>
 
       <div ref={lista} className="relative mt-6 flex-1 overflow-y-auto px-3" onPointerLeave={volver}>
@@ -266,21 +285,84 @@ function BarraCompleta({ usuario, cuentas, pathname, saliendo, cerrarSesion, osc
       </div>
 
       <div className={`border-t p-3 ${c.borde}`}>
-        <Link href="/admin/cuenta" aria-current={pathname.startsWith("/admin/cuenta") ? "page" : undefined}
-          className={`flex min-h-[48px] items-center gap-3 rounded-[12px] px-2 outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${oscura ? "[@media(hover:hover)]:hover:bg-neutral-0/10" : "[@media(hover:hover)]:hover:bg-neutral-50"}`}>
-          <Iniciales nombre={usuario.nombre} oscura={oscura} />
-          <span className="min-w-0 flex-1">
-            <span className={`block truncate text-sm font-semibold ${c.activo}`}>{usuario.nombre}</span>
-            <span className={`block text-xs ${c.titulo}`}>Mi cuenta</span>
-          </span>
-        </Link>
-        <button type="button" onClick={cerrarSesion} disabled={saliendo} onPointerEnter={escribir}
-          className={`mt-1 flex min-h-[44px] w-full items-center gap-3 rounded-[12px] px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-500 disabled:opacity-60 ${c.item} ${oscura ? "[@media(hover:hover)]:hover:bg-neutral-0/10" : "[@media(hover:hover)]:hover:bg-neutral-50"}`}>
-          <Icono nombre="salir" />
-          {saliendo ? "Saliendo…" : "Salir"}
-        </button>
+        <MenuCuenta usuario={usuario} pathname={pathname} saliendo={saliendo} cerrarSesion={cerrarSesion} oscura={oscura} />
       </div>
     </nav>
+  );
+}
+
+/**
+ * El pie de la barra como entrada a la cuenta, como el `MenuCuenta` del portal CESS (su D-024 y D-035): tus
+ * iniciales, tu nombre y tu correo. Al tocarlo se abre hacia arriba una tarjeta con «Mi cuenta» y «Salir»:
+ * crece desde el pie en 0,3 s y sus filas caen una detrás de otra. ↑ ↓ recorren, Esc o tocar afuera cierran
+ * y el foco vuelve al pie (2026-11-26, Mateo: «falta la cuenta como la que tiene el portal»).
+ */
+function MenuCuenta({ usuario, pathname, saliendo, cerrarSesion, oscura }: { usuario: Yo; pathname: string; saliendo: boolean; cerrarSesion: () => void; oscura: boolean }) {
+  const [abierto, setAbierto] = useState(false);
+  const caja = useRef<HTMLDivElement>(null);
+  const boton = useRef<HTMLButtonElement>(null);
+  const tarjeta = useRef<HTMLDivElement>(null);
+  const escribir = useEscribirIcono();
+  const enCuenta = pathname.startsWith("/admin/cuenta");
+
+  useEffect(() => setAbierto(false), [pathname]);
+
+  useLayoutEffect(() => {
+    const t = tarjeta.current;
+    if (!abierto || !t) return;
+    t.querySelector<HTMLElement>("[role='menuitem']")?.focus();
+    if (prefersReducedMotion()) return;
+    const tl = gsap.timeline();
+    tl.fromTo(t, { opacity: 0, y: 10, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "power3.out", transformOrigin: "bottom left", clearProps: "opacity,transform" })
+      .fromTo(t.querySelectorAll("[role='menuitem']"), { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.25, stagger: 0.05, ease: "power2.out", clearProps: "opacity,transform" }, 0.06);
+    return () => { tl.kill(); };
+  }, [abierto]);
+
+  useEffect(() => {
+    if (!abierto) return;
+    const afuera = (e: PointerEvent) => { if (!caja.current?.contains(e.target as Node)) setAbierto(false); };
+    document.addEventListener("pointerdown", afuera);
+    return () => document.removeEventListener("pointerdown", afuera);
+  }, [abierto]);
+
+  const cerrar = () => { setAbierto(false); boton.current?.focus(); };
+  const teclas = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") { e.preventDefault(); cerrar(); return; }
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "Home" && e.key !== "End") return;
+    e.preventDefault();
+    const items = Array.from(tarjeta.current?.querySelectorAll<HTMLElement>("[role='menuitem']") ?? []);
+    const i = items.indexOf(document.activeElement as HTMLElement);
+    const sig = e.key === "Home" ? 0 : e.key === "End" ? items.length - 1 : (i + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+    items[sig]?.focus();
+  };
+
+  const hover = oscura ? "[@media(hover:hover)]:hover:bg-neutral-0/10" : "[@media(hover:hover)]:hover:bg-neutral-50";
+  const fila = "flex min-h-[44px] w-full items-center gap-3 rounded-[10px] px-3 text-sm font-medium text-ink-900 outline-none focus-visible:bg-neutral-50 focus-visible:ring-2 focus-visible:ring-brand-500 [@media(hover:hover)]:hover:bg-neutral-50";
+  return (
+    <div ref={caja} className="relative" onKeyDown={teclas}>
+      {abierto && (
+        <div ref={tarjeta} role="menu" aria-label="Tu cuenta" className="absolute inset-x-0 bottom-full z-10 mb-2 rounded-[14px] border border-neutral-200 bg-neutral-0 p-1.5 shadow-[0_12px_32px_-12px_rgb(11_30_51/0.35)]">
+          <Link href="/admin/cuenta" role="menuitem" tabIndex={-1} aria-current={enCuenta ? "page" : undefined} onPointerEnter={escribir} onFocus={escribir} onClick={() => setAbierto(false)} className={fila}>
+            <Icono nombre="persona" className="text-ink-700" />
+            Mi cuenta
+          </Link>
+          <button type="button" role="menuitem" tabIndex={-1} disabled={saliendo} onPointerEnter={escribir} onFocus={escribir} onClick={cerrarSesion} className={`${fila} disabled:opacity-60`}>
+            <Icono nombre="salir" className="text-ink-700" />
+            {saliendo ? "Saliendo…" : "Salir"}
+          </button>
+        </div>
+      )}
+      <button ref={boton} type="button" aria-haspopup="menu" aria-expanded={abierto} onClick={() => setAbierto((a) => !a)}
+        aria-label={`Tu cuenta: ${usuario.nombre}`}
+        className={`flex min-h-[52px] w-full items-center gap-3 rounded-[12px] px-2 text-left outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${hover} ${abierto || enCuenta ? (oscura ? "bg-neutral-0/10" : "bg-neutral-50") : ""}`}>
+        <Iniciales nombre={usuario.nombre} oscura={oscura} />
+        <span className="min-w-0 flex-1">
+          <span className={`block truncate text-sm font-semibold ${oscura ? "text-neutral-0" : "text-ink-900"}`}>{saliendo ? "Saliendo…" : usuario.nombre}</span>
+          <span className={`block truncate text-xs ${oscura ? "text-neutral-0/60" : "text-neutral-700"}`}>{usuario.correo}</span>
+        </span>
+        <Icono nombre="flechas" tam={16} className={oscura ? "text-neutral-0/60" : "text-neutral-700"} acento="currentColor" />
+      </button>
+    </div>
   );
 }
 

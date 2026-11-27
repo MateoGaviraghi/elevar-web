@@ -20,7 +20,9 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const COOKIES_PERMITIDAS = new Set(["__Host-elevar_panel", "elevar_panel", "csrftoken"]);
-const ENCABEZADOS_PEDIDO = ["content-type", "accept", "x-csrftoken", "origin", "referer"];
+// user-agent: el navegador de la persona, para «Sesiones» de Mi cuenta (2026-11-26: sin él, Django guardaba el
+// del puente y toda sesión decía «Navegador»). No da permisos: solo se muestra.
+const ENCABEZADOS_PEDIDO = ["content-type", "accept", "x-csrftoken", "origin", "referer", "user-agent"];
 const ENCABEZADOS_RESPUESTA = ["content-type", "content-disposition", "retry-after"];
 const SEGMENTO_VALIDO = /^[a-z0-9][a-z0-9_-]*$/i;
 const ESPERA_MS = 15_000;

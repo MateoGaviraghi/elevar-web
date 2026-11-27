@@ -36,6 +36,7 @@ const AL_ABRIR: Record<string, () => Promise<unknown>[]> = {
   "/admin/consultas": () => [panel.consultas({ estado: "NEW", origen: "", q: "", orden: "nuevas", page: 1, page_size: 10 }), panel.consultaCifras()],
   "/admin/ordenes": () => [panel.ordenes({ estado: "PAID", medio: "", curso: "", q: "", orden: "viejas", page: 1, page_size: 10 }), panel.ordenCifras(), panel.cursos({ page_size: 100 })],
   "/admin/inscripciones": () => [panel.fechasInscripciones({ cuando: "PROXIMAS", tipo: "", curso: "", q: "", page: 1, page_size: 10 }), panel.inscripcionCifras(), panel.cursos({ page_size: 100 })],
+  "/admin/auditoria": () => [panel.auditoria({ page: 1, page_size: 10 }), panel.auditoriaCifras()],
   "/admin/cursos": () => [panel.cursos({ estado: "TODOS", modalidad: "", categoria: "", q: "", page: 1, page_size: 10 }), panel.cursoCifras(), panel.categorias()],
 };
 
