@@ -155,7 +155,8 @@ export function WhatsAppFab() {
         {/* Fondo: oscurece apenas la página para que las opciones resalten; tocarlo cierra. */}
         <div aria-hidden onClick={() => setOpen(false)} className="wa-veil invisible fixed inset-0 z-[39] bg-ink-900/30 opacity-0 print:hidden" />
 
-        <div className="fixed bottom-5 right-5 z-40 print:hidden">
+        {/* `aside`: la burbuja es una zona con nombre de la página (axe «region»). */}
+        <aside aria-label="WhatsApp" className="fixed bottom-5 right-5 z-40 print:hidden">
           <ul id="wa-menu" aria-label="Opciones de WhatsApp">
             {FAB_OPTIONS.map((o) => {
               const card = (
@@ -167,7 +168,7 @@ export function WhatsAppFab() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="wa-txt block text-[15px] font-semibold leading-tight text-ink-900">{o.title}</span>
-                    <span className="wa-txt mt-0.5 block text-xs text-neutral-500">{o.sub}</span>
+                    <span className="wa-txt mt-0.5 block text-xs text-neutral-700">{o.sub}</span>
                   </span>
                   <svg className="wa-txt h-4 w-4 shrink-0 text-neutral-400 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M5 12h14M13 6l6 6-6 6" />
@@ -209,7 +210,7 @@ export function WhatsAppFab() {
               </svg>
             </span>
           </button>
-        </div>
+        </aside>
       </div>
 
       <CommunityModal open={modal} onClose={() => setModal(false)} anchor="fab" />

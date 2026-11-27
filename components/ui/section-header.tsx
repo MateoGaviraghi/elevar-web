@@ -35,7 +35,7 @@ export function SectionHeader({
         <span className="h-px w-8 bg-brand-500 shrink-0" />
         <span
           className={`text-xs uppercase tracking-widest ${
-            dark ? "text-neutral-400" : "text-neutral-500"
+            dark ? "text-neutral-400" : "text-neutral-700"
           }`}
         >
           {eyebrow}

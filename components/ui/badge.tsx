@@ -11,7 +11,7 @@ export interface BadgeProps {
 const toneClasses: Record<BadgeTone, string> = {
   neutral: "bg-neutral-200 text-ink-800",
   brand: "bg-brand-100 text-brand-700",
-  success: "bg-status-success/10 text-status-success",
+  success: "bg-status-success/[0.06] text-status-success", // 6 %: con 10 % el texto quedaba en 4,44 de contraste
   warning: "bg-status-warning/10 text-status-warning",
   error: "bg-status-error/10 text-status-error",
   info: "bg-status-info/10 text-status-info",

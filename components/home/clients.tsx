@@ -10,7 +10,7 @@ export function ClientsSection() {
     <section className="bg-neutral-0 py-16">
       <Container>
         <Reveal>
-          <p className="text-center text-xs uppercase tracking-widest text-neutral-500 mb-8">
+          <p className="text-center text-xs uppercase tracking-widest text-neutral-700 mb-8">
             Confían en nosotros
           </p>
         </Reveal>
@@ -45,7 +45,13 @@ export function ClientsSection() {
           }
         `}</style>
 
-        <div className="elevar-marquee-wrapper elevar-marquee-scroll overflow-hidden">
+        {/* Con «menos movimiento» la fila se desplaza a mano: tabIndex para hacerlo con el teclado. */}
+        <div
+          role="region"
+          aria-label="Logos de clientes"
+          tabIndex={0}
+          className="elevar-marquee-wrapper elevar-marquee-scroll overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500"
+        >
           <div className="elevar-marquee-track flex">
             {LOGOS.map((src, i) => (
               <img

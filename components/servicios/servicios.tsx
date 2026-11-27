@@ -149,19 +149,14 @@ function Portada() {
   );
 }
 
-/** Entradas de la portada: `.bh-in` sube y aparece (1,2 s expo.out, 0,1 s entre sí). */
+/**
+ * Cabecera de la portada y del detalle: el rótulo, la lista, la frase y los botones se ven
+ * desde el primer cuadro (2026-11-27). Antes subían ocultos hasta que corría el JS y eran lo
+ * que más tardaba en verse en un celular medio (6 a 6,7 s). Siguen animados el título por
+ * líneas y el isotipo.
+ */
 function useHero<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-  useGSAP(
-    () => {
-      const els = ref.current!.querySelectorAll(".bh-in");
-      gsap.set(els, { visibility: "inherit" });
-      if (prefersReducedMotion()) return;
-      gsap.fromTo(els, { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1.2, ease: "expo.out", stagger: 0.1, delay: 0.45 });
-    },
-    { scope: ref }
-  );
-  return ref;
+  return useRef<T>(null);
 }
 
 // ── Listado ─────────────────────────────────────────────────────────────────
@@ -294,11 +289,11 @@ export function ServiciosListado() {
       <section data-tone="dark" className="relative isolate bg-ink-900 text-neutral-0">
         <Container className="grid items-center gap-16 pb-24 pt-14 md:pt-20 lg:min-h-[calc(100svh-6.5rem)] lg:grid-cols-12 lg:gap-12 lg:pb-20">
           <div ref={hero} className="lg:col-span-7">
-            <p data-reveal="" className="bh-in text-sm font-semibold tracking-wide text-brand-500">{INTRO.titulo}</p>
+            <p className="bh-in text-sm font-semibold tracking-wide text-brand-500">{INTRO.titulo}</p>
             <SplitLines as="h1" immediate className="mt-5 font-display text-[clamp(2.2rem,4.4vw,3.75rem)] font-semibold leading-[1.04] tracking-tight [text-wrap:balance]">
               {sinViuda(INTRO.bajada)}
             </SplitLines>
-            <ol data-reveal="" className="bh-in mt-10 grid gap-x-8 border-t border-neutral-0/15 sm:grid-cols-2">
+            <ol className="bh-in mt-10 grid gap-x-8 border-t border-neutral-0/15 sm:grid-cols-2">
               {SERVICIOS.map((s, i) => (
                 <li key={s.id} className="border-b border-neutral-0/15">
                   <a href={`#${s.id}`} className="group/lk flex items-center gap-3 py-3.5 text-[15px] text-neutral-200 transition-colors duration-500 hover:text-neutral-0">
@@ -495,17 +490,17 @@ export function ServicioDetalle({ id }: { id: string }) {
       <section data-tone="dark" className="relative isolate bg-ink-900 text-neutral-0">
         <Container className="grid items-center gap-16 pb-24 pt-8 md:pt-10 lg:min-h-[calc(100svh-6.5rem)] lg:grid-cols-12 lg:gap-12 lg:pb-20">
           <div ref={hero} className="lg:col-span-7">
-            <div data-reveal="" className="bh-in">
+            <div className="bh-in">
               <Migas nombre={s.nombre} />
             </div>
-            <div data-reveal="" className="bh-in mt-10 md:mt-14">
+            <div className="bh-in mt-10 md:mt-14">
               <Pictogram src={s.pictogram} className="h-16 w-16 md:h-20 md:w-20" />
             </div>
             <SplitLines as="h1" immediate className="mt-6 font-display text-[clamp(2.3rem,4.6vw,4rem)] font-semibold leading-[1.03] tracking-tight [text-wrap:balance]">
               {s.titulo}
             </SplitLines>
-            <p data-reveal="" className="bh-in mt-7 text-lg leading-relaxed text-neutral-300">{s.frase}</p>
-            <div data-reveal="" className="bh-in mt-10 flex flex-wrap items-center gap-x-8 gap-y-5">
+            <p className="bh-in mt-7 text-lg leading-relaxed text-neutral-300">{s.frase}</p>
+            <div className="bh-in mt-10 flex flex-wrap items-center gap-x-8 gap-y-5">
               <Link href={s.cta.href} className={BOTON.naranja}>
                 {s.cta.label} <Flecha />
               </Link>

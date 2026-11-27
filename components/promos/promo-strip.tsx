@@ -148,8 +148,10 @@ export function PromoStrip() {
               </span>
               <RotatingWord running={inView && !hover && !reduced} />
             </h2>
-            <p className="ps-in mt-6 text-lg leading-relaxed text-neutral-0/90">
-              {pegar(`Inscribí a ${group.minQuantity} o más personas en el mismo curso. Se aplica sola en el carrito.`)}
+            <p className="ps-in mt-6 text-2xl leading-snug text-neutral-0">
+              {/* Una oración por renglón: a 24 px la segunda se cortaba en «Se aplica / sola». */}
+              <span className="block">{pegar(`Inscribí a ${group.minQuantity} o más personas en el mismo curso.`)}</span>
+              <span className="block">{pegar("Se aplica sola en el carrito.")}</span>
             </p>
             <div className="ps-in mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/promociones" className={BTN.onBrand}>

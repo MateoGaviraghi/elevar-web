@@ -40,8 +40,8 @@ export function Header() {
 
   return (
     <>
-      {/* Top utility bar */}
-      <div className="hidden bg-ink-900 text-neutral-400 md:block">
+      {/* Top utility bar: `nav` con nombre, así queda dentro de una zona de la página (axe «region»). */}
+      <nav aria-label="Contacto y plataforma" className="hidden bg-ink-900 text-neutral-400 md:block">
         <div className="mx-auto max-w-screen-xl px-6 lg:px-8">
           <div className="flex h-9 items-center justify-between text-[11px] tracking-wider">
             <a
@@ -73,7 +73,7 @@ export function Header() {
             </div>
           </div>
         </div>
-      </div>
+      </nav>
 
       {/* Main nav */}
       <header

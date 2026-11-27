@@ -37,8 +37,9 @@ export function NosotrosHero() {
       gsap
         .timeline({ delay: 0.25 })
         .to(".nh-bar", { scaleY: 1, duration: 1.3, ease: "back.out(1.6)", stagger: 0.12 }, 0)
-        .to(".nh-draw", { strokeDashoffset: 0, duration: 1.2, ease: "power3.out", autoRound: false }, 0.3)
-        .fromTo(".nh-in", { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1.2, ease: "expo.out", stagger: 0.1 }, 0.45);
+        .to(".nh-draw", { strokeDashoffset: 0, duration: 1.2, ease: "power3.out", autoRound: false }, 0.3);
+      // El texto de abajo y el link ya no arrancan ocultos: eran lo que más tardaba en verse en
+      // un celular medio (5 a 6,7 s esperando el JS). Se ven desde el primer cuadro.
 
       const st = { trigger: el, start: "top top", end: "bottom top", scrub: 0.6 };
       gsap.to(".nh-mark", { yPercent: 12, ease: "none", scrollTrigger: st });
@@ -97,7 +98,7 @@ export function NosotrosHero() {
               )
             )}
           </SplitLines>
-          <div data-reveal="" className="mt-8 md:mt-10">
+          <div className="mt-8 md:mt-10">
             <p className="nh-in text-lg leading-relaxed text-neutral-300">{HERO.lead}</p>
             <a
               href={HERO.link.href}

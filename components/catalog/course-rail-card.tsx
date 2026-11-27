@@ -39,8 +39,9 @@ export const CourseRailCard = forwardRef<
         type="button"
         onClick={(e) => onOpen(course, e.currentTarget.closest("article") as HTMLElement)}
         className="flex flex-1 flex-col text-left focus-visible:outline-none"
-        aria-label={`Ver detalle: ${course.title}`}
       >
+        {/* Sin aria-label: el nombre del botón tiene que incluir lo que se ve escrito. */}
+        <span className="sr-only">Ver detalle: </span>
         <div className={`rail-cover relative basis-1/2 shrink-0 overflow-hidden bg-gradient-to-br ${RAIL_GRADIENTS[course.modality]}`}>
           <svg
             className="absolute -right-10 -top-10 h-56 w-56 text-neutral-0/12 transition-transform duration-700 ease-out group-hover:scale-110"
@@ -61,7 +62,7 @@ export const CourseRailCard = forwardRef<
           <h3 className="mt-3 line-clamp-4 font-display text-base font-semibold leading-snug text-ink-900 transition-colors group-hover:text-brand-600">
             {course.title}
           </h3>
-          <p className="mt-auto pt-3 text-xs text-neutral-500">{courseWhen(course)}</p>
+          <p className="mt-auto pt-3 text-xs text-neutral-700">{courseWhen(course)}</p>
           <p className="mt-1 font-display text-lg font-semibold text-ink-900">
             {free ? <span className="text-brand-600">Gratis</span> : formatARS(course.price)}
           </p>

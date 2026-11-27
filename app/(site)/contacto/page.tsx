@@ -26,10 +26,12 @@ export default function ContactoPage() {
             <h1 className="max-w-3xl font-display text-4xl font-semibold leading-[1.05] tracking-tight md:text-5xl">
               {sinViuda("¿Tiene alguna consulta?")}
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-neutral-300">
-              {pegar("Contanos en qué podemos ayudarte y te respondemos a la brevedad.")}
-            </p>
           </Reveal>
+          {/* Fuera de la entrada: se ve desde el primer cuadro (en un celular medio la cabecera
+              tardaba 4 s en aparecer esperando el JS). */}
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-neutral-300">
+            {pegar("Contanos en qué podemos ayudarte y te respondemos a la brevedad.")}
+          </p>
         </Container>
       </section>
 

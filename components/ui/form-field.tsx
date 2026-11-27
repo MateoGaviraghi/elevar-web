@@ -56,7 +56,7 @@ export function FormField(props: FormFieldProps) {
     <div className={`flex flex-col ${className}`}>
       <label
         htmlFor={id}
-        className="block text-xs font-medium uppercase tracking-wider text-neutral-500 mb-2"
+        className="block text-xs font-medium uppercase tracking-wider text-neutral-700 mb-2"
       >
         {label}
       </label>

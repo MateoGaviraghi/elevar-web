@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { preload } from "react-dom";
 import { gsap, prefersReducedMotion, SplitText, useGSAP, airMasks, LINE_FROM } from "@/lib/gsap";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
@@ -16,28 +17,28 @@ interface Slide {
 
 const SLIDES: Slide[] = pegarTodo([
   {
-    img: "/assets/hero/slide-auditorias.png",
+    img: "/assets/hero/slide-auditorias.webp",
     eyebrow: "Mejora continua",
     title: "Auditorías internas",
     desc: "Evaluamos los sistemas de gestión de calidad de los laboratorios para mantener la confianza de sus clientes.",
     href: "/servicios/auditorias-internas",
   },
   {
-    img: "/assets/hero/slide-acreditacion.png",
+    img: "/assets/hero/slide-acreditacion.webp",
     eyebrow: "Seguridad y reconocimiento",
     title: "Acompañamiento en el proceso de acreditación",
     desc: "Expertos en diferentes campos ayudan a lograr y mantener un posicionamiento en el mercado basado en el reconocimiento de la competencia técnica.",
     href: "/servicios/acreditacion-iso-17025",
   },
   {
-    img: "/assets/hero/slide-iso17025.png",
+    img: "/assets/hero/slide-iso17025.webp",
     eyebrow: "Trayectoria y experiencia",
     title: "Implementación ISO/IEC 17025",
     desc: "Nos unimos a los laboratorios que deseen, de forma voluntaria, desarrollar un sistema de gestión basado en la competencia técnica.",
     href: "/servicios/implementacion-normativa",
   },
   {
-    img: "/assets/hero/slide-gestion.png",
+    img: "/assets/hero/slide-gestion.webp",
     eyebrow: "Respaldo y confianza",
     title: "Especialistas en gestión de calidad",
     desc: "Elevar es una consultora de gestión de calidad aplicada a laboratorios de primera, segunda y tercera parte.",
@@ -68,6 +69,9 @@ export function HeroCarousel() {
   const text = useRef<HTMLDivElement>(null);
   const busy = useRef(false);
   const first = useRef(true);
+  // Las fotos 2 a 4 se piden recién cuando terminó de bajar la primera: antes competían con
+  // ella por la conexión y en un celular medio la primera tardaba 25 s.
+  const [resto, setResto] = useState(false);
 
   useGSAP(
     (_ctx, contextSafe) => {
@@ -122,6 +126,7 @@ export function HeroCarousel() {
   const goTo = contextSafe((next: number) => {
     if (busy.current || next === index) return;
     busy.current = true;
+    setResto(true);
     if (prefersReducedMotion()) {
       setIndex(next);
       return;
@@ -164,6 +169,8 @@ export function HeroCarousel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paused, visible, index]);
 
+  preload(SLIDES[0].img, { as: "image", fetchPriority: "high" });
+
   const slide = SLIDES[index];
   const running = !paused && visible;
 
@@ -177,15 +184,21 @@ export function HeroCarousel() {
       onTouchEnd={onTouchEnd}
       aria-roledescription="carrusel"
     >
-      {/* Imágenes apiladas: GSAP cruza la actual con la anterior */}
-      {SLIDES.map((s) => (
+      {/* Imágenes apiladas: GSAP cruza la actual con la anterior. La primera se ve desde el
+          primer cuadro y baja con prioridad (era lo que más tardaba en un celular: 25 s, porque
+          arrancaba oculta hasta el JS y competía con las otras tres); las demás bajan después. */}
+      {SLIDES.map((s, i) => (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           key={s.img}
-          src={s.img}
+          src={i === 0 || resto ? s.img : undefined}
+          onLoad={i === 0 ? () => setResto(true) : undefined}
+          ref={i === 0 ? (el) => { if (el?.complete && el.naturalWidth) setResto(true); } : undefined}
           alt=""
           aria-hidden
-          className="hc-img invisible absolute inset-0 -z-20 h-full w-full object-cover opacity-0"
+          fetchPriority={i === 0 ? "high" : "low"}
+          decoding={i === 0 ? "sync" : "async"}
+          className={`hc-img absolute inset-0 -z-20 h-full w-full object-cover ${i === 0 ? "motion-safe:scale-[1.16]" : "invisible opacity-0"}`}
         />
       ))}
       <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-ink-900 via-ink-900/80 to-ink-900/10" />

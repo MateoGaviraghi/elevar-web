@@ -144,11 +144,14 @@ export function ModalityPanels({ items }: { items: PanelItem[] }) {
               <button
                 type="button"
                 aria-expanded={isOpen}
-                aria-label={`${item.title}: ${item.count} ${item.count === 1 ? "curso" : "cursos"}`}
                 onClick={() => setOpen(i)}
                 className={`absolute inset-0 z-10 flex flex-col items-center justify-between py-6 transition-opacity duration-500 ${isOpen ? "pointer-events-none opacity-0" : "opacity-100 hover:bg-neutral-0/10"}`}
               >
-                <span className="text-sm font-semibold tabular-nums text-neutral-0/80">{item.count}</span>
+                {/* El nombre que lee el lector de pantalla contiene lo que se ve: «48 cursos · Asincrónicos». */}
+                <span className="text-sm font-semibold tabular-nums text-neutral-0/80">
+                  {item.count}
+                  <span className="sr-only"> {item.count === 1 ? "curso" : "cursos"} ·</span>
+                </span>
                 <span className="font-display text-lg font-semibold uppercase tracking-wide [writing-mode:vertical-rl] rotate-180">
                   {item.short}
                 </span>
