@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { plata } from "@/lib/admin/formato";
-import type { Inicio } from "@/lib/admin/tipos";
+import type { AvisoCobro, Inicio, TipoAviso } from "@/lib/admin/tipos";
+import { TIPO_AVISO } from "../avisos";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { pegar } from "@/lib/texto";
 import { Icono } from "../iconos";
@@ -26,7 +27,40 @@ const tiempo = (ms: number) => {
   return h < 24 ? { n: String(Math.max(1, Math.floor(h))), dias: false } : { n: String(Math.floor(h / 24)), dias: true };
 };
 
-/** Lo que alguien espera de ELEVAR, de lo más grave a lo menos: arrepentimientos, accesos, consultas, compras. */
+/** Qué hacer con cada aviso de cobro (2026-11-27). */
+const ACCION_AVISO: Record<TipoAviso, string> = {
+  MONTO_DISTINTO: "Revisar el pago",
+  SIN_LUGAR: "Reubicar o devolver",
+  CONFIRMACION_FALLIDA: "Reenviar la confirmación",
+  ALERTA_FALLIDA: "Mirar la orden",
+  PAGO_SIN_ORDEN: "Ver el pago",
+  DEVOLUCION_PARCIAL: "Mirar la orden",
+  DEVOLUCION_OTRO_PAGO: "Mirar la orden",
+  LUGARES_SIN_NOMBRE: "Pedirle los nombres",
+};
+
+/** Los avisos de cobro, uno por tipo: si hay varios del mismo tipo, cuántos y el más viejo; si hay uno, lo abre. */
+function urgenciasDeCobro(avisos: AvisoCobro[], ahora: number): Urgencia[] {
+  const porTipo = new Map<TipoAviso, AvisoCobro[]>();
+  for (const a of avisos) porTipo.set(a.tipo, [...(porTipo.get(a.tipo) ?? []), a]);
+  return [...porTipo.entries()].map(([tipo, lista]) => {
+    const viejo = lista.reduce((x, y) => (new Date(y.creado) < new Date(x.creado) ? y : x));
+    const quien = viejo.orden ? `#${viejo.numero}${viejo.quien ? ` · ${viejo.quien}` : ""}` : `Pago ${viejo.pago}`;
+    const t = tiempo(ahora - new Date(viejo.creado).getTime());
+    const uno = lista.length === 1;
+    return {
+      clave: `cobro-${tipo}`, nivel: viejo.nivel,
+      n: uno ? (tipo === "LUGARES_SIN_NOMBRE" ? String(viejo.detalle.faltan ?? 1) : t.n) : String(lista.length),
+      unidad: uno ? (tipo === "LUGARES_SIN_NOMBRE" ? "sin nombre" : t.dias ? "días abierto" : "h abierto") : "para revisar",
+      tipo: TIPO_AVISO[tipo].nombre, titulo: uno ? quien : `El más viejo: ${quien}`,
+      href: uno && viejo.orden ? `/admin/ordenes?estado=A_REVISAR&ver=${viejo.orden}` : "/admin/ordenes?estado=A_REVISAR",
+      accion: ACCION_AVISO[tipo], icono: TIPO_AVISO[tipo].icono,
+    };
+  });
+}
+
+/** Lo que alguien espera de ELEVAR, de lo más grave a lo menos: arrepentimientos, accesos, problemas de cobro,
+ * consultas, compras. */
 function urgencias(d: Inicio, ahora: number): Urgencia[] {
   const lista: Urgencia[] = [];
   for (const a of d.arrepentimientos) {
@@ -47,6 +81,7 @@ function urgencias(d: Inicio, ahora: number): Urgencia[] {
       href: "/admin/ordenes", accion: "Dar el acceso", icono: "llave",
     });
   }
+  lista.push(...urgenciasDeCobro(d.avisos_cobro ?? [], ahora));
   const vieja = d.consultas_viejas[0];
   if (vieja) {
     const t = tiempo(ahora - new Date(vieja.created_at).getTime());

@@ -90,6 +90,33 @@ export interface Inicio {
   consultas_por_origen: { origen: OrigenConsulta; n: number }[]; // últimos 90 días
   webinar_a_compra: { inscriptos: number; compraron: number }; // últimos 12 meses, cruzado por correo
   tiempo_respuesta: { mediana_horas: number | null; medidas: number; mediana_horas_antes: number | null; medidas_antes: number };
+  /** Problemas de cobro e inscripción (2026-11-27), de lo más grave a lo menos: van a la pila «Urgente». */
+  avisos_cobro: AvisoCobro[];
+}
+
+// --- Avisos de cobro (2026-11-27, docs/dashboard/ALERTAS.md) -------------------------------
+
+export type TipoAviso =
+  | "MONTO_DISTINTO" | "SIN_LUGAR" | "CONFIRMACION_FALLIDA" | "ALERTA_FALLIDA"
+  | "PAGO_SIN_ORDEN" | "DEVOLUCION_PARCIAL" | "DEVOLUCION_OTRO_PAGO" | "LUGARES_SIN_NOMBRE";
+
+export interface AvisoCobro {
+  /** null en los calculados (lugares sin nombre): no se resuelven ni se posponen. */
+  id: number | null;
+  clave: string;
+  tipo: TipoAviso;
+  nivel: "grave" | "atencion";
+  orden: string | null;
+  numero: string;
+  quien: string;
+  medio: MedioDePago | "";
+  /** El número del pago en Mercado Pago o Stripe, para buscarlo allá. */
+  pago: string;
+  detalle: Record<string, string | number | null>;
+  creado: string;
+  pospuesto_hasta: string | null;
+  se_resuelve: boolean;
+  se_reenvia: boolean;
 }
 
 // --- Consultas (etapa 3) -------------------------------------------------------------------
@@ -338,6 +365,9 @@ export interface OrdenCifras {
   sin_completar: number;
   cumplidas: number;
   devueltas: number;
+  /** Órdenes con algún aviso de cobro para mirar, y pagos que no son de ninguna orden. */
+  a_revisar: number;
+  pagos_sin_orden: number;
   /** Lo cobrado en el mes, una fila por moneda: nunca se suman pesos con dólares. */
   cobrado_mes: { moneda: string; cantidad: number; suma: string }[];
 }
@@ -384,4 +414,5 @@ export interface OrdenDetalle {
   stripe_payment_intent_id: string;
   admin_notes: string;
   historial: EventoHistorial[];
+  avisos: AvisoCobro[];
 }

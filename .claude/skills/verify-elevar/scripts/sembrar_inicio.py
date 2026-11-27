@@ -7,7 +7,7 @@ assert settings.DATABASES["default"]["NAME"] == "elevar_e2e", "solo base local"
 from django.utils import timezone
 from zoneinfo import ZoneInfo
 from leads.models import Lead, LeadSource, LeadStatus
-from orders.models import Order, OrderItem, OrderStatus
+from orders.models import AvisoCobro, Order, OrderItem, OrderStatus, PaymentMethod, TipoAvisoCobro
 from catalog.models import Course, CourseSession, Modality, SessionStatus, WebinarRegistration
 from panel import auditoria
 from django.contrib.auth import get_user_model
@@ -201,6 +201,63 @@ def _quinta_tanda():
     print("quinta tanda sembrada")
 
 
+# --- Sexta tanda (2026-11-27): avisos de cobro. Una orden por tipo (correos semilla.aviso*), un pago sin orden y una
+#     fecha en vivo dentro de 2 días con lugares sin nombre. No se repite. ---
+def _sexta_tanda():
+    if Order.objects.filter(buyer_email__startswith="semilla.aviso").exists():
+        print("sexta tanda ya sembrada"); return
+    ahora = timezone.now()
+    curso = Course.objects.filter(modality=Modality.LIVE, is_published=True).order_by("position", "id").first()
+    if curso is None:
+        print("sexta tanda: no hay cursos en vivo"); return
+    T = TipoAvisoCobro
+    # (tipo, comprador, estado, medio, moneda, horas atrás, detalle)
+    filas = [
+        (T.MONTO_DISTINTO, "Prueba Monto Distinto", OrderStatus.PENDING, PaymentMethod.MERCADOPAGO, "ARS", 30,
+         {"cobrado": "4800.00", "moneda_cobrada": "ARS", "total": "48000.00", "moneda": "ARS"}),
+        (T.SIN_LUGAR, "Prueba Sin Lugar", OrderStatus.PAID, PaymentMethod.MERCADOPAGO, "ARS", 5, None),
+        (T.CONFIRMACION_FALLIDA, "Prueba Sin Confirmación", OrderStatus.PAID, PaymentMethod.STRIPE, "USD", 3,
+         {"error": "RuntimeError"}),
+        (T.ALERTA_FALLIDA, "Prueba Sin Aviso de Venta", OrderStatus.FULFILLED, PaymentMethod.MERCADOPAGO, "ARS", 50,
+         {"error": "RuntimeError"}),
+        (T.DEVOLUCION_PARCIAL, "Prueba Devolución Parcial", OrderStatus.FULFILLED, PaymentMethod.MERCADOPAGO, "ARS", 70,
+         {"devuelto": "12000.00", "moneda": "ARS"}),
+    ]
+    fecha = CourseSession.objects.create(course=curso, starts_at=ahora + timedelta(days=2), ends_at=ahora + timedelta(days=2, hours=4),
+                                         capacity=10, seats_taken=4)
+    for k, (tipo, nombre, estado, medio, moneda, horas, detalle) in enumerate(filas):
+        cuando = ahora - timedelta(hours=horas)
+        total = Decimal("48000.00") if moneda == "ARS" else Decimal("60.00")
+        pago = f"pago-aviso-{k}" if medio == PaymentMethod.MERCADOPAGO else f"pi_prueba_aviso_{k}"
+        o = Order.objects.create(
+            buyer_email=f"semilla.aviso{k}@ejemplo.com", buyer_name=nombre, buyer_phone="3446000000", status=estado,
+            payment_method=medio, currency=moneda, total=total, subtotal=total,
+            paid_at=cuando if estado != OrderStatus.PENDING else None,
+            fulfilled_at=cuando + timedelta(hours=1) if estado == OrderStatus.FULFILLED else None,
+            mp_payment_id=pago if medio == PaymentMethod.MERCADOPAGO else "",
+            stripe_payment_intent_id=pago if medio == PaymentMethod.STRIPE else "",
+        )
+        Order.objects.filter(pk=o.pk).update(created_at=cuando - timedelta(minutes=3))
+        OrderItem.objects.create(order=o, course=curso, session=fecha if tipo == T.SIN_LUGAR else None, title_snapshot=curso.title,
+                                 unit_price=total, quantity=1,
+                                 attendees=[{"name": nombre, "email": f"semilla.aviso{k}@ejemplo.com"}])
+        if tipo == T.SIN_LUGAR:
+            detalle = {"fecha": fecha.pk, "inicio": fecha.starts_at.isoformat(), "curso": curso.title, "lugares": 1,
+                       "cupo": 10, "ocupados": 10}
+        a = AvisoCobro.objects.create(tipo=tipo, order=o, medio=medio, pago=pago, detalle=detalle)
+        AvisoCobro.objects.filter(pk=a.pk).update(created_at=cuando)
+    a = AvisoCobro.objects.create(tipo=T.PAGO_SIN_ORDEN, medio=PaymentMethod.MERCADOPAGO, pago="pago-sin-orden-1",
+                                  detalle={"estado": "approved", "referencia": "otra-cosa"})
+    AvisoCobro.objects.filter(pk=a.pk).update(created_at=ahora - timedelta(hours=8))
+    # Lugares sin nombre: compró 3 lugares para la fecha de pasado mañana y cargó un solo nombre.
+    o = Order.objects.create(buyer_email="semilla.aviso.nombres@ejemplo.com", buyer_name="Prueba Faltan Nombres",
+                             buyer_phone="3446000000", status=OrderStatus.PAID, total=Decimal("144000.00"),
+                             subtotal=Decimal("144000.00"), paid_at=ahora - timedelta(hours=26), mp_payment_id="pago-nombres")
+    OrderItem.objects.create(order=o, course=curso, session=fecha, title_snapshot=curso.title, unit_price=Decimal("48000.00"),
+                             quantity=3, attendees=[{"name": "Prueba Una Persona", "email": "semilla.aviso.n1@ejemplo.com"}])
+    print("sexta tanda sembrada")
+
+
 if YA:
     print("primera tanda ya sembrada")
 else:
@@ -209,3 +266,4 @@ _segunda_tanda()
 _tercera_tanda()
 _cuarta_tanda()
 _quinta_tanda()
+_sexta_tanda()

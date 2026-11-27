@@ -2,6 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { AvisosOrden, FilaAviso } from "@/components/admin/avisos";
 import { EstadoNoListo, useErrorDeAccion, type EstadoDatos } from "@/components/admin/datos";
 import { useDatosRecordados } from "@/components/admin/lista/memoria";
 import { numero } from "@/components/admin/inicio/graficos";
@@ -45,6 +46,7 @@ const ESTADOS: Opcion<string>[] = [
   { valor: "FAILED", texto: "Pago rechazado" },
   { valor: "CANCELLED", texto: "Canceladas" },
   { valor: "DEVUELTAS", texto: "Devueltas" },
+  { valor: "A_REVISAR", texto: "A revisar" },
   { valor: "TODAS", texto: "Todas" },
 ];
 const MEDIOS: Opcion<string>[] = [
@@ -102,14 +104,23 @@ function Ordenes() {
   const ir = useCallback((cambios: Partial<Record<Clave, string>>) => window.history.replaceState(null, "", enlace(cambios)), [enlace]);
 
   const [version, setVersion] = useState(0);
+  // Cambios en los avisos desde la tarjeta: se vuelven a pedir la banda y la lista, sin volver a pedir la tarjeta.
+  const [avisosVersion, setAvisosVersion] = useState(0);
   // Las que esperan el acceso van de la más vieja a la más nueva (primero la que más espera); el resto, al revés.
   const orden = v.estado === "PAID" ? "viejas" : "nuevas";
-  const claveLista = [v.estado, v.medio, v.curso, v.fecha, v.q, pagina, por, version].join("|");
+  const claveLista = [v.estado, v.medio, v.curso, v.fecha, v.q, pagina, por, version, avisosVersion].join("|");
   const lista = useDatosRecordados(
     () => panel.ordenes({ estado: v.estado, medio: v.medio, curso: v.curso, q: v.q, orden, ...rangoDe(v.fecha), page: pagina, page_size: por }),
     [claveLista],
   );
-  const cifras = useDatosRecordados(() => panel.ordenCifras(), [version]);
+  const cifras = useDatosRecordados(() => panel.ordenCifras(), [version, avisosVersion]);
+  // Los pagos que no son de ninguna orden se ven arriba de la lista con el filtro «A revisar» (2026-11-27).
+  const hayPagosSinOrden = cifras.estado.tipo === "listo" && cifras.estado.datos.pagos_sin_orden > 0;
+  const avisos = useDatosRecordados(
+    () => (v.estado === "A_REVISAR" && hayPagosSinOrden ? panel.avisos() : Promise.resolve([])),
+    [v.estado, hayPagosSinOrden, version, avisosVersion],
+  );
+  const sinOrden = avisos.estado.tipo === "listo" ? avisos.estado.datos.filter((a) => !a.orden) : [];
   const cursos = useDatosRecordados(() => panel.cursos({ page_size: 100 }), []);
   const { aviso, avisar } = useAviso();
 
@@ -184,7 +195,7 @@ function Ordenes() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1480px] flex-col gap-3 lg:h-[calc(100dvh-4rem)]">
-      <Banda sobre="Atender" titulo="Órdenes"
+      <Banda sobre="Atender" titulo="Órdenes" cinco
         contador={cifras.estado.tipo === "listo" ? `${numero(cifras.estado.datos.falta_acceso)} para dar acceso` : undefined}
         derecha={<Cobrado estado={cifras.estado} />}>
         <Cifras estado={cifras.estado} v={v} enlace={enlace} />
@@ -201,6 +212,15 @@ function Ordenes() {
           </div>
         </BarraFiltros>
 
+        {sinOrden.length > 0 && (
+          <section aria-label="Pagos sin orden" className="max-h-[38dvh] shrink-0 overflow-auto overscroll-contain rounded-[18px] border-2 border-ink-200 bg-neutral-0 p-4 [scrollbar-width:thin]">
+            <Rotulo>{sinOrden.length === 1 ? "1 pago sin orden" : `${sinOrden.length} pagos sin orden`}</Rotulo>
+            <ul className="mt-2 flex flex-col divide-y divide-ink-100">
+              {sinOrden.map((a) => <FilaAviso key={a.clave} a={a} avisar={avisar} onCambio={() => setAvisosVersion((n) => n + 1)} />)}
+            </ul>
+          </section>
+        )}
+
         {lista.estado.tipo !== "listo" && lista.estado.tipo !== "cargando" ? (
           <div className="min-h-0 flex-1 overflow-auto rounded-[18px] border border-ink-100 bg-neutral-0 p-4">
             <EstadoNoListo estado={lista.estado} recargar={lista.recargar} />
@@ -208,7 +228,9 @@ function Ordenes() {
         ) : (
           <Tabla etiqueta="Órdenes" filas={filas} columnas={columnas} clave={(o) => o.public_id} activa={v.ver || null}
             alAbrir={(o) => ir({ ver: o.public_id, accion: "" })} movil={(o) => <FilaMovil o={o} />} cargando={lista.estado.tipo === "cargando"}
-            vacio={hayFiltros
+            vacio={v.estado === "A_REVISAR"
+              ? <Vacia titulo={sinOrden.length ? "Ninguna orden para revisar." : "Nada para revisar."} texto="Cuando un pago tenga un problema, aparece acá." />
+              : hayFiltros
               ? <Vacia titulo="No hay órdenes con estos filtros." texto="Probá con otro estado, otro medio u otra fecha." accion={<Limpiar onLimpiar={limpiar} />} />
               : <Vacia titulo="Todo al día." texto="No queda ninguna orden pagada esperando el acceso." />}
             pie={total > 0 ? <Paginacion total={total} pagina={pagina} porPagina={por} onPagina={(n) => ir({ pagina: String(n) })} onPorPagina={(n) => ir({ por: String(n), pagina: "1" })} /> : undefined} />
@@ -218,6 +240,7 @@ function Ordenes() {
       {mostrada && (
         <FichaOrden id={mostrada} abierta={!!v.ver} fila={filas.find((f) => f.public_id === mostrada)} origen={filaDe(mostrada)} onSalida={alSalir}
           version={version} accion={v.accion} onCerrar={cerrarFicha} onCumplida={cumplida} avisar={avisar}
+          onAvisos={() => { setAvisosVersion((n) => n + 1); avisarContadores(); }}
           posicion={idx >= 0 ? `${idx + 1} de ${filas.length}` : undefined}
           onAnterior={idx > 0 ? () => ir({ ver: filas[idx - 1]!.public_id, accion: "" }) : undefined}
           onSiguiente={idx >= 0 && idx < filas.length - 1 ? () => ir({ ver: filas[idx + 1]!.public_id, accion: "" }) : undefined} />
@@ -231,7 +254,7 @@ function Ordenes() {
 
 function Cifras({ estado, v, enlace }: { estado: EstadoDatos<OrdenCifras>; v: typeof POR_DEFECTO; enlace: (c: Partial<Record<Clave, string>>) => string }) {
   if (estado.tipo !== "listo") {
-    return <>{[0, 1, 2, 3].map((k) => <span key={k} aria-hidden className="h-16 rounded-[16px] bg-neutral-0/[0.06] ring-1 ring-neutral-0/10" />)}</>;
+    return <>{[0, 1, 2, 3, 4].map((k) => <span key={k} aria-hidden className="h-16 rounded-[16px] bg-neutral-0/[0.06] ring-1 ring-neutral-0/10" />)}</>;
   }
   const d = estado.datos;
   const base = { pagina: "1", ver: "", accion: "", medio: "", curso: "" };
@@ -242,8 +265,11 @@ function Cifras({ estado, v, enlace }: { estado: EstadoDatos<OrdenCifras>; v: ty
       <CifraFiltro href={enlace({ ...base, estado: "PAID" })} icono="candado" nombre="Falta dar acceso" detalle="Pagaron y esperan el aula" valor={d.falta_acceso} elegida={elegida("PAID")}
         aviso={d.demoradas ? `${numero(d.demoradas)} hace más de 24 h` : undefined} />
       <CifraFiltro href={enlace({ ...base, estado: "SIN_COMPLETAR" })} icono="reloj" nombre="Sin completar" detalle="No terminaron de pagar" valor={d.sin_completar} elegida={elegida("SIN_COMPLETAR")} />
-      <CifraFiltro href={enlace({ ...base, estado: "FULFILLED" })} icono="inscripciones" nombre="Cumplidas" detalle="Ya tienen el acceso" valor={d.cumplidas} elegida={elegida("FULFILLED")} />
-      <CifraFiltro href={enlace({ ...base, estado: "DEVUELTAS" })} icono="moneda" nombre="Devueltas" detalle="La plata volvió al comprador" valor={d.devueltas} elegida={elegida("DEVUELTAS")} />
+      <CifraFiltro href={enlace({ ...base, estado: "FULFILLED" })} icono="inscripciones" nombre="Cumplidas" detalle="Con el aula" valor={d.cumplidas} elegida={elegida("FULFILLED")} />
+      <CifraFiltro href={enlace({ ...base, estado: "DEVUELTAS" })} icono="moneda" nombre="Devueltas" detalle="Plata devuelta" valor={d.devueltas} elegida={elegida("DEVUELTAS")} />
+      <CifraFiltro href={enlace({ ...base, estado: "A_REVISAR" })} icono="alerta" nombre="A revisar" detalle="Problemas de cobro" valor={d.a_revisar + d.pagos_sin_orden} elegida={elegida("A_REVISAR")}
+        className="col-span-2 xl:col-span-1"
+        aviso={d.pagos_sin_orden ? `${numero(d.pagos_sin_orden)} ${d.pagos_sin_orden === 1 ? "pago" : "pagos"} sin orden` : undefined} />
     </>
   );
 }
@@ -322,10 +348,12 @@ interface FichaOrdenProps {
   onAnterior?: () => void;
   onSiguiente?: () => void;
   onCumplida: (o: OrdenDetalle) => Promise<void>;
+  /** Se resolvió, pospuso o reenvió un aviso: la banda y la lista vuelven a pedirse. */
+  onAvisos: () => void;
   avisar: (texto: string) => void;
 }
 
-function FichaOrden({ id, abierta, fila, origen, onSalida, version, accion, posicion, onCerrar, onAnterior, onSiguiente, onCumplida, avisar }: FichaOrdenProps) {
+function FichaOrden({ id, abierta, fila, origen, onSalida, version, accion, posicion, onCerrar, onAnterior, onSiguiente, onCumplida, onAvisos, avisar }: FichaOrdenProps) {
   const { estado, recargar, setEstado } = useDatosRecordados(() => panel.orden(id), [id, version]);
   const cuerpo = useRef<HTMLDivElement>(null);
   const o = estado.tipo === "listo" && estado.datos.public_id === id ? estado.datos : null;
@@ -368,6 +396,8 @@ function FichaOrden({ id, abierta, fila, origen, onSalida, version, accion, posi
         ) : (
           <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
             <div className="flex min-w-0 flex-col gap-3">
+              <AvisosOrden avisos={o.avisos} avisar={avisar}
+                onCambio={(nueva) => { if (nueva) setEstado({ tipo: "listo", datos: nueva }); else recargar(); onAvisos(); }} />
               {o.refunded_at && (
                 <p data-entra className="rounded-[14px] border border-status-error/35 bg-status-error/10 px-4 py-3 text-sm text-status-error">
                   <b>Devuelta el {fechaHora(o.refunded_at)}.</b> {MEDIO_DE_PAGO[o.payment_method] ?? o.payment_method} avisó que la plata volvió al comprador.
@@ -644,6 +674,9 @@ const TEXTO_EVENTO: Record<string, string> = {
   "orden.devuelta": "Se devolvió el pago",
   "orden.nota": "Cambió la nota interna",
   "orden.ver_dni": "Vio el DNI",
+  "orden.confirmacion_reenviada": "Reenvió el mail de compra confirmada",
+  "aviso.resuelto": "Resolvió un aviso de cobro",
+  "aviso.pospuesto": "Pospuso un aviso de cobro 7 días",
 };
 
 function HistorialOrden({ eventos }: { eventos: EventoHistorial[] }) {
