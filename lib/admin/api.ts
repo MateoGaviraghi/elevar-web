@@ -6,6 +6,7 @@
  * Nada se guarda en el almacenamiento del navegador: la sesión es una cookie HttpOnly.
  */
 import type {
+  AvisoCobro,
   Categoria,
   ConsultaCifras,
   Contadores,
@@ -249,6 +250,12 @@ export const panel = {
   verDni: (publicId: string) => escribir<{ dni: string }>(`ordenes/${publicId}/dni`, "POST"),
   marcarCumplida: (publicId: string) => escribir<OrdenDetalle>(`ordenes/${publicId}/cumplida`, "POST"),
   guardarNota: (publicId: string, nota: string) => escribir<OrdenDetalle>(`ordenes/${publicId}/nota`, "POST", { nota }),
+  /** Le vuelve a mandar al comprador el mail de compra confirmada (una vez cada 10 minutos). */
+  reenviarConfirmacion: (publicId: string) => escribir<OrdenDetalle>(`ordenes/${publicId}/reenviar-confirmacion`, "POST"),
+
+  avisos: () => pedir<AvisoCobro[]>("avisos"),
+  resolverAviso: (id: number, nota: string) => escribir<void>(`avisos/${id}/resolver`, "POST", { nota }),
+  posponerAviso: (id: number) => escribir<void>(`avisos/${id}/posponer`, "POST"),
 };
 
 

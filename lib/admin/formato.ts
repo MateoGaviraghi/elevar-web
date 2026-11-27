@@ -20,6 +20,7 @@ const ERRORES: Record<string, string> = {
   BACKEND_NO_DISPONIBLE: "No pudimos conectar. Reintentá.",
   RED: "No pudimos conectar. Reintentá.",
   ENVIO_FALLIDO: "No se pudo enviar el correo. Probá de nuevo en un momento.",
+  DEMASIADO_PRONTO: "Ya se reenvió hace menos de 10 minutos. Esperá un poco.",
 };
 
 export function textoDeError(code: string | undefined, porDefecto = "Algo falló. Reintentá."): string {
@@ -98,6 +99,9 @@ export const ACCION: Record<string, string> = {
   "orden.devuelta": "Se devolvió el pago de una orden",
   "orden.nota": "Escribió una nota en una orden",
   "orden.ver_dni": "Vio el DNI de un comprador",
+  "orden.confirmacion_reenviada": "Reenvió el mail de compra confirmada",
+  "aviso.resuelto": "Resolvió un aviso de cobro",
+  "aviso.pospuesto": "Pospuso un aviso de cobro",
   "curso.alta": "Creó un curso",
   "curso.cambio": "Editó un curso",
   "fecha.alta": "Agregó una fecha",
@@ -114,6 +118,7 @@ export const ENTIDAD: Record<string, string> = {
   course_session: "Fecha",
   user: "Usuario",
   permiso: "Permiso",
+  aviso: "Aviso de cobro",
 };
 
 /** El detalle de un evento en palabras cortas: «Nueva → Contactada», «price, title». */
@@ -182,8 +187,21 @@ export function detalleEnPalabras(accion: string, detalle: Record<string, unknow
   if (typeof d.comando === "string") lineas.push("Hecho por soporte");
   if (typeof d.ruta === "string") lineas.push(`Pidió ${d.ruta}`);
   if (typeof d.medio === "string") lineas.push(`Medio de pago: ${d.medio}`);
+  if (typeof d.tipo === "string" && typeof d.aviso === "number") lineas.push(`Aviso: ${TIPO_AVISO_TEXTO[d.tipo] ?? d.tipo}`);
+  if (typeof d.dias === "number") lineas.push(`Por ${d.dias} días`);
   return lineas;
 }
+
+/** El tipo de un aviso de cobro, para la auditoría (los textos de pantalla están en `components/admin/avisos.tsx`). */
+const TIPO_AVISO_TEXTO: Record<string, string> = {
+  MONTO_DISTINTO: "pagó otro monto",
+  SIN_LUGAR: "pagó sin lugar",
+  CONFIRMACION_FALLIDA: "no le llegó la confirmación",
+  ALERTA_FALLIDA: "no llegó el aviso de venta",
+  PAGO_SIN_ORDEN: "pago sin orden",
+  DEVOLUCION_PARCIAL: "devolución parcial",
+  DEVOLUCION_OTRO_PAGO: "devolución de otro pago",
+};
 
 /** «hace 5 min», «hace 3 h», «ayer 18:04» o la fecha: para la actividad de Mi cuenta y las sesiones. */
 export function haceCuanto(iso: string | null | undefined): string {

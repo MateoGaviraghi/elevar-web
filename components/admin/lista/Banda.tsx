@@ -34,7 +34,7 @@ export function useLlega(ref: RefObject<HTMLElement | null>, orden: number, desd
  */
 export const cambio = { direccion: 1 as 1 | -1 };
 
-export function Banda({ sobre, titulo, contador, bajada, derecha, children }: BandaProps) {
+export function Banda({ sobre, titulo, contador, bajada, derecha, children, cinco }: BandaProps) {
   const caja = useRef<HTMLElement>(null);
   useLlega(caja, 0);
   return (
@@ -52,7 +52,7 @@ export function Banda({ sobre, titulo, contador, bajada, derecha, children }: Ba
           </div>
           {derecha && <div className="shrink-0">{derecha}</div>}
         </div>
-        {children && <div className="grid grid-cols-2 gap-2 xl:grid-cols-4 xl:gap-3">{children}</div>}
+        {children && <div className={`grid grid-cols-2 gap-2 xl:gap-3 ${cinco ? "xl:grid-cols-5" : "xl:grid-cols-4"}`}>{children}</div>}
       </div>
     </section>
   );
@@ -65,13 +65,15 @@ interface BandaProps {
   bajada?: string;
   derecha?: ReactNode;
   children?: ReactNode;
+  /** Cinco cifras en vez de cuatro (Órdenes, con «A revisar»). */
+  cinco?: boolean;
 }
 
 /**
  * Una cifra de la banda: ícono, nombre, para qué y el número. Es un enlace que filtra la lista; la elegida
  * queda en blanco (`aria-current`). `aviso` es una línea en naranja (por ejemplo, los vencidos).
  */
-export function CifraFiltro({ href, icono, nombre, detalle, valor, elegida, aviso }: CifraFiltroProps) {
+export function CifraFiltro({ href, icono, nombre, detalle, valor, elegida, aviso, className = "" }: CifraFiltroProps) {
   const escribir = useEscribirIcono();
   return (
     <Link href={href} scroll={false} aria-current={elegida ? "true" : undefined} onPointerEnter={escribir} onFocus={escribir}
@@ -81,7 +83,7 @@ export function CifraFiltro({ href, icono, nombre, detalle, valor, elegida, avis
         const actual = hermanos.findIndex((h) => h.getAttribute("aria-current") === "true");
         cambio.direccion = actual >= 0 && yo < actual ? -1 : 1;
       }}
-      className={`group flex min-h-[64px] flex-col items-start gap-1 rounded-[16px] px-3 py-2.5 sm:flex-row sm:items-center sm:gap-3 outline-none transition-[background-color,box-shadow,transform] duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 active:scale-[0.98] sm:px-4 ${
+      className={`${className} group flex min-h-[64px] flex-col items-start gap-1 rounded-[16px] px-3 py-2.5 sm:flex-row sm:items-center sm:gap-3 outline-none transition-[background-color,box-shadow,transform] duration-200 focus-visible:ring-2 focus-visible:ring-brand-400 active:scale-[0.98] sm:px-4 ${
         elegida ? "bg-neutral-0 text-ink-900 shadow-[0_10px_30px_-12px_rgba(0,0,0,.5)]" : "bg-neutral-0/[0.06] text-neutral-0 ring-1 ring-neutral-0/10 [@media(hover:hover)]:hover:bg-neutral-0/[0.12]"
       }`}>
       <span className={`hidden h-10 w-10 shrink-0 items-center justify-center rounded-[12px] 2xl:inline-flex ${elegida ? "bg-ink-900 text-neutral-0" : "bg-neutral-0/10 text-neutral-0"}`}>
@@ -104,6 +106,7 @@ interface CifraFiltroProps {
   valor: number;
   elegida: boolean;
   aviso?: string;
+  className?: string;
 }
 
 /**
