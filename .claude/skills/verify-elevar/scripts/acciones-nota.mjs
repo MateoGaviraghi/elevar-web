@@ -114,6 +114,19 @@ for (const [w, h, nombre] of [[1440, 900, "escritorio"], [375, 812, "celular"]])
   ok(fin.todas && !fin.volver, "«Ver todas las cápsulas» y sin «Volver al blog»")
   await p.screenshot({ path: `${salida}/nota-${nombre}-4-final.png` })
 
+  // 6. Teclado: desde arriba, Tab llega a las tarjetitas, a «Sigue» y a anterior/siguiente.
+  //    (2026-11-26: las entradas con autoAlpha las dejaban en visibility:hidden y Tab las salteaba.)
+  if (!cel) {
+    await p.goto(`${B}/blog/${TRES}`, { waitUntil: "networkidle" })
+    await p.waitForTimeout(1200)
+    const vistos = new Set()
+    for (let k = 0; k < 40; k++) {
+      await p.keyboard.press("Tab")
+      vistos.add(await p.evaluate(() => { const a = document.activeElement; return a.closest("li.in-carta") ? "mini" : a.closest(".ca-pie") ? "sigue" : a.closest(".vc-tarjeta") || a.classList.contains("vc-tarjeta") ? "vecina" : "" }))
+    }
+    ok(vistos.has("mini") && vistos.has("sigue") && vistos.has("vecina"), "con Tab se llega a las partes, a «Sigue» y a anterior/siguiente", [...vistos].filter(Boolean).join(", "))
+  }
+
   ok(errores.length === 0, "consola sin errores", errores.slice(0, 2).join(" | "))
   await ctx.close()
 }

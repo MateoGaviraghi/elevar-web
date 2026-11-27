@@ -128,7 +128,7 @@ function Cabecera({ c, partes }: { c: Capsula; partes: number }) {
         .timeline({ delay: 0.2 })
         .to(".cb-barra", { scaleY: 1, duration: 1.3, ease: "back.out(1.6)", stagger: 0.12 }, 0)
         .to(".cb-trazo", { strokeDashoffset: 0, duration: 1.2, ease: "power3.out", autoRound: false }, 0.3)
-        .from(".cb-in", { y: 20, autoAlpha: 0, duration: 1.1, ease: "expo.out", stagger: 0.08 }, 0.35)
+        .from(".cb-in", { y: 20, opacity: 0, duration: 1.1, ease: "expo.out", stagger: 0.08 }, 0.35)
         .from(".cb-regla", { scaleX: 0, transformOrigin: "left center", duration: 1.4, ease: "expo.inOut" }, 0.3);
       const st = { trigger: el, start: "top top", end: "bottom top", scrub: 0.6 };
       gsap.to(".cb-marca", { yPercent: 10, ease: "none", scrollTrigger: st });
@@ -334,8 +334,8 @@ export function NotaCapsula({ c, intro, partes, fotos, anterior, siguiente, sigu
           gsap
           .timeline({ scrollTrigger: { trigger: ".in-rot", start: "top 85%", once: true } })
           .from(".in-rot-linea", { scaleX: 0, duration: 1, ease: "expo.inOut" }, 0)
-          .from(".in-rot", { x: -12, autoAlpha: 0, duration: 0.9, ease: "expo.out" }, 0.1)
-          .from(".in-carta", { y: 70, rotate: (k: number) => [-3, 2, -2][k % 3], autoAlpha: 0, duration: 1.2, ease: "expo.out", stagger: 0.12 }, 0.2);
+          .from(".in-rot", { x: -12, opacity: 0, duration: 0.9, ease: "expo.out" }, 0.1)
+          .from(".in-carta", { y: 70, rotate: (k: number) => [-3, 2, -2][k % 3], opacity: 0, duration: 1.2, ease: "expo.out", stagger: 0.12 }, 0.2);
 
         cartas.forEach((carta, i) => {
           // Llegada atada a la rueda: la tarjeta sube girando y se endereza, como una carta que se reparte.
@@ -353,12 +353,12 @@ export function NotaCapsula({ c, intro, partes, fotos, anterior, siguiente, sigu
             .timeline({ scrollTrigger: { trigger: carta, start: "top 72%", once: true } })
             .from(carta.querySelector(".ca-num-in"), { yPercent: 110, duration: 1.1, ease: "expo.out" }, 0)
             .from(carta.querySelector(".ca-punto"), { scale: 0, duration: 0.6, ease: "back.out(2)" }, 0.5)
-            .from(carta.querySelector(".ca-rot"), { x: -16, autoAlpha: 0, duration: 0.9, ease: "expo.out" }, 0.1)
+            .from(carta.querySelector(".ca-rot"), { x: -16, opacity: 0, duration: 0.9, ease: "expo.out" }, 0.1)
             .from(carta.querySelectorAll(".ci-barra"), { scaleY: 0, transformOrigin: "50% 100%", duration: 1.1, ease: "back.out(1.6)", stagger: 0.1 }, 0.1)
             .fromTo(carta.querySelectorAll(".ci-trazo"), { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1, ease: "power3.out", autoRound: false }, 0.35)
             .from(carta.querySelector(".ca-linea"), { scaleX: 0, duration: 1.2, ease: "expo.inOut" }, 0.35)
-            .from(bloques, { y: 22, autoAlpha: 0, duration: 0.9, ease: "expo.out", stagger: 0.06 }, 0.45)
-            .from(carta.querySelector(".ca-pie"), { y: 16, autoAlpha: 0, duration: 0.9, ease: "expo.out" }, 0.7);
+            .from(bloques, { y: 22, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.06 }, 0.45)
+            .from(carta.querySelector(".ca-pie"), { y: 16, opacity: 0, duration: 0.9, ease: "expo.out" }, 0.7);
           if (h) {
             document.fonts.ready.then(() => {
               SplitText.create(h, {
@@ -391,7 +391,7 @@ export function NotaCapsula({ c, intro, partes, fotos, anterior, siguiente, sigu
           );
         });
         gsap.utils.toArray<HTMLElement>(".vc-tarjeta").forEach((t, k) =>
-          gsap.from(t, { y: 60, autoAlpha: 0, duration: 1.1, ease: "expo.out", delay: k * 0.08, scrollTrigger: { trigger: t, start: START, once: true } })
+          gsap.from(t, { y: 60, opacity: 0, duration: 1.1, ease: "expo.out", delay: k * 0.08, scrollTrigger: { trigger: t, start: START, once: true } })
         );
       }
       document.fonts?.ready.then(() => ScrollTrigger.refresh());
