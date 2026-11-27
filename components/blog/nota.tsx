@@ -46,6 +46,12 @@ function sinSola(t: string): string {
   });
 }
 
+/** Título de tarjeta sin las uniones de pegar(): en la columna del celular «y errores
+ * sistemáticos» unido no entraba y se cortaba (2026-11-26). Corta parejo con text-wrap: balance. */
+function sueltas(t: string): string {
+  return t.replace(/ /g, " ");
+}
+
 const dos = (n: number) => String(n).padStart(2, "0");
 
 function Bloques({ bloques }: { bloques: BlogBlock[] }) {
@@ -169,8 +175,8 @@ function Cabecera({ c, partes }: { c: Capsula; partes: number }) {
           </div>
           <div ref={bajada} className="relative mt-10 pt-8">
             <span data-hero-in="" aria-hidden className="cb-regla absolute inset-x-0 top-0 h-px bg-neutral-0/15" />
-            <p data-hero-in="" className="cb-in text-lg leading-relaxed text-neutral-300 md:text-xl">{c.teaser}</p>
-            <ul data-hero-in="" className="cb-in mt-6 flex flex-wrap gap-x-3 gap-y-2 text-sm text-neutral-200">
+            <p className="text-lg leading-relaxed text-neutral-300 md:text-xl">{c.teaser}</p>
+            <ul className="mt-6 flex flex-wrap gap-x-3 gap-y-2 text-sm text-neutral-200">
               {datos.map((d, i) => (
                 <li key={d} className="flex items-center gap-3 whitespace-nowrap">
                   {i > 0 && <span aria-hidden className="h-1 w-1 rounded-full bg-brand-400" />}
@@ -215,8 +221,10 @@ function Carta({ p, i, total, foto, proxima, siguiente }: { p: DatosNota["partes
             </p>
             <Isotipo clase="ci" className="ci-marca h-8 w-auto shrink-0 md:h-10" />
           </div>
-          <h2 className="ca-tit mt-5 font-display text-[1.85rem] font-semibold leading-[1.08] tracking-tight text-ink-900 [text-wrap:balance] md:text-[2.5rem]">
-            {sinSola(nombre)}
+          {/* El título sube entero desde una máscara (sin partirlo en líneas: con 7 tarjetas,
+              SplitText y sus recálculos bloqueaban más de 4 s un celular medio, 2026-11-26). */}
+          <h2 className="mt-5 overflow-hidden pb-[0.12em] font-display text-[1.5rem] sm:text-[1.85rem] font-semibold leading-[1.08] tracking-tight text-ink-900 [text-wrap:balance] md:text-[2.5rem]">
+            <span className="ca-tit block">{sueltas(nombre)}</span>
           </h2>
           <span aria-hidden className="ca-linea mt-6 block h-px w-full origin-left bg-ink-900/10" />
           <div className="ca-texto mt-6 space-y-5 text-[16px] leading-[1.7] text-ink-700 md:text-[17px]">
@@ -307,7 +315,8 @@ function Vecinas({ anterior, siguiente, siguienteRotulo }: { anterior: Capsula; 
 // ── Página ─────────────────────────────────────────────────────────────────────
 export function NotaCapsula({ c, intro, partes, fotos, anterior, siguiente, siguienteRotulo }: DatosNota) {
   const scope = useRef<HTMLDivElement>(null);
-  usePegarEnVivo(scope);
+  // Cuerpo y títulos de las tarjetas: solo se une la palabra de enlace que cierra un renglón.
+  usePegarEnVivo(scope, "p, li, .ca-tit");
 
   useGSAP(
     () => {
@@ -346,8 +355,7 @@ export function NotaCapsula({ c, intro, partes, fotos, anterior, siguiente, sigu
           );
           // La foto se mueve adentro de la tarjeta mientras se lee.
           gsap.fromTo(carta.querySelector(".ca-img"), { yPercent: -6 }, { yPercent: 6, ease: "none", scrollTrigger: { trigger: carta, start: "top bottom", end: "bottom top", scrub: true } });
-          // Adentro, en orden: número, rótulo, isotipo, título por líneas, línea y texto.
-          const h = carta.querySelector<HTMLElement>(".ca-tit");
+          // Adentro, en orden: número, rótulo, isotipo, título desde su máscara, línea y texto.
           const bloques = carta.querySelectorAll(".ca-texto > p, .ca-texto li");
           gsap
             .timeline({ scrollTrigger: { trigger: carta, start: "top 72%", once: true } })
@@ -356,22 +364,10 @@ export function NotaCapsula({ c, intro, partes, fotos, anterior, siguiente, sigu
             .from(carta.querySelector(".ca-rot"), { x: -16, opacity: 0, duration: 0.9, ease: "expo.out" }, 0.1)
             .from(carta.querySelectorAll(".ci-barra"), { scaleY: 0, transformOrigin: "50% 100%", duration: 1.1, ease: "back.out(1.6)", stagger: 0.1 }, 0.1)
             .fromTo(carta.querySelectorAll(".ci-trazo"), { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1, ease: "power3.out", autoRound: false }, 0.35)
+            .from(carta.querySelector(".ca-tit"), { yPercent: 110, duration: 1.2, ease: "expo.out" }, 0.2)
             .from(carta.querySelector(".ca-linea"), { scaleX: 0, duration: 1.2, ease: "expo.inOut" }, 0.35)
             .from(bloques, { y: 22, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.06 }, 0.45)
             .from(carta.querySelector(".ca-pie"), { y: 16, opacity: 0, duration: 0.9, ease: "expo.out" }, 0.7);
-          if (h) {
-            document.fonts.ready.then(() => {
-              SplitText.create(h, {
-                type: "lines",
-                mask: "lines",
-                autoSplit: true,
-                onSplit: (self) => {
-                  airMasks(self.masks);
-                  return gsap.from(self.lines, { yPercent: LINE_FROM, duration: 1.2, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: carta, start: "top 72%", once: true } });
-                },
-              });
-            });
-          }
           if (i === cartas.length - 1) return;
           // Queda fija recién cuando se leyó entera.
           ScrollTrigger.create({
@@ -394,7 +390,8 @@ export function NotaCapsula({ c, intro, partes, fotos, anterior, siguiente, sigu
           gsap.from(t, { y: 60, opacity: 0, duration: 1.1, ease: "expo.out", delay: k * 0.08, scrollTrigger: { trigger: t, start: START, once: true } })
         );
       }
-      document.fonts?.ready.then(() => ScrollTrigger.refresh());
+      // Solo si la fuente todavía no cargó: cada recálculo mide todas las tarjetas fijadas.
+      if (document.fonts && document.fonts.status !== "loaded") document.fonts.ready.then(() => ScrollTrigger.refresh());
     },
     { scope }
   );

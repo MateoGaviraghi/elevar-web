@@ -15,7 +15,7 @@ export function Meta({ c, claro = false }: { c: Capsula; claro?: boolean }) {
       {partes.map((t, i) => (
         <span key={t} className="inline-flex items-center gap-x-2 whitespace-nowrap">
           {i > 0 && <span aria-hidden className={`h-1 w-1 rounded-full ${claro ? "bg-brand-400" : "bg-brand-500"}`} />}
-          <span className={i === 0 ? `font-semibold ${claro ? "text-brand-400" : "text-brand-500"}` : ""}>{t}</span>
+          <span className={i === 0 ? `font-semibold ${claro ? "text-brand-400" : "text-brand-600"}` : ""}>{t}</span>
         </span>
       ))}
     </p>

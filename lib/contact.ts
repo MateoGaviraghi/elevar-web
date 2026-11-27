@@ -36,7 +36,7 @@ export interface Channel {
 export const CONTACT_CHANNELS: Channel[] = [
   { brand: "googlemaps", text: CONTACT.address, href: CONTACT.mapsUrl, aria: `Ver en Google Maps: ${CONTACT.address}`, external: true },
   { brand: "phone", text: CONTACT.phoneDisplay, href: CONTACT.phoneTel, aria: `Llamar al ${CONTACT.phoneDisplay}`, external: false },
-  { brand: "whatsapp", text: "Escribinos por WhatsApp", href: CONTACT.whatsappUrl, aria: "Escribir por WhatsApp", external: true },
+  { brand: "whatsapp", text: "Escribinos por WhatsApp", href: CONTACT.whatsappUrl, aria: "Escribinos por WhatsApp", external: true },
   { brand: "gmail", text: CONTACT.email, href: CONTACT.emailUrl, aria: `Escribir a ${CONTACT.email}`, external: false },
 ];
 

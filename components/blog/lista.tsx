@@ -172,7 +172,7 @@ function Destacada({ c }: { c: Capsula }) {
 
   return (
     <section ref={scope} className="relative h-[calc(100svh-64px)] overflow-hidden bg-neutral-0">
-      <Link href={c.href} className="group block h-full" aria-label={c.title}>
+      <Link href={c.href} className="group block h-full">
         <div className="ds-ventana absolute inset-0 overflow-hidden">
           <Image
             src={c.foto}
@@ -367,7 +367,9 @@ export function Cierre() {
           <SplitLines className="font-display text-[2.6rem] font-semibold uppercase leading-[0.95] tracking-[-0.01em] md:text-[5.5rem]">
             Comunidad Elevar
           </SplitLines>
-          <p className="mt-6 text-lg leading-relaxed text-neutral-0/90">
+          {/* Blanco pleno a 24 px: sobre este naranja ningún texto chico llega a 4,5:1; como texto grande
+              (24 px o más) alcanza con 3:1 (axe, 2026-11-26: el anterior daba 3,31). */}
+          <p className="mt-6 text-2xl leading-snug text-neutral-0">
             {pegar("Sumate a nuestra comunidad de WhatsApp y recibí novedades de cursos, promociones y contenido técnico sobre ISO/IEC 17025.")}
           </p>
         </div>

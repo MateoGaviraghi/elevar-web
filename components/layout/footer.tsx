@@ -42,7 +42,7 @@ export function Footer() {
 
           {/* Col 2 — Dónde estamos */}
           <div>
-            <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-500">
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-400">
               ¿Dónde estamos?
             </h3>
             <ChannelGroup className="space-y-3">
@@ -67,7 +67,7 @@ export function Footer() {
 
           {/* Col 3 — Servicios */}
           <div>
-            <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-500">
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-400">
               Servicios
             </h3>
             <ul className="space-y-2.5">
@@ -81,7 +81,7 @@ export function Footer() {
 
           {/* Col 4 — Comunidad de WhatsApp */}
           <div>
-            <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-500">
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-400">
               Comunidad Elevar
             </h3>
             <p className="mb-4 text-sm leading-relaxed text-neutral-400">

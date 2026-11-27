@@ -80,7 +80,9 @@ export function revisar([enlace, solo]) {
     // renglones armados a propósito (un hijo en bloque, p. ej. "Nuestros / servicios" en el celular)
     const bloques = [...el.children].some((c) => /block|flex|grid/.test(getComputedStyle(c).display) && !c.matches(".sr-solo"));
     // 2. palabra sola abajo (si no es un renglón armado a propósito)
-    if (!bloques && lineas[lineas.length - 1].w.length === 1) out.push(`palabra sola: ${id}`);
+    // Solo en textos de 3 palabras o más (la misma regla que scripts/saltos-de-linea.mjs del repo):
+    // un título de dos palabras que no entra en el renglón no tiene otra forma de cortar.
+    if (!bloques && palabras.length > 2 && lineas[lineas.length - 1].w.length === 1) out.push(`palabra sola: ${id}`);
     // 3. línea que termina en palabra de enlace (pegada con espacio duro no cuenta)
     for (const l of lineas.slice(0, -1)) {
       const fin = l.w[l.w.length - 1].w.toLowerCase().replace(/[«“¿¡(]/g, "");
