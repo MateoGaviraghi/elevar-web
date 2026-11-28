@@ -49,6 +49,25 @@ body {
   color: #fff;
 }
 
+/* Títulos de cabecera que entran sin esperar al JS (Servicios y Contacto, 2026-11-27): el texto
+   está dibujado desde el primer cuadro y sube entero desde atrás de una máscara. Con SplitText
+   esperaban al JS y a las fuentes: 3,7 a 6,4 s en un celular medio. */
+@media (prefers-reduced-motion: no-preference) {
+  .titulo-entra {
+    animation: titulo-entra 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  }
+}
+@keyframes titulo-entra {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(0.4em);
+  }
+  to {
+    clip-path: inset(0 0 -0.2em 0);
+    transform: none;
+  }
+}
+
 /* Entradas con GSAP: ocultas desde el primer cuadro sólo si hay JS y movimiento. */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal],

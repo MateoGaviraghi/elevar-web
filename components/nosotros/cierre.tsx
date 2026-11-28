@@ -45,7 +45,7 @@ export function Cierre() {
             {CIERRE.title}
           </SplitLines>
           <div ref={root} data-reveal="">
-            <p className="ci-in text-lg leading-relaxed text-ink-900">{CIERRE.text}</p>
+            <p className="ci-in text-2xl leading-snug text-ink-900">{CIERRE.text}</p>
             <div className="ci-in mt-8 flex flex-wrap gap-3">
               <Link href="/contacto" className={INK_BUTTON}>
                 Contactanos

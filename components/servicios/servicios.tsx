@@ -9,6 +9,7 @@ import { SplitLines } from "@/components/anim/split-lines";
 import { LOGO_ARCS, LOGO_BARS, LOGO_ORANGE } from "@/components/brand/logo-geometry";
 import { CONTACT } from "@/lib/contact";
 import { sinViuda } from "@/lib/texto";
+import { usePegarEnVivo } from "@/lib/pegar-en-vivo";
 import { CIERRE, CONTACTO, INTRO, SERVICIOS, hrefServicio, incluye, parrafos, servicio, type Servicio } from "@/lib/servicios";
 
 // /servicios y /servicios/[slug]: versión "Bandas" (elegida por Mateo, 2026-11-03).
@@ -263,8 +264,8 @@ function CierreNaranja({ boton, href }: { boton: string; href: string }) {
       <Container className="grid items-end gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
         <SplitLines className="font-display text-[clamp(2.4rem,5.6vw,5rem)] font-semibold leading-[1] tracking-tight text-ink-900 [text-wrap:balance]">{CIERRE.titulo}</SplitLines>
         <div ref={ref} data-reveal="">
-          <p className="bc-in text-lg leading-relaxed text-ink-900">{CONTACTO.pregunta}</p>
-          <p className="bc-in mt-2 flex flex-wrap gap-x-6 gap-y-1 text-lg font-semibold text-ink-900">
+          <p className="bc-in text-2xl leading-snug text-ink-900">{CONTACTO.pregunta}</p>
+          <p className="bc-in mt-3 flex flex-wrap gap-x-6 gap-y-1 text-2xl font-semibold text-ink-900">
             <a href={CONTACT.phoneTel} className="whitespace-nowrap underline decoration-ink-900/30 underline-offset-4 transition-colors hover:decoration-ink-900">{CONTACTO.tel}</a>
             <a href={CONTACT.emailUrl} className="whitespace-nowrap underline decoration-ink-900/30 underline-offset-4 transition-colors hover:decoration-ink-900">{CONTACTO.mail}</a>
           </p>
@@ -284,15 +285,19 @@ function CierreNaranja({ boton, href }: { boton: string; href: string }) {
 
 export function ServiciosListado() {
   const hero = useHero<HTMLDivElement>();
+  // El título largo va con espacios comunes y solo se une la palabra de enlace que queda al
+  // final de un renglón: con sinViuda() las cadenas («es una consultora», «a los laboratorios»)
+  // no entraban y dejaban renglones cortos con lugar de sobra.
+  usePegarEnVivo(hero, "h1");
   return (
     <div className="overflow-x-clip">
       <section data-tone="dark" className="relative isolate bg-ink-900 text-neutral-0">
         <Container className="grid items-center gap-16 pb-24 pt-14 md:pt-20 lg:min-h-[calc(100svh-6.5rem)] lg:grid-cols-12 lg:gap-12 lg:pb-20">
           <div ref={hero} className="lg:col-span-7">
-            <p className="bh-in text-sm font-semibold tracking-wide text-brand-500">{INTRO.titulo}</p>
-            <SplitLines as="h1" immediate className="mt-5 font-display text-[clamp(2.2rem,4.4vw,3.75rem)] font-semibold leading-[1.04] tracking-tight [text-wrap:balance]">
-              {sinViuda(INTRO.bajada)}
-            </SplitLines>
+            <p className="bh-in text-sm font-semibold tracking-wide text-brand-400">{INTRO.titulo}</p>
+            <h1 className="titulo-entra mt-5 font-display text-[clamp(2.2rem,4.4vw,3.25rem)] font-semibold leading-[1.04] tracking-tight [text-wrap:pretty]">
+              {INTRO.bajada}
+            </h1>
             <ol className="bh-in mt-10 grid gap-x-8 border-t border-neutral-0/15 sm:grid-cols-2">
               {SERVICIOS.map((s, i) => (
                 <li key={s.id} className="border-b border-neutral-0/15">

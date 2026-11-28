@@ -146,7 +146,7 @@ function Paths({ courses }: { courses: Course[] }) {
           <h2 className="overflow-hidden font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-[2.5rem]">
             <span className="pp-title block">Elegí cómo capacitarte</span>
           </h2>
-          <span className="hidden overflow-hidden whitespace-nowrap text-sm text-neutral-500 sm:block">
+          <span className="hidden overflow-hidden whitespace-nowrap text-sm text-neutral-700 sm:block">
             <span className="pp-title block">{MODALITIES.length} modalidades</span>
           </span>
         </div>
@@ -192,7 +192,7 @@ function Paths({ courses }: { courses: Course[] }) {
                               >
                                 <span className="w-12 shrink-0 font-mono text-xs font-semibold text-brand-600 md:group-hover:text-brand-400">{c.code}</span>
                                 <span className="min-w-0 flex-1 truncate text-[15px]">{c.title}</span>
-                                <span className="hidden shrink-0 text-sm tabular-nums text-neutral-500 sm:block md:group-hover:text-neutral-400">
+                                <span className="hidden shrink-0 text-sm tabular-nums text-neutral-700 sm:block md:group-hover:text-neutral-400">
                                   {s && !s.past ? s.short.replace(/ de \d{4}$/, "") : priceARS(c)}
                                 </span>
                               </Link>
@@ -201,7 +201,7 @@ function Paths({ courses }: { courses: Course[] }) {
                         })}
                       </ul>
                     ) : (
-                      <p className="text-[15px] text-neutral-500 md:group-hover:text-neutral-300">{EMPTY_NOTE[m.modality] ?? "Próximamente."}</p>
+                      <p className="text-[15px] text-neutral-700 md:group-hover:text-neutral-300">{EMPTY_NOTE[m.modality] ?? "Próximamente."}</p>
                     )}
                   </div>
                 </div>
@@ -364,7 +364,7 @@ export function Closing() {
           <h2 className="overflow-hidden font-display text-3xl font-semibold tracking-tight md:text-[2.5rem]">
             <span className="pc-title block">¿Tenés preguntas?</span>
           </h2>
-          <p className="pc-in mt-4 text-lg text-neutral-0/85">{pegar("Escribinos y te ayudamos a elegir el curso para vos o para tu equipo.")}</p>
+          <p className="pc-in mt-4 text-2xl leading-snug text-neutral-0">{pegar("Escribinos y te ayudamos a elegir el curso para vos o para tu equipo.")}</p>
         </div>
         <div className="pc-in flex shrink-0 flex-col gap-3 sm:flex-row">
           <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className={BTN.onBrand}>

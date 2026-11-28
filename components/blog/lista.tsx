@@ -180,6 +180,7 @@ function Destacada({ c }: { c: Capsula }) {
             fill
             sizes="100vw"
             priority
+            fetchPriority="high"
             className="ds-foto object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(.16,1,.3,1)]"
           />
         </div>

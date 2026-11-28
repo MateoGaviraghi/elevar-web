@@ -58,6 +58,12 @@ export function MobileMenu({
   const inner = useRef<HTMLDivElement>(null);
   const subRefs = useRef<Record<SubId, HTMLDivElement | null>>({ formacion: null, servicios: null });
   const [sub, setSub] = useState<SubId | null>(null);
+  // Los pictogramas de las sublistas se piden recién la primera vez que se abre el menú (antes
+  // bajaban en cada página con el menú cerrado y le sacaban la conexión a la foto principal).
+  const [cargar, setCargar] = useState(false);
+  useEffect(() => {
+    if (open) setCargar(true);
+  }, [open]);
   const tl = useRef<gsap.core.Timeline | null>(null);
   const first = useRef(true);
 
@@ -218,7 +224,7 @@ export function MobileMenu({
                         }}
                         className="h-0 overflow-hidden"
                       >
-                        <SubList id={row.sub} onPick={onClose} />
+                        <SubList id={row.sub} onPick={onClose} cargar={cargar} />
                       </div>
                     )}
 
@@ -263,7 +269,7 @@ function Word({ text }: { text: string }) {
   );
 }
 
-function SubList({ id, onPick }: { id: SubId; onPick: () => void }) {
+function SubList({ id, onPick, cargar }: { id: SubId; onPick: () => void; cargar: boolean }) {
   const { cards, links } = SUBS[id];
   return (
     <div className="pb-5 pt-1">
@@ -276,7 +282,7 @@ function SubList({ id, onPick }: { id: SubId; onPick: () => void }) {
               className="flex min-h-[48px] items-center gap-3 py-1.5 pr-2 text-[15px] text-neutral-300 transition-colors hover:text-neutral-0"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={c.pictogram} alt="" className="h-8 w-8 shrink-0 object-contain" />
+              <img src={cargar ? c.pictogram : undefined} alt="" className="h-8 w-8 shrink-0 object-contain" />
               {c.label}
             </Link>
           </li>

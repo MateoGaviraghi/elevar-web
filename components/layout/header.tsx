@@ -179,6 +179,10 @@ function DesktopNav({ isActive }: { isActive: (href: string) => boolean }) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prev = useRef<PanelId | null>(null);
   const [active, setActive] = useState<PanelId | null>(null);
+  // Los pictogramas del panel se piden recién cuando el mouse o el foco llegan al menú: antes
+  // bajaban en cada página con el panel cerrado (9 imágenes que en un celular medio le
+  // sacaban la conexión a la foto principal; en el celular este menú ni se muestra).
+  const [cargar, setCargar] = useState(false);
 
   const clear = () => {
     if (timer.current) clearTimeout(timer.current);
@@ -298,7 +302,11 @@ function DesktopNav({ isActive }: { isActive: (href: string) => boolean }) {
       className="relative hidden items-center gap-9 lg:flex"
       aria-label="Navegación principal"
       onMouseLeave={closeSoon}
-      onMouseEnter={clear}
+      onMouseEnter={() => {
+        clear();
+        setCargar(true);
+      }}
+      onFocusCapture={() => setCargar(true)}
       onKeyDown={(e) => {
         if (e.key === "Escape" && active) {
           triggers.current[active]?.focus();
@@ -329,6 +337,7 @@ function DesktopNav({ isActive }: { isActive: (href: string) => boolean }) {
             kicker="Formación"
             links={[todos, promos]}
             onPick={closeNow}
+            cargar={cargar}
           />
           <PanelContent
             id="servicios"
@@ -337,6 +346,7 @@ function DesktopNav({ isActive }: { isActive: (href: string) => boolean }) {
             kicker="Servicios"
             links={[{ label: "Todos los servicios", href: "/servicios" }]}
             onPick={closeNow}
+            cargar={cargar}
           />
         </div>
       </div>
@@ -351,6 +361,7 @@ function PanelContent({
   kicker,
   links,
   onPick,
+  cargar,
 }: {
   id: PanelId;
   refCb: (el: HTMLDivElement | null) => void;
@@ -358,6 +369,7 @@ function PanelContent({
   kicker: string;
   links: { label: string; href: string }[];
   onPick: () => void;
+  cargar: boolean;
 }) {
   return (
     <div ref={refCb} id={`panel-${id}`} className="invisible absolute left-0 top-0 flex w-max opacity-0">
@@ -373,7 +385,7 @@ function PanelContent({
             <span className="pictogram relative mt-0.5 inline-block h-11 w-11 shrink-0" aria-hidden>
               <span className="pictogram-scale block h-full w-full">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.pictogram} alt="" className="block h-full w-full object-contain" />
+                <img src={cargar ? c.pictogram : undefined} alt="" className="block h-full w-full object-contain" />
               </span>
               <svg className="pictogram-ring" viewBox="0 0 100 100" focusable="false">
                 <circle cx="50" cy="50" r="49.2" pathLength={1} />

@@ -95,8 +95,10 @@ export function CourseCarousel({
     >
       {header && <div className="cc-head">{header}</div>}
 
+      {/* data-carril: la fila corre de costado a propósito (el chequeo de saltos mide contra la tarjeta, no contra la pantalla). */}
       <div
         ref={viewport}
+        data-carril=""
         className="mt-[min(2.5rem,4svh)] overflow-x-auto [scrollbar-width:none] motion-safe:overflow-x-visible [&::-webkit-scrollbar]:hidden"
       >
         <div
